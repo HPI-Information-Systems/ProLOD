@@ -1,0 +1,2 @@
+-- finishes the mean schema entry creation for a cluster
+-- %1$s schema

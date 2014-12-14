@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+
+<project name="ProLOD" basedir="." default="deploy">
+	<!-- external properties -->
+	<property file="warbuilder.properties" />
+
+	<!-- fixed properties -->
+	<property name="log4j.file" value="./log4j.properties" />
+
+	<property name="project.dir" value=".." />
+
+	<property name="src.dir" value="${project.dir}/src" />
+
+	<property name="client.lib.dir" value="${project.dir}/${client.lib.folder}" />
+
+	<property name="war.dir" value="${project.dir}/war" />
+	<property name="web-inf.dir" value="${war.dir}/WEB-INF" />
+	<property name="server.lib.dir" value="${web-inf.dir}/lib" />
+	<property name="client.js.dir" value="${war.dir}/${module.name}" />
+
+	<property name="build.dir" value="build" />
+	<property name="all_classes.dir" value="${build.dir}/all_classes" />
+	<property name="server_classes.dir" value="${build.dir}/server_classes" />
+
+	<!-- classpath definition -->
+	<path id="classpath">
+		<!-- all server libraries -->
+		<fileset dir="${server.lib.dir}" includes="**/*.jar" />
+
+		<!-- all client libraries -->
+		<fileset dir="${client.lib.dir}" includes="**/*.jar" />
+
+		<!-- GWT libraries -->
+		<pathelement location="${gwt.dir}/gwt-user.jar" />
+		<pathelement location="${gwt.dir}/gwt-dev.jar" />
+
+		<!-- all compiled classes -->
+		<path path="${all_classes.dir}" />
+
+		<!-- source directory -->
+		<path path="${src.dir}" />
+	</path>
+
+	<!-- ##################### -->
+	<!-- # compiling process # -->
+	<!-- ##################### -->
+
+	<!-- generates the war file -->
+	<target name="deploy" depends="clean-temp, clean-war, server-jar, client-compile">
+		<war basedir="${war.dir}" destfile="${project.dir}/${war.filename}.war" webxml="${web-inf.dir}/web.xml">
+			<webinf dir="${web-inf.dir}">
+				<include name="**/*.jar" />
+			</webinf>
+		</war>
+		<antcall target="clean-temp" />
+	</target>
+
+	<target name="compile_all">
+		<mkdir dir="${all_classes.dir}" />
+		<javac includeantruntime="false" srcdir="${src.dir}" destdir="${all_classes.dir}" debug="on" nowarn="on" classpathref="classpath">
+		</javac>
+
+		<!-- copying any non source files like *.properties or *.xml -->
+		<copy todir="${all_classes.dir}">
+			<fileset dir="${src.dir}" excludes="**/*.java" />
+			<!-- copy the logging properties in the ant folder to the server dir and override the existing one-->
+			<fileset file="${log4j.file}" />
+		</copy>
+	</target>
+
+	<target name="client-compile" depends="compile_all">
+		<java classname="com.google.gwt.dev.Compiler" classpathref="classpath" fork="true" maxmemory="512m" failonerror="true" dir="${project.dir}">
+			
+			<arg value="-style" />
+			<arg value="${gwt.code.style}" />
+			<arg value="${gwt.project.xml}" />
+		</java>
+	</target>
+
+
+
+	<!-- generates a jar archive for the server-side source code -->
+	<target name="server-jar" depends="server-compile">
+		<jar destfile="${server.lib.dir}/${module.name}.jar" basedir="${server_classes.dir}" />
+	</target>
+
+	<!-- compiles the server-side source code -->
+	<target name="server-compile" depends="compile_all">
+		<!-- simply copies any files w/o client files -->
+		<copy todir="${server_classes.dir}">
+			<fileset dir="${all_classes.dir}" excludes="**/client/**" />
+		</copy>
+	</target>
+
+	<!-- #################### -->
+	<!-- # cleaning process # -->
+	<!-- #################### -->
+
+	<!-- removes all created resources -->
+	<target name="clean" depends="clean-temp, clean-war" />
+
+
+	<!-- removes all temporary created folders & resources-->
+	<target name="clean-temp">
+		<!-- delete build folders -->
+		<delete dir="${all_classes.dir}" failonerror="no" />
+		<delete dir="${server_classes.dir}" failonerror="no" />
+		<delete dir="${build.dir}" failonerror="no" />
+		<!-- delete jar file -->
+		<delete file="${server.lib.dir}/${module.name}.jar" failonerror="no" />
+	</target>
+
+
+	<!-- removes the war file -->
+	<target name="clean-war">
+		<delete file="${project.dir}/${war.filename}.war" failonerror="no" />
+		<delete dir="${client.js.dir}" failonerror="no" />
+	</target>
+
+</project>

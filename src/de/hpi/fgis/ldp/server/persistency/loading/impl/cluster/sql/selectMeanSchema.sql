@@ -1,0 +1,5 @@
+-- ?1 clusterID
+
+SELECT distinct predicate_id, RANK FROM CLUSTER_MEANSCHEMA 
+	WHERE CLUSTER_ID = ?
+		ORDER BY RANK ASC

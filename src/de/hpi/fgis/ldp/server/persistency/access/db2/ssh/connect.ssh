@@ -1,0 +1,5 @@
+-- %1$s schema
+-- %2$s user
+-- %3$s password
+
+db2 CONNECT TO %1$s USER %2$s USING %3$s;

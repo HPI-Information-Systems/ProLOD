@@ -1,0 +1,4 @@
+-- ?1 sessionID
+-- ?2 user view
+
+SELECT ID FROM CLUSTERS WHERE CHILD_SESSION = ? AND USERNAME = ?

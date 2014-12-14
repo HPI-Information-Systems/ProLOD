@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/aopalliance.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/bzip2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/concurrentlinkedhashmap-lru-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/db2jcc_license_cu.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/db2jcc.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/fastutil-5.1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/guice-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/guice-servlet-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/gwt-dispatch-1.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/gwt-log-3.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/gwt-servlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/gwtupload-0.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/log4j-1.2.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/mysql-connector-java-5.1.12-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/slf4j-api-1.5.11.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/slf4j-jdk14-1.5.11.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/sshj-0.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/trove-130930163819.jar"/>
+	<classpathentry kind="lib" path="client_lib/gin-1.0.jar"/>
+	<classpathentry kind="lib" path="client_lib/gwt-image-loader-1.1.4.jar"/>
+	<classpathentry kind="lib" path="client_lib/gwt-presenter-1.0.0.jar"/>
+	<classpathentry kind="lib" path="client_lib/gxt.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/httpclient-4.2.3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/httpcore-4.2.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jcl-over-slf4j-1.6.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jena-arq-2.11.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jena-core-2.11.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jena-iri-1.0.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jena-sdb-1.4.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jena-tdb-1.0.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/gwt-2.0.1"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

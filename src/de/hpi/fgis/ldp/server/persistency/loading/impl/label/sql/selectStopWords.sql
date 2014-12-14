@@ -1,0 +1,4 @@
+-- %1$s db2 schema
+
+
+SELECT DISTINCT TOKEN FROM %1$s.STOPWORDS

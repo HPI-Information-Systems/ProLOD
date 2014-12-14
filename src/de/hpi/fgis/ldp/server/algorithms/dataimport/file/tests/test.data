@@ -1,0 +1,39 @@
+<http://www.w3.org/2001/08/rdf-test/>  <http://purl.org/dc/elements/1.1/creator>    "Dave Beckett" .
+<http://www.w3.org/2001/08/rdf-test/>  <http://purl.org/dc/elements/1.1/creator>    "Jan Grant" .
+<http://www.w3.org/2001/08/rdf-test/>  <http://purl.org/dc/elements/1.1/publisher>  _:a .
+_:a                                    <http://purl.org/dc/elements/1.1/title>      "World Wide Web Consortium" .
+_:a                                    <http://purl.org/dc/elements/1.1/source>     <http://www.w3.org/> .
+
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/name> "!!!(CHK CHK CHK)"@en .
+	# this is a comment
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/img> "Chkchkchk.jpg"@en .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/landscape> "yes"@en .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/background> "group_or_band"@en .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/origin> <http://dbpedia.org/resource/Sacramento%2C_California> .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/origin> <http://dbpedia.org/resource/California> .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/yearsActive> "1996\u2013Present"@en .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/wikiPageUsesTemplate> <http://dbpedia.org/resource/Template:infobox_musical_artist> .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/date> "2009-06"^^<http://www.w3.org/2001/XMLSchema#gYearMonth> .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/wikiPageUsesTemplate> <http://dbpedia.org/resource/Template:expand-section> .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/id> "f26c72d3-e52c-467b-b651-679c73d8e1a7"@en .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/name> "!!!"@en .
+<http://dbpedia.org/resource/%21%21%21> <http://dbpedia.org/property/wikiPageUsesTemplate> <http://dbpedia.org/resource/Template:musicbrainz_artist> .
+<http://dbpedia.org/resource/%21%21%21Fuck_You%21%21%21> <http://dbpedia.org/property/name> "!!!Fuck You!!!"@en .
+<http://dbpedia.org/resource/%21%21%21Fuck_You%21%21%21> <http://dbpedia.org/property/type> "EP"@en .
+<http://dbpedia.org/resource/%21%21%21Fuck_You%21%21%21> <http://dbpedia.org/property/artist> <http://dbpedia.org/resource/Overkill_%28band%29> .
+<http://dbpedia.org/resource/%21%21%21Fuck_You%21%21%21> <http://dbpedia.org/property/cover> "OverkillFUoriginal.jpg"@en .
+<http://dbpedia.org/resource/%21%21%21Fuck_You%21%21%21> <http://dbpedia.org/property/released> "1987"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://dbpedia.org/resource/%21%21%21Fuck_You%21%21%21> <http://dbpedia.org/property/genre> <http://dbpedia.org/resource/Thrash_metal> .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist1> <http://dbpedia.org/property/title> "The Step"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist1> <http://dbpedia.org/property/length> "6:08"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist1> <http://dbpedia.org/property/title> "Hammerhead"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist1> <http://dbpedia.org/property/length> "5:04"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist1> <http://dbpedia.org/property/title> "KooKooKa Fuk-U"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist1> <http://dbpedia.org/property/length> "7:26"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist3> <http://dbpedia.org/property/title> "There's No Fucking Rules, Dude"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist3> <http://dbpedia.org/property/length> "8:49"@en .
+<http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist3> <http://dbpedia.org/property/wikiPageUsesTemplate> <http://dbpedia.org/resource/Template:tracklist> .
+<http://dbpedia.org/resource/%21%21%21_%28album%29> <http://dbpedia.org/property/relatedInstance> <http://dbpedia.org/resource/%21%21%21_%28album%29/tracklist3> .
+<http://dbpedia.org/resource/%21%21%21_%28album%29> <http://dbpedia.org/property/id> "1b105601-d2d3-4da2-a7d9-114f981b1766"@en .
+<http://dbpedia.org/resource/%22C%22_Is_for_Corpse> <http://dbpedia.org/property/name> "\"C\" Is for Corpse"@en .
+<http://dbpedia.org/resource/Aston_Martin_Vanquish> <http://dbpedia.org/property/power> "520.0"^^<http://dbpedia.org/ontology/brake horsepower> .

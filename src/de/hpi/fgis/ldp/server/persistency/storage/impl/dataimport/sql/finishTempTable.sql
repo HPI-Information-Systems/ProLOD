@@ -1,0 +1,7 @@
+-- finish tmp table
+-- %1$s max size of subject
+-- %2$s max size of predicate
+-- %3$s max size of object
+-- %4$s max size of pattern
+-- %5$s max size of normalized_pattern
+-- %6$s schema

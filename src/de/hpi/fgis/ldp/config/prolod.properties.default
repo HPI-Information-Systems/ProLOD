@@ -1,0 +1,153 @@
+##############
+### Server ###
+##############
+# the maximal amount of parallel jobs to be executed at one time
+server.maxJobCount=8
+# the maximal amount of parallel threads per job to be used (e.g. during import)
+server.maxThreadCount=2
+# the maximal amount of milliseconds used to calculate a result before a ResponseDelayException is thrown
+server.requestTimeout=30000
+# activates the server cache
+server.cache.active=true
+# the maximal amount of cachable requests to be hold in the cache (for 20000 at least 256M of heap space has to be available) --> currently ~4GB
+server.cache.maxCapacity=320000
+# the minimal amount of milliseconds used to calculate a result which is worth caching (5 seconds)
+server.cache.minMillis=5000
+
+
+##############
+### import ###
+##############
+# the max. size of the files to be uploaded (10GB)
+upload.maxupload=10737418240
+# slows the uploads down (default:0)
+upload.slowuploads=0
+# enables the replacement of old schemas per default
+import.replaceSchemas=false
+
+
+##########
+### DB ###
+##########
+# the data source class
+db.dataSource=de.hpi.fgis.ldp.server.persistency.access.db2.DB2DataSource
+#db.dataSource=de.hpi.fgis.ldp.server.persistency.access.mysql.MySQLDataSource
+#db.dataSource=de.hpi.fgis.ldp.server.persistency.access.infobright.InfoBrightDataSource
+# the name of the main schema
+db.mainSchema=PROLOD_MAIN
+# the name of the main schema
+db.defaultUserView=default
+# the name of the ontology schema
+db.ontologyUserView=ontology
+# the number of rows to be fetched 
+db.fetchRowSize=5000
+# the maximum number of commands to be sent to the db before before executing them
+db.maxBatchSize=10000
+# size of key VARCHAR fields in database
+db.maxLengthOfStrings=255
+# max length of patterns and normalized patterns
+db.maxLengthOfPatterns=200
+# 500 is the max length of the short abstracts of dbpedia (using 1000 to be able to handle coded chars like \")
+db.maxLengthOfTexts=1000
+# the max. lenght of schema names
+db.maxLengthOfSchemaNames=30
+# delay between automatic db optimization runs in ms (default 86400000 -> 1 day; 0 to deactivate the auto optimization)
+db.autoOptimizeDelay=86400000
+
+
+###########################
+###### DB -> pooling ######
+###########################
+# the maximal age of a connection in the servers-side connection pool for db-connections (default 10min -> 600000ms)
+db.pooling.maxConnectionAge=600000
+# the max time to wait for a available from connection pool
+db.pooling.maxWaitTime=10000
+# the max. size of the pool of a single data source
+db.pooling.maxPoolSize=50
+# idle time during idle process between next try to get a connection from connection pool(in ms)
+db.pooling.idleTime=100
+# the delay between validity checks for a single connection in the pool (default 30s -> 30000ms)
+db.pooling.validityCheckDelay=30000
+
+
+#########################
+###### DB -> MySQL ######
+#########################
+# name of MySQL user
+db.mysql.username=root
+# password for MySQL user
+db.mysql.password=password
+# host of the MySQL database
+db.mysql.host=127.0.0.1
+# port of the MySQL database
+db.mysql.port=3306
+# auto reconnect value of the JConnector
+db.mysql.autoReconnect=false
+# wait timeout of the MySQL database
+db.mysql.waitTimeout=3610000
+# ping delay for the MySQL database
+db.mysql.pingDelay=1800000
+
+
+##############################
+###### DB -> InfoBright ######
+##############################
+# name of InfoBright user
+db.infobright.username=root
+# password for InfoBright user
+db.infobright.password=password
+# host of the InfoBright database
+db.infobright.host=127.0.0.1
+# port of the InfoBright database
+db.infobright.port=5029
+# auto reconnect value of the JConnector
+db.infobright.autoReconnect=false
+# wait timeout of the InfoBright database
+db.infobright.waitTimeout=3610000
+# ping delay for the InfoBright database
+db.infobright.pingDelay=1800000
+
+
+#######################
+###### DB -> DB2 ######
+#######################
+# name of DB2 user
+db.db2.username=root
+# password for DB2 user
+db.db2.password=password
+# host of the DB2 database
+db.db2.host=127.0.0.1
+# port of the DB2 database
+db.db2.port=50000
+# name of database
+db.db2.database=prolod
+
+#############################
+######### DB2 - ssh #########
+#############################
+db.db2.ssh.host=localhost
+db.db2.ssh.port=22
+db.db2.ssh.username=root
+db.db2.ssh.password=password
+db.db2.ssh.fingerprint=00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF
+db.db2.ssh.remoteDirectory=C:/prolod
+
+
+################
+### labeling ###
+################
+# the number of top weighted token used as label
+labeling.labelTokenCount=3
+# the number of most common schema elements used as alternative label
+labeling.labelMeanSchemaCount=3
+# minimal length of a token used for cluster labeling
+labeling.minTokenLength=4
+# maximal amount of description texts to be loaded
+labeling.maxDescriptionTexts=50000
+
+
+#################
+### profiling ###
+#################
+# minimal length of a TEXT datatype
+profiling.minTextLength=100

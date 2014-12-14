@@ -1,0 +1,2 @@
+-- Creates a new cluster
+-- %1$s schema
