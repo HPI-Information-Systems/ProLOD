@@ -1,6 +1,6 @@
 # ProLOD++
 
-[ProLOD++](https://hpi.de/naumann/projects/data-profiling-and-analytics/prolod.html) is a  project of the Hasso-Plattner-Institut ([HPI](http://www.hpi.de)). ProLOD contains algorithms to perform data profiling on graph data.
+[ProLOD++](https://hpi.de/naumann/projects/data-profiling-and-analytics/prolod.html) is a  project of the Hasso-Plattner-Institut ([HPI](http://www.hpi.de)). ProLOD++ contains algorithms to perform data profiling on Linked Data.
 
 ProLOD++ is supplied under the [Creative Commons BY-SA](https://creativecommons.org/licenses/by-sa/3.0/) license. You can use and extend the tool to develop your own profiling algorithms. 
 
