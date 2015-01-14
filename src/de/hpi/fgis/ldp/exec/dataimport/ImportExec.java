@@ -28,6 +28,7 @@ import de.hpi.fgis.ldp.exec.optimize.OptimizeDB;
 import de.hpi.fgis.ldp.server.algorithms.dataimport.ImportJob;
 import de.hpi.fgis.ldp.server.util.progress.DebugProgress;
 import de.hpi.fgis.ldp.server.util.progress.IProgress;
+import de.hpi.fgis.ldp.shared.config.dataimport.FileType;
 
 public class ImportExec {
   /**
@@ -67,10 +68,18 @@ public class ImportExec {
     System.err.println("schema: " + schemaName);
     System.err.println("file: " + sourceFile);
 
+    FileType type = FileType.NT;
+    if (sourceFile.endsWith(".gz")) {
+      type = FileType.NT_GZ;
+    } else if (sourceFile.endsWith(".bz")) {
+      type = FileType.NT_BZ2;
+    }
+    System.err.println("type: " + type);
+
     IProgress progress = debugProcess.get();
 
     this.importJob.init(progress);
-    this.importJob.init(schemaName, label, sourceFile, null, replace);
+    this.importJob.init(schemaName, label, sourceFile, type, replace);
     this.importJob.execute();
 
     System.err.println("end: " + new Date());
