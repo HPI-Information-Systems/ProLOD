@@ -1,0 +1,100 @@
+* {
+	font-family: Helvetica;
+	color: #777777;
+}
+
+body {
+  margin: 40px;
+}
+div#content {
+  width:800px;
+  text-align: left; 
+  margin:auto;
+}
+
+
+div#hpi_logo { 
+float:right; 
+width:150px;
+} 
+
+div#title { 
+width:450px; 
+foat: center; 
+margin-left:200px;
+} 
+
+div#prolod_logo { 
+float:left; 
+width:200px; 
+} 
+
+div#references {
+	font-size: 0.9em;
+	text-align: left;
+	clear: both;
+}
+
+div#footer {
+	color: #BBBBBB;
+	font-size: 0.8em;
+	text-align: center;
+	margin-top: 10em;
+	padding: 10px;
+	border-top: 1px solid #EEEEEE;
+	clear: both;
+}
+
+div#footer a.invisible {
+	color: #BBBBBB;
+	text-decoration: none;
+}
+
+h1 {
+	font-size: 1.8em;
+	color: #777777;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1.2em;
+	color: #777777;
+	font-weight: bold;
+}
+
+h1#title {
+	text-align: center;
+}
+
+h2#title {
+	text-align: center;
+}
+
+p, ul, ol {
+	font-size: 0.9em;
+}
+
+p#title {
+	font-size: 0.7em;
+	color: #777777;
+	text-align: center;
+}
+
+a:link {
+	font-style:italic;
+	text-decoration: none;
+}
+
+a:hover { 
+	text-decoration: underline
+}
+
+a#bold {
+	font-weight:bold;
+}
+
+a#title {
+	font-style:normal;
+	font-weight:bold;
+}
+
