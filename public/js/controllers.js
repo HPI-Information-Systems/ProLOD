@@ -20,9 +20,9 @@ define(function () {
       return "/" + dataset + "/" + group + "/" + view;
     };
 
-    $scope.init = function() {
-      console.log($route);
-      angular.extend($scope.nav, $routeParams); //TODO doesnt work!
+    $scope.init = function(view, params) {
+      angular.extend($scope.nav, params);
+      $scope.nav.view = view;
     };
 
     $scope.goTo = function(params){
@@ -35,10 +35,15 @@ define(function () {
   controllers.MainCtrl.$inject = ['$scope', '$routeParams', '$location'];
 
 
+  controllers.DefaultViewCtrl = function ($scope, $routeParams) {
+    $scope.init('default', $routeParams);
+
+  };
+  controllers.DefaultViewCtrl.$inject = ['$scope', '$routeParams'];
+
+
   controllers.MyCtrl1 = function ($scope, $routeParams) {
-    $scope.nav.view = 'view1';
-    $scope.nav.dataset = $routeParams.dataset;
-    $scope.nav.group = $routeParams.group;
+    $scope.init('view1', $routeParams);
 
     $scope.myData = [
       {
@@ -55,13 +60,13 @@ define(function () {
   };
   controllers.MyCtrl1.$inject = ['$scope', '$routeParams'];
 
-  controllers.MyCtrl2 = function ($scope) {
-    $scope.nav.view = 'view2';
+  controllers.MyCtrl2 = function ($scope, $routeParams) {
+    $scope.init('view2', $routeParams);
 
   };
-  controllers.MyCtrl2.$inject = ['$scope'];
+  controllers.MyCtrl2.$inject = ['$scope', '$routeParams'];
 
-  controllers.TreeViewController = function ($scope, $location) {
+  controllers.TreeViewController = function ($scope) {
     $scope.treeOptions = {
       nodeChildren: "children",
       dirSelectable: true,
@@ -95,7 +100,7 @@ define(function () {
       $scope.goTo({dataset: selected.dataset, group: selected.group || "all"});
     }
   };
-  controllers.TreeViewController.$inject = ['$scope', '$location', '$routeParams'];
+  controllers.TreeViewController.$inject = ['$scope'];
 
   return controllers;
 

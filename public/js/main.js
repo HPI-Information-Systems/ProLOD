@@ -39,10 +39,10 @@ require(['angular', './controllers', './directives', './filters', './services', 
 
     var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'ngRoute', 'ui.bootstrap', 'ui.grid', 'treeControl']).
       config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/:dataset/:group/default', {templateUrl: 'partials/partial1.html', controller: controllers.MyCtrl1});
+        $routeProvider.when('/:dataset/:group/default', {redirectTo: '/:dataset/:group/view1'});
         $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/partial1.html', controller: controllers.MyCtrl1});
         $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/partial2.html', controller: controllers.MyCtrl2});
-        $routeProvider.when('/', {templateUrl: 'partials/partial1.html', controller: controllers.MyCtrl1});
+        $routeProvider.when('/', {templateUrl: 'partials/default.html', controller: controllers.DefaultViewCtrl});
         $routeProvider.otherwise({redirectTo: '/'});
       }]);
 
