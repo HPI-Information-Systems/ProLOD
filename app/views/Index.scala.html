@@ -12,8 +12,7 @@
         <link rel="stylesheet" href="@routes.Assets.versioned("css/app.css")">
         <script data-main="@routes.Assets.versioned("js/main.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
     </head>
-    <body>
-
+    <body ng-controller="MainCtrl" ng-init="init()">
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -43,18 +42,26 @@
                     tree-model="dataForTheTree"
                     options="treeOptions"
                     on-selection="showSelected(node)"
-                    selected-node="node1">employee: {{node.name}} age {{node.age}}
+                    selected-node="node1">
+                        {{node.name}}
                     </treecontrol>
-                    <ul class="nav nav-sidebar">
-                        <li><a href="#/view1">view1</a></li>
-                        <li><a href="#/view2">view2</a></li>
-                    </ul>
                  </div>
-                <div class="col-sm-8 col-sm-offset-4 main">
+                <div class="col-sm-8 col-sm-offset-3 main">
                     <div class="row">
+                        <ol class="breadcrumb">
+                            <li><a href="#">{{nav.dataset}}</a></li>
+                            <li><a href="#">{{nav.group}}</a></li>
+                            <li><a href="#" class="active">{{nav.view}}</a></li>
+                        </ol>
                         <div class="col-sm12" ng-view></div>
                     </div>
-                    <div class="row">Angular seed app: v<span app-version></span></div>
+                    <div class="row">
+                        <ul class="pagination">
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">view1</a></li>
+                            <li><a href="#/{{nav.dataset}}/{{nav.group}}/view2">view2</a></li>
+                        </ul>
+                        <div class="row">Angular seed app: v<span app-version></span></div>
+                    </div>
                 </div>
             </div>
         </div>
