@@ -13,21 +13,28 @@ define(function () {
       view: "default"
     };
 
+
     var makeUrl = function (params) {
+      params = params || {};
       var dataset = params.dataset || $scope.nav.dataset;
       var group = params.group || $scope.nav.group;
       var view = params.view || $scope.nav.view;
       return "/" + dataset + "/" + group + "/" + view;
     };
 
-    $scope.init = function(view, params) {
+    $scope.init = function() {
+      console.log("init!");
+    };
+
+    $scope.updateParams = function(view, params) {
       angular.extend($scope.nav, params);
       $scope.nav.view = view;
+      console.log("view: " + JSON.stringify($scope.nav));
     };
 
     $scope.goTo = function(params){
       angular.extend($scope.nav, params);
-      var url = makeUrl({});
+      var url = makeUrl();
       $location.path(url);
     };
 
@@ -36,14 +43,13 @@ define(function () {
 
 
   controllers.DefaultViewCtrl = function ($scope, $routeParams) {
-    $scope.init('default', $routeParams);
-
+    $scope.updateParams('default', $routeParams);
   };
   controllers.DefaultViewCtrl.$inject = ['$scope', '$routeParams'];
 
 
   controllers.MyCtrl1 = function ($scope, $routeParams) {
-    $scope.init('view1', $routeParams);
+    $scope.updateParams('view1', $routeParams);
 
     $scope.myData = [
       {
@@ -61,7 +67,7 @@ define(function () {
   controllers.MyCtrl1.$inject = ['$scope', '$routeParams'];
 
   controllers.MyCtrl2 = function ($scope, $routeParams) {
-    $scope.init('view2', $routeParams);
+    $scope.updateParams('view2', $routeParams);
 
   };
   controllers.MyCtrl2.$inject = ['$scope', '$routeParams'];

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>My AngularJS App</title>
+        <title>Prolod++ 2</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("img/favicon.png")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/ui-grid/ui-grid.css")">
@@ -22,7 +22,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Project name</a>
+                    <a class="navbar-brand" href="#">Prolod++ 2</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -49,9 +49,9 @@
                 <div class="col-sm-9 col-sm-offset-3 main" ng-hide="nav.view == 'default'">
                     <div class="row">
                         <ol class="breadcrumb">
-                            <li><a href="#">{{nav.dataset}}</a></li>
-                            <li><a href="#">{{nav.group}}</a></li>
-                            <li><a href="#" class="active">{{nav.view}}</a></li>
+                            <li><a href="#/{{nav.dataset}}">{{nav.dataset}}</a></li>
+                            <li ng-if="nav.group != 'all'"><a href="#/{{nav.dataset}}/{{nav.group}}">{{nav.group}}</a></li>
+                            <li ng-if="nav.view != 'view1'"><a href="#/{{nav.dataset}}/{{nav.group}}/{{nav.view}}" class="active">{{nav.view}}</a></li>
                         </ol>
                         <div class="col-sm12" ng-view></div>
                     </div>
