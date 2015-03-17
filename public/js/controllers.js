@@ -8,11 +8,14 @@ define(function () {
 
   var controllers = {};
 
-  controllers.MainCtrl = function ($scope, $routeParams, $location) {
+  controllers.MainCtrl = function ($scope, $rootScope, $routeParams, $location) {
     $scope.nav = {
       view: "default"
     };
 
+    $rootScope.$on('$routeChangeSuccess', function(event, current, previous){
+          angular.extend($scope.nav, current.params);
+    });
 
     var makeUrl = function (params) {
       params = params || {};
@@ -27,7 +30,6 @@ define(function () {
     };
 
     $scope.updateParams = function(view, params) {
-      angular.extend($scope.nav, params);
       $scope.nav.view = view;
       console.log("view: " + JSON.stringify($scope.nav));
     };
@@ -39,7 +41,7 @@ define(function () {
     };
 
   };
-  controllers.MainCtrl.$inject = ['$scope', '$routeParams', '$location'];
+  controllers.MainCtrl.$inject = ['$scope', '$rootScope', '$routeParams', '$location'];
 
 
   controllers.DefaultViewCtrl = function ($scope, $routeParams) {

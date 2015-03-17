@@ -36,8 +36,8 @@
         </nav>
 
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-3 sidebar" ng-controller="TreeViewController">
+            <div class="row" ng-cloak>
+                <div class="col-sm-3 sidebar ng-cloak" ng-controller="TreeViewController">
                     <treecontrol class="tree-classic"
                     tree-model="dataForTheTree"
                     options="treeOptions"
@@ -46,17 +46,17 @@
                         {{node.name}}
                     </treecontrol>
                  </div>
-                <div class="col-sm-9 col-sm-offset-3 main" ng-hide="nav.view == 'default'">
+                <div class="col-sm-9 col-sm-offset-3 main">
                     <div class="row">
-                        <ol class="breadcrumb">
+                        <ol class="breadcrumb" ng-if="nav.dataset">
                             <li><a href="#/{{nav.dataset}}">{{nav.dataset}}</a></li>
-                            <li ng-if="nav.group != 'all'"><a href="#/{{nav.dataset}}/{{nav.group}}">{{nav.group}}</a></li>
-                            <li ng-if="nav.view != 'view1'"><a href="#/{{nav.dataset}}/{{nav.group}}/{{nav.view}}" class="active">{{nav.view}}</a></li>
+                            <li ng-if="nav.group && nav.group != 'all'"><a href="#/{{nav.dataset}}/{{nav.group}}">{{nav.group}}</a></li>
+                            <li ng-if="nav.group && nav.view != 'view1'"><a href="#/{{nav.dataset}}/{{nav.group}}/{{nav.view}}" class="active">{{nav.view}}</a></li>
                         </ol>
                         <div class="col-sm12" ng-view></div>
                     </div>
                     <div class="row">
-                        <ul class="pagination">
+                        <ul class="pagination" ng-if="nav.dataset">
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">view1</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view2">view2</a></li>
                         </ul>

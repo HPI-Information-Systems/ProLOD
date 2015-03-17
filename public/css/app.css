@@ -1,5 +1,9 @@
 /* app css stylesheet */
 
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none;
+}
+
 /*
  * Base structure
  */
