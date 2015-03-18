@@ -9,8 +9,7 @@ case class Group(name: String)
 
 object Data {
 
-  var list: List[DatabaseSource] = {
-    List(
+  val list: List[DatabaseSource] = List(
       DatabaseSource(
         "DBpedia",
         List(
@@ -26,5 +25,4 @@ object Data {
       )
     )
 
-  }
 }

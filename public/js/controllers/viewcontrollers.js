@@ -8,38 +8,73 @@ define(function () {
 
   var controllers = {};
 
+  controllers.MyCtrl0 = function ($scope) {
+    $scope.updateParams(['view0']);
+
+  };
+  controllers.MyCtrl0.$inject = ['$scope'];
+
+
   controllers.MyCtrl1 = function ($scope) {
-    $scope.updateParams('view1');
+    $scope.updateParams(['view1']);
+
+    $scope.url = function(detail) {
+      return $scope.makeUrl({view: ['view1', detail]})
+    };
+
+    var data = [
+      {
+        "firstName": "Cox",
+        "lastName": "Carney",
+        "age": 12
+      },
+      {
+        "firstName": "Peter",
+        "lastName": "Lustig",
+        "age": 30
+      }
+    ];
 
     $scope.model = {
-      data: [
-        {
-          "firstName": "Cox",
-          "lastName": "Carney",
-          "age": 12
-        },
-        {
-          "firstName": "Peter",
-          "lastName": "Lustig",
-          "age": 30
-        }
-      ]
+      gridOptions: {
+        data: 'model.data',
+        columnDefs: [
+          { name: '', width: 50, field: 'firstName',
+            cellTemplate: '<div class="ui-grid-cell-contents"><a href="#{{grid.appScope.url(COL_FIELD)}}">X</a></div>' },
+          { name: 'firstName' },
+          { name: 'lastName' },
+          { name: 'age' }
+        ]
+      },
+      data: data
     }
   };
   controllers.MyCtrl1.$inject = ['$scope'];
 
+  controllers.MyCtrl1Detail = function ($scope, $routeParams) {
+    $scope.updateParams(['view1', $routeParams.detail]);
+
+    $scope.model = {
+      name: $routeParams.detail
+    }
+  };
+  controllers.MyCtrl1Detail.$inject = ['$scope', '$routeParams'];
+
 
   controllers.MyCtrl2 = function ($scope) {
-    $scope.updateParams('view2');
+    $scope.updateParams(['view2']);
 
   };
   controllers.MyCtrl2.$inject = ['$scope'];
 
 
   controllers.MyCtrl3 = function ($scope) {
-    $scope.updateParams('view3');
+    $scope.updateParams(['view3']);
 
     $scope.model = {
+      gridOptions: {
+        data: 'model.data'
+      },
       data: [
         {
           "property": "instanceOf",

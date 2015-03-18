@@ -7,17 +7,15 @@ import play.api.http.MimeTypes
 
 object Application extends Controller {
 
-
-  implicit val databaseSourceFormat = Json.format[DatabaseSource]
-  implicit val groupFormat = Json.format[Group]
-
   def index = Action {
     Ok(views.html.Index())
   }
 
+  implicit val groupFormat = Json.format[Group]
+  implicit val databaseSourceFormat = Json.format[DatabaseSource]
 
   def jsonTest = Action {
-    val json = Json.toJson(Data.list)
+    val json = Json.obj("data" -> Data.list)
     Ok(json)
   }
 }
