@@ -29,7 +29,7 @@ define(function () {
       console.log("init!");
     };
 
-    $scope.updateParams = function(view, params) {
+    $scope.updateParams = function(view) {
       $scope.nav.view = view;
       console.log("view: " + JSON.stringify($scope.nav));
     };
@@ -50,30 +50,6 @@ define(function () {
   controllers.DefaultViewCtrl.$inject = ['$scope', '$routeParams'];
 
 
-  controllers.MyCtrl1 = function ($scope, $routeParams) {
-    $scope.updateParams('view1', $routeParams);
-
-    $scope.myData = [
-      {
-        "firstName": "Cox",
-        "lastName": "Carney",
-        "age": 12
-      },
-      {
-        "firstName": "Peter",
-        "lastName": "Lustig",
-        "age": 30
-      }
-    ]
-  };
-  controllers.MyCtrl1.$inject = ['$scope', '$routeParams'];
-
-  controllers.MyCtrl2 = function ($scope, $routeParams) {
-    $scope.updateParams('view2', $routeParams);
-
-  };
-  controllers.MyCtrl2.$inject = ['$scope', '$routeParams'];
-
   controllers.TreeViewController = function ($scope) {
     $scope.treeOptions = {
       nodeChildren: "children",
@@ -89,7 +65,7 @@ define(function () {
         labelSelected: "a8"
       }
     };
-    $scope.dataForTheTree = [
+    $scope.treeData = [
       {
         "name": "Dbpedia", dataset: "dbpedia", "children": [
         {"name": "Tiere", dataset: "dbpedia", group: "tiere"},
@@ -104,11 +80,20 @@ define(function () {
       }
     ];
 
-    $scope.showSelected = function (selected) {
+    $scope.onSelection = function (selected) {
       $scope.goTo({dataset: selected.dataset, group: selected.group || "all"});
     }
   };
   controllers.TreeViewController.$inject = ['$scope'];
+
+  controllers.BreadCrumbController = function ($scope) {
+    $scope.model = {
+        data: [
+          
+        ]
+    }
+  };
+  controllers.BreadCrumbController.$inject = ['$scope'];
 
   return controllers;
 

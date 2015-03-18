@@ -33,23 +33,30 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers', './directives', './filters', './services', 'angular-route', 'ui-bootstrap', 'ui-grid', 'treeControl'],
-  function (angular, controllers) {
+require(['angular', './controllers/controllers','./controllers/viewcontrollers',
+    './directives', './filters', './services', 'angular-route', 'ui-bootstrap', 'ui-grid', 'treeControl'],
+  function (angular, controllers, viewcontrollers) {
     // Declare app level module which depends on filters, and services
 
-    var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'ngRoute', 'ui.bootstrap', 'ui.grid', 'treeControl']).
+    var app = angular.module('Prolod2', ['myApp.filters', 'myApp.services', 'myApp.directives', 'ngRoute', 'ui.bootstrap', 'ui.grid', 'treeControl']).
       config(['$routeProvider', function ($routeProvider) {
+        // routes
+        $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/partial1.html', controller: viewcontrollers.MyCtrl1});
+        $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/partial2.html', controller: viewcontrollers.MyCtrl2});
+        $routeProvider.when('/:dataset/:group/view3', {templateUrl: 'partials/partial1.html', controller: viewcontrollers.MyCtrl3});
+        // redirects
         $routeProvider.when('/:dataset/:group/default', {redirectTo: '/:dataset/:group/view1'});
-        $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/partial1.html', controller: controllers.MyCtrl1});
-        $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/partial2.html', controller: controllers.MyCtrl2});
+        $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/default'});
+        $routeProvider.when('/:dataset', {redirectTo: '/:dataset/all/default'});
+        // other
         $routeProvider.when('/', {templateUrl: 'partials/default.html', controller: controllers.DefaultViewCtrl});
         $routeProvider.otherwise({redirectTo: '/'});
       }]);
 
     app.controller('MainCtrl', controllers.MainCtrl);
-
     app.controller('TreeViewController', controllers.TreeViewController);
+    app.controller('BreadCrumbController', controllers.BreadCrumbController);
 
-    angular.bootstrap(document, ['myApp']);
+    angular.bootstrap(document, ['Prolod2']);
 
   });

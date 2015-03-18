@@ -39,19 +39,19 @@
             <div class="row" ng-cloak>
                 <div class="col-sm-3 sidebar ng-cloak" ng-controller="TreeViewController">
                     <treecontrol class="tree-classic"
-                    tree-model="dataForTheTree"
-                    options="treeOptions"
-                    on-selection="showSelected(node)"
-                    selected-node="node1">
+                        tree-model="treeData"
+                        options="treeOptions"
+                        on-selection="onSelection(node)"
+                        selected-node="node1">
                         {{node.name}}
                     </treecontrol>
                  </div>
                 <div class="col-sm-9 col-sm-offset-3 main">
                     <div class="row">
-                        <ol class="breadcrumb" ng-if="nav.dataset">
+                        <ol class="breadcrumb" ng-if="nav.dataset" ng-controller="BreadCrumbController">
                             <li><a href="#/{{nav.dataset}}">{{nav.dataset}}</a></li>
                             <li ng-if="nav.group && nav.group != 'all'"><a href="#/{{nav.dataset}}/{{nav.group}}">{{nav.group}}</a></li>
-                            <li ng-if="nav.group && nav.view != 'view1'"><a href="#/{{nav.dataset}}/{{nav.group}}/{{nav.view}}" class="active">{{nav.view}}</a></li>
+                            <li ng-if="nav.view"><a href="#/{{nav.dataset}}/{{nav.group}}/{{nav.view}}" class="active">{{nav.view}}</a></li>
                         </ol>
                         <div class="col-sm12" ng-view></div>
                     </div>
@@ -59,6 +59,7 @@
                         <ul class="pagination" ng-if="nav.dataset">
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">view1</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view2">view2</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view3">view3</a></li>
                         </ul>
                         <div class="row">Angular seed app: v<span app-version></span></div>
                     </div>

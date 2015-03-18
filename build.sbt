@@ -16,5 +16,3 @@ pipelineStages := Seq(rjs, digest, gzip)
 
 
 fork in run := true
-
-fork in run := true
