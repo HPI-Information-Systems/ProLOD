@@ -8,15 +8,23 @@ define(function () {
 
   var controllers = {};
 
+
+  controllers.IndexViewCtrl = function ($scope, $routeParams) {
+    $scope.updateView(['index'], $routeParams);
+  };
+  controllers.IndexViewCtrl.$inject = ['$scope', '$routeParams'];
+
+
+
   controllers.MyCtrl0 = function ($scope) {
-    $scope.updateParams(['view0']);
+    $scope.updateView(['view0']);
 
   };
   controllers.MyCtrl0.$inject = ['$scope'];
 
 
   controllers.MyCtrl1 = function ($scope) {
-    $scope.updateParams(['view1']);
+    $scope.updateView(['view1']);
 
     $scope.url = function(detail) {
       return $scope.makeUrl({view: ['view1', detail]})
@@ -24,14 +32,14 @@ define(function () {
 
     var data = [
       {
-        "firstName": "Cox",
-        "lastName": "Carney",
-        "age": 12
+        firstName: 'Cox',
+        lastName: 'Carney',
+        age: 12
       },
       {
-        "firstName": "Peter",
-        "lastName": "Lustig",
-        "age": 30
+        firstName: 'Peter',
+        lastName: 'Lustig',
+        age: 30
       }
     ];
 
@@ -52,7 +60,7 @@ define(function () {
   controllers.MyCtrl1.$inject = ['$scope'];
 
   controllers.MyCtrl1Detail = function ($scope, $routeParams) {
-    $scope.updateParams(['view1', $routeParams.detail]);
+    $scope.updateView(['view1', $routeParams.detail]);
 
     $scope.model = {
       name: $routeParams.detail
@@ -62,14 +70,14 @@ define(function () {
 
 
   controllers.MyCtrl2 = function ($scope) {
-    $scope.updateParams(['view2']);
+    $scope.updateView(['view2']);
 
   };
   controllers.MyCtrl2.$inject = ['$scope'];
 
 
   controllers.MyCtrl3 = function ($scope) {
-    $scope.updateParams(['view3']);
+    $scope.updateView(['view3']);
 
     $scope.model = {
       gridOptions: {
@@ -77,19 +85,19 @@ define(function () {
       },
       data: [
         {
-          "property": "instanceOf",
-          "object": "Human",
-          "p": 0.4
+          property: 'instanceOf',
+          object: 'Human',
+          p: 0.4
         },
         {
-          "property": "dateOfBirth",
-          "object": "1.1.12",
-          "p": 0.2
+          property: 'dateOfBirth',
+          object: '1.1.12',
+          p: 0.2
         },
         {
-          "property": "first name",
-          "object": "peter",
-          "p": 0.1
+          property: 'first name',
+          object: 'peter',
+          p: 0.1
         }
       ]
     }

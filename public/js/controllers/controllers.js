@@ -8,6 +8,10 @@ define(function () {
 
   var controllers = {};
 
+  var Events = {
+    viewChanged: 'viewChanged'
+  };
+
   controllers.MainCtrl = function ($scope, $rootScope, $routeParams, $location) {
     $scope.nav = {
       view: []
@@ -22,17 +26,17 @@ define(function () {
       var dataset = params.dataset || $scope.nav.dataset;
       var group = params.group || $scope.nav.group;
       var view = params.view || $scope.nav.view;
-      return "/" + dataset + "/" + group + "/" + view.join("/");
+      return '/' + dataset + '/' + group + '/' + view.join('/');
     };
 
     $scope.init = function () {
-      console.log("init!");
+      console.log('init!');
     };
 
-    $scope.updateParams = function (viewChain) {
+    $scope.updateView = function (viewChain) {
       $scope.nav.view = viewChain;
-      console.log("view: " + JSON.stringify($scope.nav));
-      $rootScope.$emit("navChanged", $scope.nav);
+      console.log('view: ' + JSON.stringify($scope.nav));
+      $rootScope.$emit(Events.viewChanged, $scope.nav);
     };
 
     $scope.goTo = function (params) {
@@ -45,26 +49,20 @@ define(function () {
   controllers.MainCtrl.$inject = ['$scope', '$rootScope', '$routeParams', '$location'];
 
 
-  controllers.DefaultViewCtrl = function ($scope, $routeParams) {
-    $scope.updateParams(['default'], $routeParams);
-  };
-  controllers.DefaultViewCtrl.$inject = ['$scope', '$routeParams'];
-
-
   controllers.TreeViewController = function ($scope, httpApi) {
     $scope.model = {
       treeOptions: {
-        nodeChildren: "children",
+        nodeChildren: 'children',
         dirSelectable: true,
         injectClasses: {
-          ul: "a1",
-          li: "a2",
-          liSelected: "a7",
-          iExpanded: "a3",
-          iCollapsed: "a4",
-          iLeaf: "a5",
-          label: "a6",
-          labelSelected: "a8"
+          ul: 'a1',
+          li: 'a2',
+          liSelected: 'a7',
+          iExpanded: 'a3',
+          iCollapsed: 'a4',
+          iLeaf: 'a5',
+          label: 'a6',
+          labelSelected: 'a8'
         }
       },
       treeData: []
@@ -115,8 +113,8 @@ define(function () {
       breadcrumbs: []
     };
 
-    $rootScope.$on("navChanged", function(evt, nav) {
-      if (!nav.dataset) {
+    $rootScope.$on(Events.viewChanged, function(evt, nav) {
+      if (nav.view == 'index') {
         $scope.model.breadcrumbs = [];
         return
       }
@@ -134,7 +132,6 @@ define(function () {
       });
       $scope.model.breadcrumbs = crumbs;
     });
-
   };
   controllers.BreadCrumbController.$inject = ['$scope', '$rootScope'];
 

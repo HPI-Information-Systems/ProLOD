@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Prolod++ 2</title>
+        <title>ProLOD++ 2</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("img/favicon.png")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/ui-grid/ui-grid.css")">
@@ -22,7 +22,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Prolod++ 2</a>
+                    <a class="navbar-brand" href="#">ProLOD++ 2</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -54,14 +54,14 @@
                         <div class="col-sm12" ng-view></div>
                     </div>
                     <div class="row">
-                        <ul class="pagination" ng-if="nav.dataset">
+                        <ul class="pagination" ng-if="nav.view != 'index'">
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">view0</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">view1</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view2">view2</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view3">view3</a></li>
                         </ul>
-                        <div class="row">Version: v<span app-version></span></div>
                     </div>
+                    <div class="row">Version: v<span app-version></span></div>
                 </div>
             </div>
         </div>
