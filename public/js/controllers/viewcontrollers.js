@@ -15,63 +15,63 @@ define(function () {
   controllers.IndexViewCtrl.$inject = ['$scope', '$routeParams'];
 
 
-  controllers.MyCtrl0 = function ($scope) {
+  controllers.OverviewCtrl = function ($scope) {
     $scope.updateView(['view0']);
 
   };
-  controllers.MyCtrl0.$inject = ['$scope'];
+  controllers.OverviewCtrl.$inject = ['$scope'];
 
 
-  controllers.TableViewCtrl = function ($scope) {
+  controllers.TableViewCtrl = function ($scope, httpApi) {
     $scope.updateView(['view1']);
 
-    $scope.url = function (detail) {
+    $scope.detailUrl = function (detail) {
       return $scope.makeUrl({view: ['view1', detail]})
     };
-
-    var data = [
-      {
-        firstName: 'Cox',
-        lastName: 'Carney',
-        age: 12
-      },
-      {
-        firstName: 'Peter',
-        lastName: 'Lustig',
-        age: 30
-      }
-    ];
 
     $scope.model = {
       gridOptions: {
         data: 'model.data',
         columnDefs: [
           {
-            name: '', width: 20, field: 'firstName', enableSorting: false,
-            cellTemplate: '<div class="ui-grid-cell-contents"><a href="#{{grid.appScope.url(COL_FIELD)}}"><i class="glyphicon glyphicon-zoom-in"/></a></div>'
+            name: '', width: 20, field: 'id', enableSorting: false,
+            cellTemplate: '<div class="ui-grid-cell-contents"><a href="#{{grid.appScope.detailUrl(COL_FIELD)}}"><i class="glyphicon glyphicon-zoom-in"/></a></div>'
           },
           {name: 'firstName'},
           {name: 'lastName'},
           {name: 'age'}
         ]
       },
-      data: data
-    }
-  };
-  controllers.TableViewCtrl.$inject = ['$scope'];
+      data: []
+    };
 
-  controllers.TableDetailViewCtrl = function ($scope, $routeParams) {
-    $scope.updateView(['view1', $routeParams.detail]);
+    httpApi.getTable1().then(function(evt){
+      $scope.model.data = evt.data.data;
+    });
+
+  };
+  controllers.TableViewCtrl.$inject = ['$scope', 'httpApi'];
+
+
+  controllers.TableDetailViewCtrl = function ($scope, $routeParams, httpApi) {
+    var id = $routeParams.detail;
+    $scope.updateView(['view1', id]);
 
     $scope.model = {
-      name: $routeParams.detail
-    }
+      data: null
+    };
+
+    httpApi.getTable1Detail(id).then(function(evt){
+      $scope.model.data = evt.data.data;
+    });
   };
-  controllers.TableDetailViewCtrl.$inject = ['$scope', '$routeParams'];
+  controllers.TableDetailViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
 
 
   controllers.ChartsViewCtrl = function ($scope) {
     $scope.updateView(['view2']);
+
+    Chart.defaults.global.colours = ['#1FBED6', '#97C30A', '#FF717E', '#555555'];
 
     $scope.chart0 = {
       labels: ["Download Sales", "In-Store Sales", "Mail-Order Sales"],
@@ -90,7 +90,7 @@ define(function () {
   controllers.ChartsViewCtrl.$inject = ['$scope'];
 
 
-  controllers.Table2View = function ($scope) {
+  controllers.Table2ViewCtrl = function ($scope) {
     $scope.updateView(['view3']);
 
     $scope.model = {
@@ -116,7 +116,7 @@ define(function () {
       ]
     }
   };
-  controllers.Table2View.$inject = ['$scope'];
+  controllers.Table2ViewCtrl.$inject = ['$scope'];
 
   return controllers;
 

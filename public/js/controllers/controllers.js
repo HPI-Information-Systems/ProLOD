@@ -84,7 +84,7 @@ define(function () {
       ]
       */
 
-    httpApi.getSources().then(function (evt) {
+    httpApi.getDatasets().then(function (evt) {
       $scope.model.treeData = evt.data.data.map(function(db){
         return {
           name: db.name,
