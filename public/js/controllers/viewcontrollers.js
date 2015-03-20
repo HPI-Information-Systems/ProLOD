@@ -15,7 +15,6 @@ define(function () {
   controllers.IndexViewCtrl.$inject = ['$scope', '$routeParams'];
 
 
-
   controllers.MyCtrl0 = function ($scope) {
     $scope.updateView(['view0']);
 
@@ -23,10 +22,10 @@ define(function () {
   controllers.MyCtrl0.$inject = ['$scope'];
 
 
-  controllers.MyCtrl1 = function ($scope) {
+  controllers.TableViewCtrl = function ($scope) {
     $scope.updateView(['view1']);
 
-    $scope.url = function(detail) {
+    $scope.url = function (detail) {
       return $scope.makeUrl({view: ['view1', detail]})
     };
 
@@ -47,36 +46,51 @@ define(function () {
       gridOptions: {
         data: 'model.data',
         columnDefs: [
-          { name: '', width: 50, field: 'firstName',
-            cellTemplate: '<div class="ui-grid-cell-contents"><a href="#{{grid.appScope.url(COL_FIELD)}}">X</a></div>' },
-          { name: 'firstName' },
-          { name: 'lastName' },
-          { name: 'age' }
+          {
+            name: '', width: 20, field: 'firstName', enableSorting: false,
+            cellTemplate: '<div class="ui-grid-cell-contents"><a href="#{{grid.appScope.url(COL_FIELD)}}"><i class="glyphicon glyphicon-zoom-in"/></a></div>'
+          },
+          {name: 'firstName'},
+          {name: 'lastName'},
+          {name: 'age'}
         ]
       },
       data: data
     }
   };
-  controllers.MyCtrl1.$inject = ['$scope'];
+  controllers.TableViewCtrl.$inject = ['$scope'];
 
-  controllers.MyCtrl1Detail = function ($scope, $routeParams) {
+  controllers.TableDetailViewCtrl = function ($scope, $routeParams) {
     $scope.updateView(['view1', $routeParams.detail]);
 
     $scope.model = {
       name: $routeParams.detail
     }
   };
-  controllers.MyCtrl1Detail.$inject = ['$scope', '$routeParams'];
+  controllers.TableDetailViewCtrl.$inject = ['$scope', '$routeParams'];
 
 
-  controllers.MyCtrl2 = function ($scope) {
+  controllers.ChartsViewCtrl = function ($scope) {
     $scope.updateView(['view2']);
 
+    $scope.chart0 = {
+      labels: ["Download Sales", "In-Store Sales", "Mail-Order Sales"],
+      data: [300, 500, 100]
+
+    };
+    $scope.chart1 = {
+      labels: ['2006', '2007', '2008', '2009', '2010', '2011', '2012'],
+      series: ['Series A', 'Series B'],
+      data: [
+        [65, 59, 80, 81, 56, 55, 40],
+        [28, 48, 40, 19, 86, 27, 90]
+      ]
+    }
   };
-  controllers.MyCtrl2.$inject = ['$scope'];
+  controllers.ChartsViewCtrl.$inject = ['$scope'];
 
 
-  controllers.MyCtrl3 = function ($scope) {
+  controllers.Table2View = function ($scope) {
     $scope.updateView(['view3']);
 
     $scope.model = {
@@ -102,7 +116,7 @@ define(function () {
       ]
     }
   };
-  controllers.MyCtrl3.$inject = ['$scope'];
+  controllers.Table2View.$inject = ['$scope'];
 
   return controllers;
 
