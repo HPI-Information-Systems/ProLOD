@@ -11,6 +11,7 @@
         <link rel="stylesheet" type="text/css" href="lib/angular-tree-control/css/tree-control.css">
         <link rel="stylesheet" href="@routes.Assets.versioned("css/app.css")">
         <script data-main="@routes.Assets.versioned("js/main.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
+
     </head>
     <body ng-controller="MainCtrl" ng-init="init()">
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -60,8 +61,12 @@
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">table with detail</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view2">charts</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view3">table</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view4">graph</a></li>
                         </ul>
                     </div>
+
+
+
                     <div class="row">Version: v<span app-version></span></div>
                 </div>
             </div>

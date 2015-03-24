@@ -9,7 +9,9 @@ requirejs.config({
     'ui-grid': ['../lib/ui-grid/ui-grid'],
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
     'chartjs': ['../lib/chartjs/Chart'],
-    'angular-chart': ['../lib/angular-chart.js/angular-chart']
+    'angular-chart': ['../lib/angular-chart.js/angular-chart'],
+    'd3': ['../lib/d3js/d3']
+
   },
   shim: {
     'angular': {
@@ -34,7 +36,7 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers/controllers','./controllers/viewcontrollers',
+require(['angular', './controllers/controllers','./controllers/viewcontrollers', 'd3',
     './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl'],
   function (angular, controllers, viewcontrollers) {
     // Declare app level module which depends on filters, and services
@@ -52,7 +54,10 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
 
         $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/charts.html', controller: viewcontrollers.ChartsViewCtrl});
 
-        $routeProvider.when('/:dataset/:group/view3', {templateUrl: 'partials/table.html', controller: viewcontrollers.Table2View});
+            $routeProvider.when('/:dataset/:group/view3', {templateUrl: 'partials/table.html', controller: viewcontrollers.Table2View});
+
+
+           $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: viewcontrollers.GraphCtrl});
 
         // redirects
         $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});
