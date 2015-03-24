@@ -60,7 +60,7 @@ define(function () {
 
 
   controllers.SynonymViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['predicates']);
+    $scope.updateView(['synonyms']);
 
     $scope.model = {
       gridOptions: {

@@ -8,7 +8,6 @@ case class Predicate(predicate:String, count: Int, percentage: Double)
 case class LinkRatio(literals:Int, externalLinks:Int, internalLinks:Int)
 case class DatasetInfo(distribution:List[Predicate], ratio:LinkRatio)
 
-
 case class InversePredicate(predicateA:String, predicateB:String, correlation:Double, support:Double)
 
 case class AssociationRule(condition:String, Consequence: String, frequency:Double, confidence:Double, correlation:Double)
