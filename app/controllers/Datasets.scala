@@ -1,14 +1,12 @@
 package controllers
 
+import model.DatasetFormats._
 import model.{Dataset, Group}
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
 
 object Datasets extends Controller {
-
-  implicit val groupFormat = Json.format[Group]
-  implicit val databaseSourceFormat = Json.format[Dataset]
 
   val list = List(
     Dataset(
@@ -27,7 +25,9 @@ object Datasets extends Controller {
   )
 
   def datasets = Action {
-    val json = Json.obj("data" -> list)
+    val data: List[Dataset] = list
+    val json = Json.obj("data" -> data)
     Ok(json)
   }
+
 }
