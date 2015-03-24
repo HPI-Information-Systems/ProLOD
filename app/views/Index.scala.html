@@ -8,10 +8,9 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("img/favicon.png")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/ui-grid/ui-grid.css")">
-        <link rel="stylesheet" type="text/css" href="lib/angular-tree-control/css/tree-control.css">
+        <link rel="stylesheet" href="@routes.Assets.versioned("lib/angular-tree-control/css/tree-control.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("css/app.css")">
         <script data-main="@routes.Assets.versioned("js/main.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
-
     </head>
     <body ng-controller="MainCtrl" ng-init="init()">
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -38,7 +37,7 @@
 
         <div class="container-fluid">
             <div class="row" ng-cloak>
-                <div class="col-sm-3 sidebar ng-cloak" ng-controller="TreeViewController">
+                <div class="col-xs-3 sidebar ng-cloak" ng-controller="TreeViewController">
                     <treecontrol class="tree-classic"
                         tree-model="model.treeData"
                         options="model.treeOptions"
@@ -48,13 +47,13 @@
                     </treecontrol>
                  </div>
                 <!-- main content -->
-                <div class="col-sm-9 col-sm-offset-3 main">
+                <div class="col-xs-9 col-xs-offset-3 main">
                     <div class="row">
                         <ol class="breadcrumb" ng-controller="BreadCrumbController" ng-show="model.breadcrumbs">
                             <li ng-repeat="crumb in model.breadcrumbs"><a href="#{{crumb.url}}">{{crumb.name}}</a></li>
                         </ol>
                     </div>
-                    <div class="row" ng-view></div>
+                    <div id="view" class="row" ng-view>loading...</div>
                     <div class="row">
                         <ul class="pagination" ng-if="nav.view != 'index'">
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">overview</a></li>
