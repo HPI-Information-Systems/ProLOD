@@ -47,17 +47,17 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
         // routes
         $routeProvider.when('/', {templateUrl: 'partials/index.html', controller: viewcontrollers.IndexViewCtrl});
 
-        $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'partials/partial0.html', controller: viewcontrollers.MyCtrl0});
+        $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'partials/partial0.html', controller: viewcontrollers.OverviewCtrl});
 
         $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/table.html', controller: viewcontrollers.TableViewCtrl});
         $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl});
 
         $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/charts.html', controller: viewcontrollers.ChartsViewCtrl});
 
-            $routeProvider.when('/:dataset/:group/view3', {templateUrl: 'partials/table.html', controller: viewcontrollers.Table2View});
+        $routeProvider.when('/:dataset/:group/view3', {templateUrl: 'partials/table.html', controller: viewcontrollers.Table2ViewCtrl});
 
 
-           $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: viewcontrollers.GraphCtrl});
+        $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: viewcontrollers.GraphCtrl});
 
         // redirects
         $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});

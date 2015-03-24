@@ -12,11 +12,14 @@ angular.module('Prolod2.services', []).
   value('version', '0.1').
   factory('httpApi', ['$http', function($http) {
     return {
-      getSources: function() {
-        return $http.get('sources');
+      getDatasets: function() {
+        return $http.get('datasets');
       },
-      getView1: function() {
-        //TODO...
+      getTable1: function() {
+        return $http.get('persons');
+      },
+      getTable1Detail: function(id) {
+        return $http.get('persons/' + encodeURIComponent(id));
       }
     }
   }]);

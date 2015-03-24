@@ -4,9 +4,13 @@
 
 
 # Home page
-GET        /             controllers.Application.index()
+GET        /                   controllers.Application.index()
 
-GET        /sources      controllers.Application.jsonTest()
+GET        /datasets           controllers.Datasets.datasets()
+
+GET        /persons            controllers.Table1.getAll()
+GET        /persons/:id        controllers.Table1.getPerson(id : Int)
 
 # Map the JS resource paths
-GET        /*file        controllers.Assets.versioned(path="/public", file: Asset)
+GET        /*file              controllers.Assets.versioned(path="/public", file: Asset)
+
