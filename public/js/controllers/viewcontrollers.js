@@ -133,7 +133,9 @@ define(function () {
           .attr("width", width)
           .attr("height", height);
 
-      d3.json("miserables.json", function(error, graph) {
+      var jsonURL = "http://localhost:9000/personslink";
+
+      d3.json(jsonURL, function(error, graph) {
           force
               .nodes(graph.nodes)
               .links(graph.links)
@@ -154,7 +156,7 @@ define(function () {
               .call(force.drag);
 
           node.append("title")
-              .text(function(d) { return d.name; });
+              .text(function(d) { return d.lastName; });
 
           force.on("tick", function() {
               link.attr("x1", function(d) { return d.source.x; })
