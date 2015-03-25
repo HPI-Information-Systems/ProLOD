@@ -23,7 +23,7 @@ case class Suggestion(subject:String)
 case class Uniqueness(predicate:String, uniqueness: Double, density:Double, keyness:Double, values: Int, uniqueValues:Int)
 
 //TODO remove, just sample data
-case class Person(id: Int, firstName: String, lastName: String, age: Int)
+case class Person(id: Int, firstName: String, lastName: String, age: Int, group: Int)
 
 object ViewFormats {
   implicit val predicateFormat = Json.format[Predicate]

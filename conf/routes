@@ -8,7 +8,7 @@ GET        /                   controllers.Application.index()
 
 GET        /datasets           controllers.Datasets.datasets()
 
-GET        /personslink        controllers.Table1.getPersonLinks
+GET        /personslink        controllers.Persons.getPersonLinks
 
 GET        /predicates/:dataset/:group               controllers.Predicates.getPredicates(dataset: String, group:String)
 
