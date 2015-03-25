@@ -66,8 +66,8 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
 
       // redirects
       $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});
-      $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/default'});
-      $routeProvider.when('/:dataset', {redirectTo: '/:dataset/all/default'});
+      $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/index'});
+      $routeProvider.when('/:dataset', {redirectTo: '/:dataset/all'});
 
       // other
       $routeProvider.otherwise({redirectTo: '/'});
