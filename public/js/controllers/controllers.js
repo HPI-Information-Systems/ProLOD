@@ -85,14 +85,16 @@ define(function () {
       */
 
     httpApi.getDatasets().then(function (evt) {
-      $scope.model.treeData = evt.data.data.map(function(db){
+      $scope.model.treeData = evt.data.datasets.map(function(ds){
         return {
-          name: db.name,
-          dataset: db.name,
-          children: db.groups.map(function(group) {
+          name: ds.name,
+          size: ds.size,
+          dataset: ds.name,
+          children: ds.groups.map(function(group) {
             return {
               name: group.name,
-              dataset: db.name,
+              size: group.size,
+              dataset: ds.name,
               group: group.name
             }
           })

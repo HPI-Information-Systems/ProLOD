@@ -36,37 +36,42 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers/controllers','./controllers/viewcontrollers', 'd3',
-    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl'],
-  function (angular, controllers, viewcontrollers) {
+require(['angular', './controllers/controllers','./controllers/viewcontrollers','./controllers/tableviewcontrollers','./controllers/graphcontroller',
+    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3'],
+  function (angular, controllers, viewcontrollers, tableviewcontrollers, GraphCtrl) {
     // Declare app level module which depends on filters, and services
 
     var app = angular.module('Prolod2', ['Prolod2.filters', 'Prolod2.services', 'Prolod2.directives',
-                                         'ngRoute', 'ui.grid', 'treeControl', 'chart.js']).
-      config(['$routeProvider', function ($routeProvider) {
-        // routes
-        $routeProvider.when('/', {templateUrl: 'partials/index.html', controller: viewcontrollers.IndexViewCtrl});
+                             'ngRoute', 'ui.grid', 'treeControl', 'chart.js'])
+      .config(['$routeProvider', function ($routeProvider) {
+      // routes
+      $routeProvider.when('/', {templateUrl: 'partials/index.html', controller: viewcontrollers.IndexViewCtrl});
 
-        $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'partials/partial0.html', controller: viewcontrollers.OverviewCtrl});
+      $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'partials/partial0.html', controller: viewcontrollers.OverviewCtrl});
 
-        $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/table.html', controller: viewcontrollers.TableViewCtrl});
-        $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl});
+      $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/table.html', controller: viewcontrollers.TableViewCtrl});
+      $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl});
 
-        $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/charts.html', controller: viewcontrollers.ChartsViewCtrl});
+      $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/charts.html', controller: viewcontrollers.ChartsViewCtrl});
 
-        $routeProvider.when('/:dataset/:group/view3', {templateUrl: 'partials/table.html', controller: viewcontrollers.Table2ViewCtrl});
+      $routeProvider.when('/:dataset/:group/predicates', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl});
+      $routeProvider.when('/:dataset/:group/inversePredicates', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl});
+      $routeProvider.when('/:dataset/:group/associationRules', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl});
+      $routeProvider.when('/:dataset/:group/synonyms', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl});
+      $routeProvider.when('/:dataset/:group/factGeneration', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl});
+      $routeProvider.when('/:dataset/:group/suggestions', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl});
+      $routeProvider.when('/:dataset/:group/uniqueness', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl});
 
+      $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: GraphCtrl});
 
-        $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: viewcontrollers.GraphCtrl});
+      // redirects
+      $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});
+      $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/default'});
+      $routeProvider.when('/:dataset', {redirectTo: '/:dataset/all/default'});
 
-        // redirects
-        $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});
-        $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/default'});
-        $routeProvider.when('/:dataset', {redirectTo: '/:dataset/all/default'});
-
-        // other
-        $routeProvider.otherwise({redirectTo: '/'});
-      }]);
+      // other
+      $routeProvider.otherwise({redirectTo: '/'});
+    }]);
 
     app.controller('MainCtrl', controllers.MainCtrl);
     app.controller('TreeViewController', controllers.TreeViewController);

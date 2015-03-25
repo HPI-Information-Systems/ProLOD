@@ -8,9 +8,24 @@ GET        /                   controllers.Application.index()
 
 GET        /datasets           controllers.Datasets.datasets()
 
-GET        /persons            controllers.Table1.getAll()
-GET        /persons/:id        controllers.Table1.getPerson(id : Int)
 GET        /personslink        controllers.Table1.getPersonLinks
+
+GET        /predicates/:dataset/:group               controllers.Predicates.getPredicates(dataset: String, group:String)
+
+GET        /inversePredicates/:dataset/:group        controllers.InversePredicates.getInversePredicates(dataset: String, group:String)
+
+GET        /associationRules/:dataset/:group         controllers.AssociationRules.getAssociationRules(dataset: String, group:String)
+
+GET        /synonyms/:dataset/:group                 controllers.Synonyms.getSynonyms(dataset: String, group:String)
+
+GET        /factGeneration/:dataset/:group           controllers.FactGeneration.getFacts(dataset: String, group:String)
+
+GET        /suggestions/:dataset/:group              controllers.Suggestions.getSuggestions(dataset: String, group:String)
+
+GET        /uniqueness/:dataset/:group               controllers.UniquenessResults.getUniqueness(dataset: String, group:String)
+
+GET        /persons                                  controllers.Persons.getPersons()
+GET        /persons/:id                              controllers.Persons.getPerson(id : Int)
 
 # Map the JS resource paths
 GET        /*file              controllers.Assets.versioned(path="/public", file: Asset)
