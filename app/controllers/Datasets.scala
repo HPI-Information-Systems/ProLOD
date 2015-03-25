@@ -11,22 +11,24 @@ object Datasets extends Controller {
   val list = List(
     Dataset(
       "DBpedia",
+      10,
       List(
-        Group("humans"),
-        Group("cars"))
+        Group("humans", 7),
+        Group("cars", 3))
     ),
     Dataset(
       "Drugbank",
+      5,
       List(
-        Group("Drugs"),
-        Group("Diseases")
+        Group("Drugs", 3),
+        Group("Diseases", 2)
       )
     )
   )
 
   def datasets = Action {
     val data: List[Dataset] = list
-    val json = Json.obj("data" -> data)
+    val json = Json.obj("datasets" -> data)
     Ok(json)
   }
 

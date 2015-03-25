@@ -24,108 +24,37 @@ define(function () {
   };
   controllers.PredicateViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
 
+  // this creates a controller for simple tables
+  var createGenericTableView = function (name, httpCall) {
+    var ctrl = function ($scope, $routeParams, httpApi) {
+      $scope.updateView([name]);
 
-  controllers.InversePredicateViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['inversePredicates']);
+      $scope.model = {
+        gridOptions: {
+          data: 'model.data'
+        },
+        data: []
+      };
 
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
+      httpApi[httpCall]($routeParams.dataset, $routeParams.group).then(function (evt) {
+        $scope.model.data = evt.data.data;
+      });
     };
-
-    httpApi.getInversePredicates($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
+    ctrl.$inject = ['$scope', '$routeParams', 'httpApi'];
+    return ctrl
   };
-  controllers.InversePredicateViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
 
+  controllers.InversePredicateViewCtrl = createGenericTableView("inversePredicates", "getInversePredicates");
 
-  controllers.AssociationRuleViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['associationRules']);
+  controllers.AssociationRuleViewCtrl = createGenericTableView('associationRules', "getAssociationRules");
 
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
-    };
+  controllers.SynonymViewCtrl = createGenericTableView('synonyms', "getSynonyms");
 
-    httpApi.getAssociationRules($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
-  };
-  controllers.AssociationRuleViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
+  controllers.FactGenerationViewCtrl = createGenericTableView('factGeneration', "getFactGeneration");
 
+  controllers.SuggestionViewCtrl = createGenericTableView('suggestions',"getSuggestions");
 
-  controllers.SynonymViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['synonyms']);
-
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
-    };
-
-    httpApi.getSynonyms($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
-  };
-  controllers.SynonymViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
-
-
-  controllers.FactGenerationViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['factGeneration']);
-
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
-    };
-
-    httpApi.getFactGeneration($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
-  };
-  controllers.FactGenerationViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
-
-
-  controllers.SuggestionViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['suggestions']);
-
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
-    };
-
-    httpApi.getSuggestions($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
-  };
-  controllers.SuggestionViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
-
-
-  controllers.UniquenessViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['uniqueness']);
-
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
-    };
-
-    httpApi.getUniqueness($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
-  };
-  controllers.UniquenessViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
-
+  controllers.UniquenessViewCtrl = createGenericTableView('uniqueness', "getUniqueness");
 
   return controllers;
 

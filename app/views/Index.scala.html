@@ -42,14 +42,14 @@
                         tree-model="model.treeData"
                         options="model.treeOptions"
                         on-selection="onSelection(node)"
-                        selected-node="node1">
-                        {{node.name}}
+                        selected-node="model.selected">
+                        {{node.name}} ({{node.size}})
                     </treecontrol>
                  </div>
                 <!-- main content -->
                 <div class="col-xs-9 col-xs-offset-3 main">
                     <div class="row">
-                        <ol class="breadcrumb" ng-controller="BreadCrumbController" ng-show="model.breadcrumbs">
+                        <ol class="breadcrumb" ng-controller="BreadCrumbController" ng-show="model.breadcrumbs.length">
                             <li ng-repeat="crumb in model.breadcrumbs"><a href="#{{crumb.url}}">{{crumb.name}}</a></li>
                         </ol>
                     </div>
@@ -59,6 +59,7 @@
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">overview</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">table with detail</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view2">charts</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view4">graph</a></li>
 
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/predicates">Predicates</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/inversePredicates">Inverse Predicates</a></li>
@@ -68,7 +69,6 @@
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">uniqueness</a></li>
 
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view4">graph</a></li>
                         </ul>
                     </div>
 
