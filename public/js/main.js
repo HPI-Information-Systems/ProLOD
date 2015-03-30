@@ -10,7 +10,9 @@ requirejs.config({
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
     'chartjs': ['../lib/chartjs/Chart'],
     'angular-chart': ['../lib/angular-chart.js/angular-chart'],
-    'd3': ['../lib/d3js/d3']
+    'd3': ['../lib/d3js/d3'],
+    'nv': ['../lib/nvd3js/nv.d3']
+    //'d3v3': ['../lib/nvd3js/d3.v3.min']
 
   },
   shim: {
@@ -36,9 +38,9 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers/controllers','./controllers/viewcontrollers','./controllers/tableviewcontrollers','./controllers/graphcontroller',
-    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3'],
-  function (angular, controllers, viewcontrollers, tableviewcontrollers, GraphCtrl) {
+require(['angular', './controllers/controllers','./controllers/viewcontrollers','./controllers/tableviewcontrollers','./controllers/graphcontroller', './controllers/chartcontroller',
+    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3', 'nv'],
+  function (angular, controllers, viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
     var app = angular.module('Prolod2', ['Prolod2.filters', 'Prolod2.services', 'Prolod2.directives',
@@ -52,8 +54,9 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
       $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'partials/table.html', controller: viewcontrollers.TableViewCtrl});
       $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl});
 
-      $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/charts.html', controller: viewcontrollers.ChartsViewCtrl});
-
+      $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/chart.html', controller: ChartCtrl});
+      $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: GraphCtrl});
+      //$routeProvider.when('/:dataset/:group/view2', {templateUrl: 'partials/charts.html'});
       $routeProvider.when('/:dataset/:group/predicates', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl});
       $routeProvider.when('/:dataset/:group/inversePredicates', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl});
       $routeProvider.when('/:dataset/:group/associationRules', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl});
@@ -62,7 +65,7 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
       $routeProvider.when('/:dataset/:group/suggestions', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl});
       $routeProvider.when('/:dataset/:group/uniqueness', {templateUrl: 'partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl});
 
-      $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'partials/graph.html', controller: GraphCtrl});
+
 
       // redirects
       $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});

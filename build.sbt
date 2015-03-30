@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "angular-tree-control" % "0.2.8",
   "org.webjars" % "angular-chart.js" % "0.5.3",
   "org.webjars" % "d3js" % "3.5.3"
+  "org.webjars" % "nvd3js" % "1.7.1"
 )
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
