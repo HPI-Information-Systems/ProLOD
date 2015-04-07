@@ -22,7 +22,7 @@ object Persons extends Controller {
                         Person(9, "Francesco", "Totti", 31,4),
                         Person(10, "Luca", "Toni", 31,4))
 
-  val dataLink = List(Link(0, 0, 1, 1),Link(0, 0, 2, 1),Link(0, 0, 3, 1),Link(0, 0, 4, 1),
+  val dataLink = List(Link(0, 0, 1, 1),Link(0, 0, 2, 1),Link(0, 0, 3, 1),Link(0, 0, 4, 1), Link(0,1,0,1),
                       Link(1, 1, 5, 1),Link(1, 1, 6, 1),Link(1, 1, 7, 1),Link(1, 1, 8, 1),
                       Link(1, 2, 5, 1),Link(1, 2, 6, 1),Link(1, 2, 7, 1),Link(1, 2, 8, 1),
                       Link(1, 3, 5, 1),Link(1, 3, 6, 1),Link(1, 3, 7, 1),Link(1, 3, 8, 1),
