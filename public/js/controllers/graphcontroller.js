@@ -37,6 +37,14 @@ define(function () {
 
         var jsonURL = "http://localhost:9000/personslink";
 
+
+        function click(d) {
+            if (d3.event.defaultPrevented) return; // click suppressed
+            d = toggleChildren(d);
+            update(d);
+            centerNode(d);
+        }
+        
         d3.json(jsonURL, function (error, graph) {
             force
                 .nodes(graph.nodes)
@@ -59,7 +67,10 @@ define(function () {
                 .style("fill", function (d) {
                     return fill(d.group);
                 })
-                .call(force.drag);
+                .call(force.drag)
+                .on('click', function(d, i) {
+                    window.location.href = d.firstName;
+                })
 
 
             node.append("title")
