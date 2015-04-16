@@ -11,9 +11,8 @@ requirejs.config({
     'chartjs': ['../lib/chartjs/Chart'],
     'angular-chart': ['../lib/angular-chart.js/angular-chart'],
     'd3': ['../lib/d3js/d3'],
-    'nv': ['../lib/nvd3js/nv.d3']
+    'nv': ['../lib/nvd3-community/nv.d3']
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
-
   },
   shim: {
     'angular': {
@@ -34,6 +33,10 @@ requirejs.config({
     'treeControl': {
       deps: ['angular'],
       exports: 'angular'
+    },
+    'nv': {
+      deps: ['d3'],
+      exports: 'nv'
     }
   }
 });
