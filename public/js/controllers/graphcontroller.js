@@ -3,7 +3,6 @@
 define(function () {
 
     var GraphCtrl = function ($scope) {
-
         var width = 1200,
             height = 600,
             fill = d3.scale.category20();
@@ -22,12 +21,14 @@ define(function () {
             .append('svg:g')
             .call(d3.behavior.zoom().on("zoom", redraw));
 
+
         function redraw() {
             console.log("here", d3.event.translate, d3.event.scale);
             svg.attr("transform",
                 "translate(" + d3.event.translate + ")"
                 + " scale(" + d3.event.scale + ")");
         }
+
 
         svg.append('svg:rect')
             .attr('width', width)
@@ -47,10 +48,19 @@ define(function () {
                 .data(graph.links)
                 .enter().append("line")
                 .attr("class", "link")
-                .on('click', connectedNodes)/*
-                .on('mouseover', highlightin)
-                .on('mouseout', highlightout)*/
+                .on('click', clicklink)
+                .on('mouseover', link_in)
+                .on('mouseout', link_out)
                 .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+            $('line').tipsy({
+                gravity: 'w',
+                html: true,
+                title: function() {
+                    var d = this.__data__;
+                    return "Node: "+ d.id+" | Source: "+ d.source.firstName +" "+ d.source.lastName +" | Target: "+ d.target.firstName +" "+ d.target.lastName +" | Value: "+ d.value;
+                }
+            });
 
             var node = svg.selectAll(".node")
                 .data(graph.nodes)
@@ -59,11 +69,26 @@ define(function () {
                 .attr("r", 5)
                 .style("fill", function(d) { return color(d.group); })
                 .call(force.drag)
-                .on('click', connectedNodes);
+                .on('click', connectedNodes)
+                .on('mouseover', node_in)
+                .on('mouseout', node_out);
 
+                $('circle').tipsy({
+                gravity: 'w',
+                html: true,
+                title: function() {
+                    var d = this.__data__;
+                    return "Node: "+ d.id+" | Name: "+ d.firstName+" "+ d.lastName+" | Age: "+ d.age+" | Group: "+ d.group;
+                }
+            });
 
-            node.append("title")
+            /*node.append("title")
                 .text(function(d) { return d.name; });
+
+            node.append("text")
+                .attr("x", 12)
+                .attr("dy", ".35em")
+                .text(function(d) { return d.name; });*/
 
             force.on("tick", function() {
                 link.attr("x1", function(d) { return d.source.x; })
@@ -92,6 +117,37 @@ define(function () {
             function neighboring(a, b) {
                 return linkedByIndex[a.index + "," + b.index];
             }
+
+
+            function link_in(){
+                var link = d3.select(this);
+                link.style('stroke-width', 2);
+                link.style("stroke", "black");
+            }
+            function link_out(){
+                var link = d3.select(this);
+                link.style('stroke-width', 1);
+                link.style("stroke", "#bbb");
+            }
+
+            function node_in(){
+                var node = d3.select(this);
+                node.style('stroke-width', 2);
+
+                var labels = node.append("text")
+                    .text(function(d) { return d.name; });
+            }
+            function node_out(){
+                var node = d3.select(this);
+                node.style('stroke-width', 1);
+            }
+
+            function clicklink(){
+                var link = d3.select(this);
+                link.append("text")
+                    .text(function(d) { return "safasfa"; });
+            }
+
 
             function connectedNodes() {
 
