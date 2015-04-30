@@ -7,7 +7,8 @@ lazy val prolod_play = (project in file("prolod-play"))
   .dependsOn(prolod_server)
 
 lazy val prolod_server = (project in file("prolod-server"))
-    .dependsOn(prolod_common)
+  .enablePlugins(PlayScala)
+  .dependsOn(prolod_common)
 
 lazy val prolod_preprocessing = (project in file("prolod-preprocessing"))
     .dependsOn(prolod_common)
