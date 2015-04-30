@@ -13,7 +13,22 @@ libraryDependencies ++= Seq(
   "org.webjars" % "nvd3-community" % "1.7.0"
 )
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayScala)
+  .aggregate(prolod_server)
+  .dependsOn(prolod_server)
+
+
+lazy val prolod_server = (project in file("prolod-server"))
+    .aggregate(prolod_common)
+    .dependsOn(prolod_common)
+
+lazy val prolod_preprocessing = (project in file("prolod-preprocessing"))
+    .aggregate(prolod_common)
+    .dependsOn(prolod_common)
+
+lazy val prolod_common = project in file("prolod-common")
+
 
 pipelineStages := Seq(rjs, digest, gzip)
 
