@@ -12,10 +12,8 @@ requirejs.config({
     'angular-chart': ['../lib/angular-chart.js/angular-chart'],
     'd3': ['../lib/d3js/d3'],
     'nv': ['../lib/nvd3js/nv.d3'],
-      'tipsy': ['../lib/tipsy/tipsy'],
       'jquery': ['../lib/jquery/jquery']
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
-
   },
   shim: {
     'angular': {
@@ -36,12 +34,16 @@ requirejs.config({
     'treeControl': {
       deps: ['angular'],
       exports: 'angular'
+    },
+    'nv': {
+      deps: ['d3'],
+      exports: 'nv'
     }
   }
 });
 
 require(['angular', './controllers/controllers','./controllers/viewcontrollers','./controllers/tableviewcontrollers','./controllers/graphcontroller', './controllers/chartcontroller',
-    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3', 'nv','tipsy', 'jquery'],
+    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3', 'nv','jquery'],
   function (angular, controllers, viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 

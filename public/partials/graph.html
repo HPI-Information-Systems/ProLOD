@@ -1,16 +1,16 @@
 <style>
-    .tipsy { font-size: 12px; position: absolute; padding: 5px; z-index: 100000; }
+    /*.tipsy { font-size: 12px; position: absolute; padding: 5px; z-index: 100000; }
     .tipsy-inner { background-color: #000; color: #FFF; max-width: 200px; padding: 5px 8px 4px 8px; text-align: center; }
 
-    /* Rounded corners */
+    *//* Rounded corners *//*
     .tipsy-inner { border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
 
-    /* Uncomment for shadow */
-    /*.tipsy-inner { box-shadow: 0 0 5px #000000; -webkit-box-shadow: 0 0 5px #000000; -moz-box-shadow: 0 0 5px #000000; }*/
+    *//* Uncomment for shadow *//*
+    *//*.tipsy-inner { box-shadow: 0 0 5px #000000; -webkit-box-shadow: 0 0 5px #000000; -moz-box-shadow: 0 0 5px #000000; }*//*
 
     .tipsy-arrow { position: absolute; width: 0; height: 0; line-height: 0; border: 0px dashed #000; }
 
-    /* Rules to colour arrows */
+    *//* Rules to colour arrows *//*
     .tipsy-arrow-n { border-bottom-color: #000; }
     .tipsy-arrow-s { border-top-color: #000; }
     .tipsy-arrow-e { border-left-color: #000; }
@@ -23,7 +23,7 @@
     .tipsy-sw .tipsy-arrow { bottom: 0; left: 10px; border-top-style: solid; border-bottom: none;  border-left-color: transparent; border-right-color: transparent; }
     .tipsy-se .tipsy-arrow { bottom: 0; right: 10px; border-top-style: solid; border-bottom: none; border-left-color: transparent; border-right-color: transparent; }
     .tipsy-e .tipsy-arrow { right: 0; top: 50%; margin-top: -5px; border-left-style: solid; border-right: none; border-top-color: transparent; border-bottom-color: transparent; }
-    .tipsy-w .tipsy-arrow { left: 0; top: 50%; margin-top: -5px; border-right-style: solid; border-left: none; border-top-color: transparent; border-bottom-color: transparent; }
+    .tipsy-w .tipsy-arrow { left: 0; top: 50%; margin-top: -5px; border-right-style: solid; border-left: none; border-top-color: transparent; border-bottom-color: transparent; }*/
 
     .node {
         stroke: #000;
@@ -36,7 +36,101 @@
         stroke: #bbb;
         cursor: pointer;
     }
+
+    <style>
+
+     .node {
+         stroke: #000;
+         stroke-width: 1.1px;
+         cursor: pointer;
+     }
+
+    .link {
+        fill: none;
+        stroke: #bbb;
+        cursor: pointer;
+    }
 </style>
 
-<div id="graph"></div>
+<style>
+    .onoffswitch {
+        position: relative; width: 140px;
+        -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    }
+    .onoffswitch-checkbox {
+        display: none;
+    }
+    .onoffswitch-label {
+        display: block; overflow: hidden; cursor: pointer;
+        border: 2px solid #999999; border-radius: 20px;
+    }
+    .onoffswitch-inner {
+        display: block; width: 200%; margin-left: -100%;
+        -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+        -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+    }
+    .onoffswitch-inner:before, .onoffswitch-inner:after {
+        display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+        font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+        -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+    }
+    .onoffswitch-inner:before {
+        content: "GRAPH_1";
+        padding-left: 10px;
+        background-color: #393C3D; color: #FFFFFF;
+    }
+    .onoffswitch-inner:after {
+        content: "GRAPH_2";
+        padding-right: 10px;
+        background-color: #EEEEEE; color: #999999;
+        text-align: right;
+    }
+    .onoffswitch-switch {
+        display: block; width: 18px; margin: 6px;
+        background: #FFFFFF;
+        border: 2px solid #999999; border-radius: 20px;
+        position: absolute; top: 0; bottom: 0; right: 106px;  /*34 di meno della larghezza*/
+        -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+        -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+        margin-left: 0;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+        right: 0px;
+    }
+</style>
 
+
+Graph:
+
+<div class="onoffswitch">
+    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch" checked>
+
+    <label class="onoffswitch-label" for="switch">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+</div>
+<!--
+
+<script>
+    $("#graph_2").hide();
+</script>
+
+<script>
+    $('#switch').on('change', function() {
+        if ($(this).is(':checked')) {
+            $("#graph_1").show();
+            $("#graph_2").hide();
+        } else {
+            $("#graph_1").hide();
+            $("#graph_2").show();
+        }
+    })
+</script>
+-->
+
+
+    <div id="graph_1"></div>
+    <div id="graph_2"></div>
