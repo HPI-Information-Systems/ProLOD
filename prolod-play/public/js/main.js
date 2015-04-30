@@ -11,8 +11,8 @@ requirejs.config({
     'chartjs': ['../lib/chartjs/Chart'],
     'angular-chart': ['../lib/angular-chart.js/angular-chart'],
     'd3': ['../lib/d3js/d3'],
-    'nv': ['../lib/nvd3js/nv.d3'],
-      'jquery': ['../lib/jquery/jquery']
+    'nv': ['../lib/nvd3-community/nv.d3'],
+    'jquery': ['../lib/jquery/jquery']
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
   shim: {

@@ -8,7 +8,7 @@ commandline
 ---
 
 - install sbt
-- execute ```sbt run```
+- execute ```sbt "project prolod_play" run```
 
 idea
 ----
@@ -21,4 +21,4 @@ idea
 Packaging
 ---------
 
-- execute ```sbt dist```
+- execute ```sbt "project prolod_play" dist```
