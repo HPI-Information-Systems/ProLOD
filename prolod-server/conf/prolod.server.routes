@@ -1,0 +1,4 @@
+
+GET /index                  controllers.prolod.server.Application.index()
+
+GET /assets/*file           controllers.prolod.server.Assets.at(path="/public", file)
