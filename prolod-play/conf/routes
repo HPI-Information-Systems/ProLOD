@@ -27,7 +27,7 @@ GET        /uniqueness/:dataset/:group               controllers.UniquenessResul
 GET        /persons                                  controllers.Persons.getPersons()
 GET        /persons/:id                              controllers.Persons.getPerson(id : Int)
 
-->  /server prolod.server.Routes
+->        /server        prolod.server.Routes
 
 # Map the JS resource paths
 GET        /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)

@@ -1,6 +1,6 @@
 
-GET /index                  controllers.prolod.server.Application.index()
+GET        /                    controllers.prolod.server.Application.index()
 
-GET /index2                  controllers.prolod.server.Application.index2()
+GET        /index2              controllers.prolod.server.Application.index2()
 
-GET /assets/*file           controllers.prolod.server.Assets.at(path="/public", file)
+GET        /assets/*file        controllers.prolod.server.Assets.at(path="/public/prolod/server/", file)
