@@ -292,7 +292,8 @@
                     .attr("r", 5)
                     .style("fill", function(d) { return color(d.group); })
                     .call(force1.drag)
-                    .on('click', connectedNodes1)
+                    .on('click',
+                    connectedNodes1)
                     .on('mouseover', node_in)
                     .on('mouseout', node_out);
 
@@ -359,6 +360,8 @@
                         .attr("cy", function(d) { return d.y; });
                 });
 
+
+
                 function link_in() {
                     var link = d3.select(this);
                     link.style('stroke-width', 2);
@@ -393,7 +396,6 @@
                             return "safasfa";
                         });
                 }
-
 
                 //Toggle stores whether the highlighting is on
                 var toggle = 0;
@@ -460,6 +462,7 @@
 
                 function connectedNodes1() {
 
+
                     if (toggle1 == 0) {
                         //Reduce the opacity of all but the neighbouring nodes
                         var d = d3.select(this).node().__data__;
@@ -481,6 +484,9 @@
                         toggle1 = 0;
                     }
                 }
+
+
+
             });
         }
 
