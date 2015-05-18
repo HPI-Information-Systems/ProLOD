@@ -8,22 +8,6 @@ define(function () {
 
   var controllers = {};
 
-  controllers.PredicateViewCtrl = function ($scope, $routeParams, httpApi) {
-    $scope.updateView(['predicates']);
-
-    $scope.model = {
-      gridOptions: {
-        data: 'model.data'
-      },
-      data: []
-    };
-
-    httpApi.getPredicates($routeParams.dataset, $routeParams.group).then(function (evt) {
-      $scope.model.data = evt.data.data;
-    });
-  };
-  controllers.PredicateViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
-
   // this creates a controller for simple tables
   var createGenericTableView = function (name, httpCall) {
     var ctrl = function ($scope, $routeParams, httpApi) {
@@ -43,6 +27,8 @@ define(function () {
     ctrl.$inject = ['$scope', '$routeParams', 'httpApi'];
     return ctrl
   };
+
+  controllers.PredicateViewCtrl = createGenericTableView("predicates", "getPredicates");
 
   controllers.InversePredicateViewCtrl = createGenericTableView("inversePredicates", "getInversePredicates");
 
