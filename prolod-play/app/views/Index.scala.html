@@ -47,30 +47,32 @@
                     </treecontrol>
                  </div>
                 <!-- main content -->
+                <span>{{currentRoute.activetab}}</span>
                 <div class="col-xs-9 col-xs-offset-3 main">
+                    <div class="row">
+                        <ul class="nav nav-tabs" ng-if="nav.view != 'index'">
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'view0'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">overview</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'view1'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">table with detail</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'charts'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/charts">charts</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'graphs'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/graphs">graph</a></li>
+
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/predicates">Predicates</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/inversePredicates">Inverse Predicates</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'associationRules'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/associationRules">Association Rules</a></li>
+                            <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">uniqueness</a></li>-->
+                        </ul>
+                    </div>
+
                     <div class="row">
                         <ol class="breadcrumb" ng-controller="BreadCrumbController" ng-show="model.breadcrumbs.length">
                             <li ng-repeat="crumb in model.breadcrumbs"><a href="#{{crumb.url}}">{{crumb.name}}</a></li>
                         </ol>
                     </div>
+
                     <div id="view" class="row" ng-view>loading...</div>
-                    <div class="row">
-                        <ul class="pagination" ng-if="nav.view != 'index'">
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">overview</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">table with detail</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view2">charts</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view4">graph</a></li>
-
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/predicates">Predicates</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/inversePredicates">Inverse Predicates</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/associationRules">Association Rules</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">uniqueness</a></li>
-
-                        </ul>
-                    </div>
 
                     <div class="row">Version: v<span app-version></span></div>
                 </div>

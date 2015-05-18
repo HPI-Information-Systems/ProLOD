@@ -12,13 +12,15 @@ define(function () {
     viewChanged: 'viewChanged'
   };
 
-  controllers.MainCtrl = function ($scope, $rootScope, $routeParams, $location) {
+  controllers.MainCtrl = function ($scope, $rootScope, $routeParams, $location, $route) {
+
     $scope.nav = {
       view: []
     };
 
     $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
       angular.extend($scope.nav, current.params);
+      $scope.currentRoute = current;
     });
 
     $scope.makeUrl = function (params) {
@@ -46,7 +48,7 @@ define(function () {
     };
 
   };
-  controllers.MainCtrl.$inject = ['$scope', '$rootScope', '$routeParams', '$location'];
+  controllers.MainCtrl.$inject = ['$scope', '$rootScope', '$routeParams', '$location', '$route'];
 
 
   controllers.TreeViewController = function ($scope, httpApi) {

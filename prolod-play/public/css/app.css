@@ -39,12 +39,30 @@ body {
 }
 
 .main {
-    padding-top: 20px;
-    padding-right: 40px;
-    padding-left: 40px;
+
+
 }
 
 .main .page-header {
     margin-top: 0;
 }
 
+#view {
+    margin: 10px;
+}
+
+.graph-grid {
+
+}
+
+.graph-grid .graph-cell {
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+    padding: 3px;
+    border: 1px solid transparent;
+}
+
+.graph-cell:hover {
+    border: 1px solid black;
+}

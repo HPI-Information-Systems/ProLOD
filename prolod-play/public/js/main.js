@@ -53,21 +53,21 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
       // routes
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});
 
-      $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'assets/partials/partial0.html', controller: viewcontrollers.OverviewCtrl});
+      $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'assets/partials/partial0.html', controller: viewcontrollers.OverviewCtrl, activetab: 'view0'});
 
-      $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'assets/partials/table.html', controller: viewcontrollers.TableViewCtrl});
-      $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'assets/partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl});
+      $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'assets/partials/table.html', controller: viewcontrollers.TableViewCtrl, activetab: 'view1'});
+      $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'assets/partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl, activetab: 'view1'});
 
-      $routeProvider.when('/:dataset/:group/view2', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl});
-      $routeProvider.when('/:dataset/:group/view4', {templateUrl: 'assets/partials/graph.html', controller: GraphCtrl});
-      //$routeProvider.when('/:dataset/:group/view2', {templateUrl: 'assets/partials/charts.html'});
-      $routeProvider.when('/:dataset/:group/predicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl});
-      $routeProvider.when('/:dataset/:group/inversePredicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl});
-      $routeProvider.when('/:dataset/:group/associationRules', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl});
-      $routeProvider.when('/:dataset/:group/synonyms', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl});
-      $routeProvider.when('/:dataset/:group/factGeneration', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl});
-      $routeProvider.when('/:dataset/:group/suggestions', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl});
-      $routeProvider.when('/:dataset/:group/uniqueness', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl});
+      $routeProvider.when('/:dataset/:group/charts', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
+      $routeProvider.when('/:dataset/:group/graphs', {templateUrl: 'assets/partials/graphs.html', controller: GraphCtrl, activetab: 'graphs'});
+
+      $routeProvider.when('/:dataset/:group/predicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
+      $routeProvider.when('/:dataset/:group/inversePredicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});
+      $routeProvider.when('/:dataset/:group/associationRules', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
+      $routeProvider.when('/:dataset/:group/synonyms', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
+      $routeProvider.when('/:dataset/:group/factGeneration', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
+      $routeProvider.when('/:dataset/:group/suggestions', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
+      $routeProvider.when('/:dataset/:group/uniqueness', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});
 
 
 
