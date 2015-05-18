@@ -8,12 +8,14 @@ define(function () {
         $scope.graphs = [
             {
                 id: 1,
+                count: 102,
                 name: "spinne",
                 nodes: [{id: 0, group: "outlier"}, {id: 1}, {id: 2}, {id: 3}],
                 links: [{source: 1, target: 2}, {source: 3, target: 1}, {source: 2, target: 3}]
             },
             {
                 id: 2,
+                count: 130,
                 name: "sonne",
                 nodes: [{id: 1, group:"center"}, {id: 2, group: "a"}, {id: 3, group: "b"}, {id: 4}, {id: 5}, {id: 6}],
                 links: [{source: 1, target: 2}, {source: 1, target: 3}, {source: 1, target: 4},
@@ -22,6 +24,7 @@ define(function () {
             },
             {
                 id: 3,
+                count: 7,
                 name: "zwillingssonne",
                 nodes: [{id: 1}, {id: 2}, {id: 3}],
                 links: [{source: 1, target: 2}, {source: 3, target: 1}, {source: 2, target: 3}]
@@ -29,6 +32,7 @@ define(function () {
             },
             {
                 id: 4,
+                count: 22,
                 name: "scorpion",
                 nodes: [{id: 1}, {id: 2}, {id: 3}],
                 links: [{source: 1, target: 2}, {source: 3, target: 1}, {source: 2, target: 3}]
@@ -36,6 +40,7 @@ define(function () {
             },
             {
                 id: 5,
+                count: 9,
                 name: "line",
                 nodes: [{id: 1}, {id: 2}, {id: 3}, {id: 4}],
                 links: [{source: 1, target: 2}, {source: 2, target: 3}, {source: 3, target: 4}]

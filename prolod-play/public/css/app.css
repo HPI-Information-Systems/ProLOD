@@ -55,14 +55,16 @@ body {
 
 }
 
-.graph-grid .graph-cell {
-    /* width: 200px; */
-    /* height: 200px; */
+.graph-grid a:hover{
+    text-decoration: none;
+}
+
+.graph-cell {
     display: inline-block;
     padding: 3px;
     border: 1px solid transparent;
 }
 
 .graph-cell:hover {
-    border: 1px solid black;
+    border: 1px solid #888;
 }

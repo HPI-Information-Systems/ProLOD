@@ -41,13 +41,13 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers/controllers','./controllers/viewcontrollers','./controllers/tableviewcontrollers','./controllers/graphcontroller', './controllers/chartcontroller',
-    './directives', './filters', './services', 'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3', 'nv'],
-  function (angular, controllers, viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
+require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphcontroller', './controllers/chartcontroller',
+      './controllers/controllers', './directives', './filters', './services',
+      'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3', 'nv'],
+  function (angular,  viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
-    var app = angular.module('Prolod2', ['Prolod2.filters', 'Prolod2.services', 'Prolod2.directives',
-                             'ngRoute', 'ui.grid', 'treeControl', 'chart.js'])
+    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'treeControl', 'chart.js'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});
@@ -68,8 +68,6 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
       $routeProvider.when('/:dataset/:group/suggestions', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
       $routeProvider.when('/:dataset/:group/uniqueness', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});
 
-
-
       // redirects
       $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});
       $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/index'});
@@ -79,10 +77,7 @@ require(['angular', './controllers/controllers','./controllers/viewcontrollers',
       $routeProvider.otherwise({redirectTo: '/'});
     }]);
 
-    app.controller('MainCtrl', controllers.MainCtrl);
-    app.controller('TreeViewController', controllers.TreeViewController);
-    app.controller('BreadCrumbController', controllers.BreadCrumbController);
-
     angular.bootstrap(document, ['Prolod2']);
+    console.log("bootstrapped!");
 
   });

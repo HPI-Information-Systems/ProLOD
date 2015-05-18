@@ -131,7 +131,7 @@ define(['angular'], function (angular) {
                     graph: '='
                 },
                 restrict: 'EA',
-                template: '<div>{{graph.name}}</div>'
+                template: '<div>{{graph.name}} ({{graph.count}}x)</div>'
             };
         }
         ])
