@@ -29,7 +29,7 @@ define(function () {
             .attr("transform", "translate(" + width1 / 2 + "," + height1 / 2 + ")");
 
 
-        d3.csv("data.csv", function(error, data) {
+        d3.csv("assets/data.csv", function(error, data) {
 
             data.forEach(function(d) {
                 d.population = +d.population;
@@ -78,7 +78,7 @@ define(function () {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        d3.tsv("data.tsv", type, function(error, data) {
+        d3.tsv("assets/data.tsv", type, function(error, data) {
             x.domain(data.map(function(d) { return d.letter; }));
             y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
 

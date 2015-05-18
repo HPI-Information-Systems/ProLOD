@@ -252,9 +252,7 @@
 
 <div class="graph-grid">
     <a ng-repeat="graph in ::graphs" href="#/{{::nav.dataset}}/{{::nav.group}}/samples/{{::graph.id}}">
-        <span class="graph-cell">
-            {{::graph.name}}
-        </span>
+        <span class="graph-cell" prolod-graph-thumbnail graph="graph"></span>
     </a>
 </div>
 
@@ -338,8 +336,3 @@
         </table>
     </div>
 </fieldset>
-</div>
-</body>​
-
-</fieldset>
-</div>
