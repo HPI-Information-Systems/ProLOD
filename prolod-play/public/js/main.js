@@ -10,6 +10,7 @@ requirejs.config({
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
     'chartjs': ['../lib/chartjs/Chart'],
     'angular-chart': ['../lib/angular-chart.js/angular-chart'],
+    'bg-splitter': ['../bg-splitter/js/splitter'],
     'd3': ['../lib/d3js/d3'],
     'nv': ['../lib/nvd3-community/nv.d3'],
     'jquery': ['../lib/jquery/jquery']
@@ -26,6 +27,10 @@ requirejs.config({
     },
     'angular-chart': {
       deps: ['angular', 'chartjs'],
+      exports: 'angular'
+    },
+    'bg-splitter': {
+      deps: ['angular'],
       exports: 'angular'
     },
     'ui-grid': {
@@ -45,11 +50,11 @@ requirejs.config({
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphcontroller', './controllers/chartcontroller',
       './controllers/controllers', './directives', './filters', './services',
-      'angular-route', 'angular-chart', 'ui-grid', 'treeControl', 'd3', 'nv', 'jquery'],
+      'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
   function (angular,  viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
-    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'treeControl', 'chart.js'])
+    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'bgDirectives', 'treeControl', 'chart.js'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});

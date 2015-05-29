@@ -49,8 +49,9 @@ body {
 }
 
 .view-container {
-    height: calc(100% - 98px);
+    height: calc(100% - 79px);
     overflow-y: hidden;
+    position: relative
 }
 
 .lowerpanel {
@@ -60,7 +61,7 @@ body {
     border-right: 1px solid #eee;
     border-top: 1px solid #eee;
     padding: 0 10px;
-    height: 34%;
+    height: 100%;
 }
 
 .main {
@@ -74,9 +75,9 @@ body {
 
 #view {
     padding: 10px;
-    height: 66%;
     overflow-y: auto;
     overflow-x: hidden;
+    height: 100%;
 }
 
 

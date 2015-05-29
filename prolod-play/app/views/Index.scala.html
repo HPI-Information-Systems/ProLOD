@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/ui-grid/ui-grid.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("lib/angular-tree-control/css/tree-control.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("css/app.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("bg-splitter/css/style.css")">
         <script data-main="@routes.Assets.versioned("js/main.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
 
     </head>
@@ -73,58 +74,65 @@
                         </ol>
                     </div>
 
-                    <div class="row view-container">
-                        <div id="view" ng-view>loading...</div>
 
-                        <div class="lowerpanel">
-                            <fieldset>
-                                <legend>Panel:</legend>
-                                <div class="datagrid">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>header</th>
-                                                <th>header</th>
-                                                <th>header</th>
-                                                <th>header</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                            </tr>
-                                            <tr class="alt">
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                            </tr>
-                                            <tr>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                            </tr>
-                                            <tr class="alt">
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                            </tr>
-                                            <tr>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                                <td>data</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                    <div class="row view-container">
+                        <bg-splitter orientation="vertical">
+                            <bg-pane>
+                                <div id="view" ng-view>loading...</div>
+                            </bg-pane>
+                            <bg-pane>
+                                <div class="lowerpanel">
+                                    <fieldset>
+                                        <legend>Panel:</legend>
+                                        <div class="datagrid">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>header</th>
+                                                        <th>header</th>
+                                                        <th>header</th>
+                                                        <th>header</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                    </tr>
+                                                    <tr class="alt">
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                    </tr>
+                                                    <tr class="alt">
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                        <td>data</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </fieldset>
                                 </div>
-                            </fieldset>
-                        </div>
+                            </bg-pane>
+                        </bg-splitter>
+
                     </div>
                     @*<div class="row">Version: v<span app-version></span></div>*@
                 </div>
