@@ -37,20 +37,19 @@
             </div>
         </nav>
 
-        <div class="container-fluid">
-            <div class="row" ng-cloak>
+        <div class="container-fluid heightlimited">
+            <div class="row heightlimited" ng-cloak>
                 <div class="col-xs-3 sidebar ng-cloak" ng-controller="TreeViewController">
                     <treecontrol class="tree-classic"
-                        tree-model="model.treeData"
-                        options="model.treeOptions"
-                        on-selection="onSelection(node)"
-                        selected-node="model.selected">
+                    tree-model="model.treeData"
+                    options="model.treeOptions"
+                    on-selection="onSelection(node)"
+                    selected-node="model.selected">
                         {{node.name}} ({{node.size}})
                     </treecontrol>
-                 </div>
-                <!-- main content -->
-                <span>{{currentRoute.activetab}}</span>
-                <div class="col-xs-9 col-xs-offset-3 main">
+                </div>
+                    <!-- main content -->
+                <div class="col-xs-9 col-xs-offset-3 main heightlimited">
                     <div class="row">
                         <ul class="nav nav-tabs" ng-if="nav.view != 'index'">
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'view0'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">overview</a></li>
@@ -61,7 +60,7 @@
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/predicates">Predicates</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/inversePredicates">Inverse Predicates</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'associationRules'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/associationRules">Association Rules</a></li>
-                            <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
+                                <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">uniqueness</a></li>-->
@@ -74,65 +73,60 @@
                         </ol>
                     </div>
 
-                    <div id="view" class="row" ng-view>loading...</div>
+                    <div class="row view-container">
+                        <div id="view" ng-view>loading...</div>
 
-
-
-
-                    <div class="footer">
-
-                        <fieldset>
-                            <legend>Panel:</legend>
-                            <div class="datagrid">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>header</th>
-                                            <th>header</th>
-                                            <th>header</th>
-                                            <th>header</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                        </tr>
-                                        <tr class="alt">
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                        </tr>
-                                        <tr>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                        </tr>
-                                        <tr class="alt">
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                        </tr>
-                                        <tr>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                            <td>data</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </fieldset>
-
+                        <div class="lowerpanel">
+                            <fieldset>
+                                <legend>Panel:</legend>
+                                <div class="datagrid">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>header</th>
+                                                <th>header</th>
+                                                <th>header</th>
+                                                <th>header</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                            </tr>
+                                            <tr class="alt">
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                            </tr>
+                                            <tr>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                            </tr>
+                                            <tr class="alt">
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                            </tr>
+                                            <tr>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                                <td>data</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
-
-
-                    <div class="row">Version: v<span app-version></span></div>
+                    @*<div class="row">Version: v<span app-version></span></div>*@
                 </div>
             </div>
         </div>

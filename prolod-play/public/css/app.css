@@ -11,6 +11,12 @@
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
     padding-top: 50px;
+    height: 100vh;
+}
+
+.heightlimited {
+    height: 100%;
+    overflow: hidden;
 }
 
 /*
@@ -38,21 +44,23 @@ body {
     padding: 20px 0;
 }
 
+.breadcrumb {
+    margin: 0px;
+}
 
-.footer {
-    position: fixed;
-    top: 75%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    display: block;
+.view-container {
+    height: calc(100% - 98px);
+    overflow-y: hidden;
+}
+
+.lowerpanel {
+    overflow-y: auto;
     overflow-x: hidden;
-    overflow-y: scroll; /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
     border-right: 1px solid #eee;
     border-top: 1px solid #eee;
-    padding: 20px 0;
+    padding: 0 10px;
+    height: 34%;
 }
 
 .main {
@@ -65,7 +73,16 @@ body {
 }
 
 #view {
-    margin: 10px;
+    padding: 10px;
+    height: 66%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+.grid {
+    height: calc(100% - 3px);
+    width: calc(100% - 10px);
 }
 
 .graph-grid {
