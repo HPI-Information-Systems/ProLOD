@@ -35,11 +35,12 @@ define(function () {
         columnDefs: [
           {
             name: '', width: 20, field: 'id', enableSorting: false,
+            type: 'object',
             cellTemplate: '<div class="ui-grid-cell-contents"><a href="#{{grid.appScope.detailUrl(COL_FIELD)}}"><i class="glyphicon glyphicon-zoom-in"/></a></div>'
           },
-          {name: 'firstName'},
-          {name: 'lastName'},
-          {name: 'age'}
+          {name: 'firstName', type: 'string'},
+          {name: 'lastName', type: 'string'},
+          {name: 'age', type: 'number'}
         ]
       },
       data: []
