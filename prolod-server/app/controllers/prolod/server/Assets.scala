@@ -1,3 +1,6 @@
 package controllers.prolod.server
 
-object Assets extends controllers.AssetsBuilder
+import play.api.http.{LazyHttpErrorHandler, DefaultHttpErrorHandler}
+
+
+object Assets extends controllers.AssetsBuilder(DefaultHttpErrorHandler)
