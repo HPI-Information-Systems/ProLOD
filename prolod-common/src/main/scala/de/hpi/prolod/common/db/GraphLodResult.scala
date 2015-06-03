@@ -21,7 +21,7 @@ case class GraphLodResult(val datasetId : Integer) {
 
 	val nodeDegreeDistribution : HashMap[Int, Int] = new HashMap()
 
-	val patternJson : List[JSONObject] = Nil
+	val patternJson : HashMap[JSONObject, Integer] = new HashMap()
 
 	val giantComponentEdges : Int = 0
 	val giantComponentNodes : Int = 0
