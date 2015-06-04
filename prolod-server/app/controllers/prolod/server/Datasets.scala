@@ -11,18 +11,20 @@ object Datasets extends Controller {
 
 	val list = List(
 		Dataset(
+			0,
 			"DBpedia",
-			10,
+			4300000,
 			List(
-				Group("humans", 7),
-				Group("cars", 3))
+				Group(0, "humans", 7),
+				Group(1, "cars", 3))
 		),
 		Dataset(
-			"Drugbank",
+			1,
+			"DrugBank",
 			5,
 			List(
-				Group("Drugs", 3),
-				Group("Diseases", 2)
+				Group(0, "Drugs", 3),
+				Group(1, "Diseases", 2)
 			)
 		)
 	)
