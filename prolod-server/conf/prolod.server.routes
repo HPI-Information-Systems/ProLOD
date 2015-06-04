@@ -1,6 +1,13 @@
 
-GET        /                    controllers.prolod.server.Application.index()
+GET        /                                         controllers.prolod.server.Application.index()
 
-GET        /index2              controllers.prolod.server.Application.index2()
+GET        /index2                                   controllers.prolod.server.Application.index2()
 
-GET        /assets/*file        controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
+GET        /datasets                                 controllers.prolod.server.Datasets.list()
+
+GET        /graphstatistics/:dataset                 controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Integer)
+
+GET        /graphstatistics/:dataset/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, pattern: Integer)
+
+GET        /assets/*file                             controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
+

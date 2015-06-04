@@ -2,6 +2,7 @@ name := """Prolod2"""
 
 version := "1.0-SNAPSHOT"
 
+unmanagedJars in Compile := (baseDirectory.value ** "lib/*.jar").classpath
 
 lazy val prolod_play = (project in file("prolod-play"))
   .enablePlugins(PlayScala)
