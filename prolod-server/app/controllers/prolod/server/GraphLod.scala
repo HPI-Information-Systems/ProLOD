@@ -1,24 +1,32 @@
 package controllers.prolod.server
 
-import de.hpi.prolod.common.db.GraphLodResult
-import graphlod.algorithms.GraphFeatures
+import model.prolod.server.GraphLodResult
+import model.prolod.server.GraphLodResultFormats._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
 object GraphLod extends Controller {
+	def getGraphStatistics(datasetId: Int) = Action {
+/*		val data: GraphLodResult = GraphLodResult(datasetId)
+		                                //Json.format[GraphLodResult]
+		// val json = Json.obj("datasets" -> Json.format[GraphLodResult])
+           val json = Json.format[GraphLodResult]
+//		val json = Json.toJson(graphlodResult)
+Ok(Json.toJson(json))
+*/
+		var data: GraphLodResult = GraphLodResult(0)
+		data.nodes = 2000
+		data.edges = 1000
 
-	def getGraphStatistics(datasetId: Integer) = Action {
-		val data: GraphLodResult = new GraphLodResult(datasetId)
-		implicit val json = Json.format[GraphLodResult]
-		//val json = Json.format[GraphLodResult] // Json.obj("graphStatistics" -> data) // Json.format[
+		val json = Json.obj("statistics" -> data)
 		Ok(json)
 	}
 
+	/*
 	def getGraphPatternStatistics(datasetId: Integer, pattern: Integer) = Action {
-		// TODO
 		//new GraphFeatures()
-		val data: GraphLodResult = new GraphLodResult(datasetId)
-		implicit val json = Json.format[GraphLodResult]
+		val json = Json.toJson(graphlodResult)
 		Ok(json)
 	}
+	*/
 }
