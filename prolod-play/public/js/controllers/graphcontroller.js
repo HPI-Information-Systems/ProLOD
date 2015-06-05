@@ -1,4 +1,5 @@
 'use strict';
+
 define(function () {
 
     var GraphCtrl = function ($scope) {

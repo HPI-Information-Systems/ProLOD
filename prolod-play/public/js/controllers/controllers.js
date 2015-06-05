@@ -4,9 +4,9 @@
 
 define(['angular'], function (angular) {
 
-    var Events = {
+    var Events = Object.freeze({
         viewChanged: 'viewChanged'
-    };
+    });
 
     angular.module('Prolod2.controllers', [])
         .controller("MainCtrl", ['$scope', '$rootScope', '$routeParams', '$location', '$route',
@@ -131,4 +131,6 @@ define(['angular'], function (angular) {
                 $scope.model.breadcrumbs = crumbs;
             });
         }]);
+
 });
+

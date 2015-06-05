@@ -1,17 +1,8 @@
-/*global define */
+"use strict";
 
-'use strict';
+define(['angular', './directives'], function (angular) {
 
-define(['angular'], function (angular) {
-
-    /* Directives */
-
-    angular.module('Prolod2.directives', [])
-        .directive('appVersion', ['version', function (version) {
-            return function (scope, elm, attrs) {
-                elm.text(version);
-            };
-        }])
+    angular.module('Prolod2.controllers')
         .directive('prolodGraphThumbnail', [function () {
 
             function linkFunction($scope, element, attrs) {
@@ -34,7 +25,6 @@ define(['angular'], function (angular) {
                     .attr("pointer-events", "all")
                     .append('svg:g');
 
-
                 svg.append('svg:rect')
                     .attr('width', width)
                     .attr('height', height)
@@ -51,8 +41,8 @@ define(['angular'], function (angular) {
                     .attr("class", "link")
                     .style("marker-end", "url(#suit)")
                     .style("stroke-width", function (d) {
-                        return Math.sqrt(d.value);
-                    });
+                               return Math.sqrt(d.value);
+                           });
 
                 var node = svg.selectAll(".node")
                     .data(graph.nodes)
@@ -60,37 +50,36 @@ define(['angular'], function (angular) {
                     .attr("class", "node")
                     .attr("r", 5)
                     .style("fill", function (d) {
-                        return color(d.group);
-                    })
+                               return color(d.group);
+                           })
                     .call(force.drag);
-
 
                 force.nodes(graph.nodes)
                     .links(graph.links)
                     .start()
                     .on("tick", function () {
-                        link
-                            .attr("x1", function (d) {
-                                return d.source.x;
-                            })
-                            .attr("y1", function (d) {
-                                return d.source.y;
-                            })
-                            .attr("x2", function (d) {
-                                return d.target.x;
-                            })
-                            .attr("y2", function (d) {
-                                return d.target.y;
-                            });
+                            link
+                                .attr("x1", function (d) {
+                                          return d.source.x;
+                                      })
+                                .attr("y1", function (d) {
+                                          return d.source.y;
+                                      })
+                                .attr("x2", function (d) {
+                                          return d.target.x;
+                                      })
+                                .attr("y2", function (d) {
+                                          return d.target.y;
+                                      });
 
-                        node
-                            .attr("cx", function (d) {
-                                return d.x;
-                            })
-                            .attr("cy", function (d) {
-                                return d.y;
-                            });
-                    });
+                            node
+                                .attr("cx", function (d) {
+                                          return d.x;
+                                      })
+                                .attr("cy", function (d) {
+                                          return d.y;
+                                      });
+                        });
             }
 
             function buildGraph($scope) {
@@ -117,12 +106,6 @@ define(['angular'], function (angular) {
                 return graph;
             }
 
-            //function controller($scope, $http) {
-            //    console.log("controller!");
-            //    $scope.getTemp = function (city) {
-            //    }
-            //}
-
             return {
                 link: linkFunction,
                 controller: ['$scope', '$http', function ($http) {
@@ -134,5 +117,5 @@ define(['angular'], function (angular) {
                 template: '<div>{{graph.name}} ({{graph.count}}x)</div>'
             };
         }
-        ])
+    ])
 });

@@ -1,5 +1,5 @@
 
-GET        /                                controllers.prolod.server.Application.index()
+#GET        /                                controllers.prolod.server.Application.index()
 
 GET        /index2                          controllers.prolod.server.Application.index2()
 

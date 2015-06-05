@@ -49,12 +49,14 @@ requirejs.config({
 });
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphcontroller', './controllers/chartcontroller',
-      './controllers/controllers', './controllers/panelcontroller', './directives', './filters', './services',
+      './controllers/controllers', './controllers/panelcontroller',
+      './directives/directives', './directives/graphThumbnail',
+      './filters/filters', './services/services', './services/httpApi',
       'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
   function (angular,  viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
-    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.controllers1', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'chart.js'])
+    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'chart.js'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});

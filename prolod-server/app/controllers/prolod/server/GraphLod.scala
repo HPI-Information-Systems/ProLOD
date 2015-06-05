@@ -19,8 +19,8 @@ object GraphLod extends Controller {
 		data.nodes = 2000
 		data.edges = 1000
 		data.patterns = List(
-			Pattern("{\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}", 15),
-			Pattern("{\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}", 3)
+			Pattern(Json.parse("{\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}"), 15),
+			Pattern(Json.parse("{\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}"), 3)
 		)
 
 		val json = Json.obj("statistics" -> data)
