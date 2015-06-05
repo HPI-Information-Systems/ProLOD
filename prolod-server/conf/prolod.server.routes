@@ -5,7 +5,7 @@ GET        /index2                                   controllers.prolod.server.A
 
 GET        /datasets                                 controllers.prolod.server.Datasets.datasets()
 
-GET        /graphstatistics/:dataset                 controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Integer)
+GET        /graphstatistics/:dataset                 controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int)
 
 # GET        /graphstatistics/:dataset/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, pattern: Integer)
 

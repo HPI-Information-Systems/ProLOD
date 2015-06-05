@@ -18,7 +18,8 @@ case class GraphLodResult(datasetId : Int,
 	                      var averageDiameter : Float = 0,
 	                      var giantComponentEdges : Int = 0,
 	                      var giantComponentNodes : Int = 0,
-	                      var giantComponentDiameter : Float = 0
+	                      var giantComponentDiameter : Float = 0,
+							var patterns : List[Pattern] = Nil
 
 							// val nodeDegreeDistribution : HashMap[Int, Int] = new HashMap()
                           // val patternJson : HashMap[JSONObject, Integer] = new HashMap()

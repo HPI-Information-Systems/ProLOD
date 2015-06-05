@@ -15,8 +15,8 @@ object Datasets extends Controller {
 			"DBpedia",
 			4300000,
 			List(
-				Group(0, "humans", 7),
-				Group(1, "cars", 3))
+				Group(0, "dbpedia:Person", 700000),
+				Group(1, "dbpedia:Place", 30000))
 		),
 		Dataset(
 			1,
