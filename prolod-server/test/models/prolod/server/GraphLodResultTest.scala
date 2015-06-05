@@ -5,7 +5,7 @@ import org.hamcrest.CoreMatchers._
 import org.hamcrest.MatcherAssert.assertThat
 import play.api.libs.json.Json
 
-import models.prolod.server.GraphLodResultFormats.{graphLodResultFormat, mapFormat}
+import models.prolod.server.GraphLodResultFormats.graphLodResultFormat
 
 class GraphLodResultTest {
 

@@ -2,7 +2,7 @@ package models.prolod.server
 
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
-
+import models.prolod.server.PatternFormats.patternFormat
 
 case class GraphLodResult(datasetId : Int,
 	                      var nodes : Int = 0,
@@ -19,7 +19,7 @@ case class GraphLodResult(datasetId : Int,
 	                      var giantComponentEdges : Int = 0,
 	                      var giantComponentNodes : Int = 0,
 	                      var giantComponentDiameter : Float = 0,
-							var patterns : List[Pattern] = Nil,
+							          var patterns : List[Pattern] = Nil,
 							 					nodeDegreeDistribution : Map[Int, Int] = Map(0 -> 0)
                           // val patternJson : HashMap[JSONObject, Integer] = new HashMap()
 
@@ -27,7 +27,7 @@ case class GraphLodResult(datasetId : Int,
 
 }
 
-object GraphLodResult {
+object GraphLodResultLoader {
 	def load(datasetId: Integer) = {
 		new GraphLodResult(datasetId)
 	}
@@ -48,7 +48,7 @@ object GraphLodResultFormats {
 				ret
 			}.toSeq:_*)
 	}
-	implicit val mapFormat: Format[Map[Int, Int]] = Format(mapReads, mapWrites)
+	implicit val mapIntIntFormat: Format[Map[Int, Int]] = Format(mapReads, mapWrites)
 	implicit val graphLodResultFormat = Json.format[GraphLodResult]
 
 }

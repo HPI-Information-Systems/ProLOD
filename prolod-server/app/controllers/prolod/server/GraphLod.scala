@@ -1,7 +1,7 @@
 package controllers.prolod.server
 
 import models.prolod.server.GraphLodResult
-import models.prolod.server.GraphLodResultFormats._
+import models.prolod.server.GraphLodResultFormats.graphLodResultFormat
 import models.prolod.server.Pattern
 import models.prolod.server.PatternFormats._
 
@@ -10,14 +10,14 @@ import play.api.mvc.{Action, Controller}
 
 object GraphLod extends Controller {
 	def getGraphStatistics(datasetId: Int) = Action {
-/*		val data: GraphLodResult = GraphLodResult(datasetId)
-		                                //Json.format[GraphLodResult]
-		// val json = Json.obj("datasets" -> Json.format[GraphLodResult])
-           val json = Json.format[GraphLodResult]
-//		val json = Json.toJson(graphlodResult)
-Ok(Json.toJson(json))
-*/
-		var data: GraphLodResult = GraphLodResult(0)
+		/*		val data: GraphLodResult = GraphLodResult(datasetId)
+                                        //Json.format[GraphLodResult]
+        // val json = Json.obj("datasets" -> Json.format[GraphLodResult])
+               val json = Json.format[GraphLodResult]
+    //		val json = Json.toJson(graphlodResult)
+    Ok(Json.toJson(json))
+    */
+		val data: GraphLodResult = GraphLodResult(0)
 		data.nodes = 2000
 		data.edges = 1000
 		data.patterns = List(
