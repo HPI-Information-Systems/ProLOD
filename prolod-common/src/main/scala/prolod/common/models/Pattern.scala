@@ -1,4 +1,4 @@
-package models.prolod.server
+package prolod.common.models
 
 import play.api.libs.json.Json
 
