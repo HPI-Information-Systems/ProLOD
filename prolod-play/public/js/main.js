@@ -49,7 +49,7 @@ requirejs.config({
 });
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphcontroller', './controllers/chartcontroller',
-      './controllers/controllers', './controllers/panelcontroller',
+      './controllers/controllers', './controllers/panelcontroller','./controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
       './directives/directives', './directives/graphThumbnail',
       './filters/filters', './services/services', './services/httpApi',
       'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],

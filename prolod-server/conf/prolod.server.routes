@@ -1,19 +1,16 @@
 
-#GET        /                                controllers.prolod.server.Application.index()
 
-GET        /index2                          controllers.prolod.server.Application.index2()
+GET        /index2                                           controllers.prolod.server.Application.index2()
 
-GET        /datasets                        controllers.prolod.server.Datasets.datasets()
+GET        /datasets                                         controllers.prolod.server.Datasets.datasets()
 
-GET        /graphstatistics/:dataset        controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int)
-#GET        /graphstatistics/:dataset/:groups                 controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int, groups: String)
+GET        /graphstatistics/:dataset                         controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int, group: List[Int])
 
-#GET        /graphstatistics/pattern/:dataset/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, pattern: Integer)
-#GET        /graphstatistics/pattern/:dataset/:groups/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, groups: String , pattern: Integer)
+# example: http://localhost:9000/server/graphstatistics/pattern/0/0?group=1&group=2
+GET        /graphstatistics/pattern/:dataset/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Int, group: List[Int], pattern: Int)
 
-#GET        /graphstatistics/bigcomponent/:dataset/        controllers.prolod.server.GraphLod.getBigComponent(dataset: Integer, pattern: Integer)
-#GET        /graphstatistics/bigcomponent/:dataset/:groups        controllers.prolod.server.GraphLod.getBigComponent(dataset: Integer, pattern: Integer)
+GET        /graphstatistics/bigcomponent/:dataset/        controllers.prolod.server.GraphLod.getBigComponent(dataset: Int, group: List[Int], pattern: Int)
 
 
-GET        /assets/*file                    controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
+GET        /assets/*file                                     controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
 

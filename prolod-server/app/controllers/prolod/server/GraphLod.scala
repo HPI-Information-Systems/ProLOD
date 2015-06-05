@@ -7,7 +7,7 @@ import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
 object GraphLod extends Controller {
-	def getGraphStatistics(datasetId: Int) = Action {
+	def getGraphStatistics(datasetId: Int, groups: List[Int] = List()) = Action {
 		/*		val data: GraphLodResult = GraphLodResult(datasetId)
                                         //Json.format[GraphLodResult]
         // val json = Json.obj("datasets" -> Json.format[GraphLodResult])
@@ -34,4 +34,12 @@ object GraphLod extends Controller {
 		Ok(json)
 	}
 	*/
+	def getGraphPatternStatistics(dataset: Int, groups: List[Int], pattern: Int) = Action {
+		val json = Json.obj("dataset" -> dataset, "groups" -> groups, "pattern" -> pattern)
+		Ok(json)
+	}
+
+	def getBigComponent(dataset: Int, groups: List[Int], pattern: Int) = Action {
+		Ok("this is big!")
+	}
 }
