@@ -1,6 +1,6 @@
 package controllers
 
-import model.{Link, Person}
+import models.{Link, Person}
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 

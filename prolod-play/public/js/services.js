@@ -13,7 +13,7 @@ angular.module('Prolod2.services', []).
   factory('httpApi', ['$http', function($http) {
     return {
       getDatasets: function() {
-        return $http.get('datasets');
+        return $http.get('server/datasets');
       },
       getTable1: function() {
         return $http.get('persons');

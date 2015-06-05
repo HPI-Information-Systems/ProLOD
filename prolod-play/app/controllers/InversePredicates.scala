@@ -1,7 +1,7 @@
 package controllers
 
-import model.InversePredicate
-import model.ViewFormats._
+import models.InversePredicate
+import models.ViewFormats._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 

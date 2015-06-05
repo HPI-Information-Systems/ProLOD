@@ -83,7 +83,7 @@ define(['angular'], function (angular) {
              */
 
             httpApi.getDatasets().then(function (evt) {
-                $scope.model.treeData = evt.data.datasets.map(function (ds) {
+                var data = evt.data.datasets.map(function (ds) {
                     return {
                         name: ds.name,
                         size: ds.size,
@@ -98,6 +98,7 @@ define(['angular'], function (angular) {
                         })
                     }
                 });
+                $scope.model.treeData = data;
             });
 
             $scope.onSelection = function (selected) {
