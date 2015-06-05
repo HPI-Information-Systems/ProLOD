@@ -74,3 +74,28 @@
   bottom: 0px;
   border-top: 1px solid #aaa;
 }
+
+
+
+.bar {
+    fill: #b0b0b0;
+}
+
+.bar:hover {
+    fill: brown;
+}
+
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}
