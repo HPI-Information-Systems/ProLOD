@@ -1,7 +1,7 @@
 package controllers
 
-import model.ViewFormats._
-import model._
+import models.ViewFormats._
+import models._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 

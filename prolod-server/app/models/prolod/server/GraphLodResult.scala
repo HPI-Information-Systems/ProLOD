@@ -1,8 +1,8 @@
-package model.prolod.server
+package models.prolod.server
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json.JsValueWrapper
+import play.api.libs.json._
 
-import java.util.HashMap
 
 case class GraphLodResult(datasetId : Int,
 	                      var nodes : Int = 0,
@@ -19,9 +19,8 @@ case class GraphLodResult(datasetId : Int,
 	                      var giantComponentEdges : Int = 0,
 	                      var giantComponentNodes : Int = 0,
 	                      var giantComponentDiameter : Float = 0,
-							var patterns : List[Pattern] = Nil
-
-							// val nodeDegreeDistribution : HashMap[Int, Int] = new HashMap()
+							var patterns : List[Pattern] = Nil,
+							 					nodeDegreeDistribution : Map[Int, Int] = Map(0 -> 0)
                           // val patternJson : HashMap[JSONObject, Integer] = new HashMap()
 
 	                         ) {
@@ -35,5 +34,21 @@ object GraphLodResult {
 }
 
 object GraphLodResultFormats {
+
+	implicit val mapReads: Reads[Map[Int, Int]] = new Reads[Map[Int, Int]] {
+		def reads(jv: JsValue): JsResult[Map[Int, Int]] =
+			JsSuccess(jv.as[Map[String, Int]].map{case (k, v) =>
+				Integer.parseInt(k) -> v .asInstanceOf[Int]
+			})
+	}
+	implicit val mapWrites: Writes[Map[Int, Int]] = new Writes[Map[Int, Int]] {
+		def writes(map: Map[Int, Int]): JsValue =
+			Json.obj(map.map{case (s, o) =>
+				val ret: (String, JsValueWrapper) = s.toString -> JsNumber(o)
+				ret
+			}.toSeq:_*)
+	}
+	implicit val mapFormat: Format[Map[Int, Int]] = Format(mapReads, mapWrites)
 	implicit val graphLodResultFormat = Json.format[GraphLodResult]
+
 }

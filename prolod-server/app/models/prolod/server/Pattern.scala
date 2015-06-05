@@ -1,8 +1,6 @@
-package model.prolod.server
+package models.prolod.server
 
-import play.api.libs.json.{Json, Writes}
-
-import java.util.HashMap
+import play.api.libs.json.Json
 
 case class Pattern(json : String,
 	                      occurences : Int) {

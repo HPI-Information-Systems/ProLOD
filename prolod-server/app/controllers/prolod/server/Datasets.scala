@@ -1,8 +1,7 @@
 package controllers.prolod.server
 
-import model.prolod.server.DatasetFormats._
-import model.prolod.server.Dataset
-import model.prolod.server.Group
+import models.prolod.server.{Group, Dataset}
+import models.prolod.server.DatasetFormats.datasetFormat
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 

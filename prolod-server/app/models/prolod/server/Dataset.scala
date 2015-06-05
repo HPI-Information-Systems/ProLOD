@@ -1,4 +1,4 @@
-package model.prolod.server
+package models.prolod.server
 
 import play.api.libs.json.{Json, Writes}
 
@@ -9,5 +9,6 @@ case class Group(id: Int, name: String, size:Int)
 
 object DatasetFormats{
   implicit val groupFormat = Json.format[Group]
-  implicit val databaseSourceFormat = Json.format[Dataset]
+  implicit val datasetFormat = Json.format[Dataset]
+
 }

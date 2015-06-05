@@ -1,9 +1,10 @@
 package controllers.prolod.server
 
-import model.prolod.server.GraphLodResult
-import model.prolod.server.GraphLodResultFormats._
-import model.prolod.server.Pattern
-import model.prolod.server.PatternFormats._
+import models.prolod.server.GraphLodResult
+import models.prolod.server.GraphLodResultFormats._
+import models.prolod.server.Pattern
+import models.prolod.server.PatternFormats._
+
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
