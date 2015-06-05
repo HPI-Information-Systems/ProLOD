@@ -1,7 +1,6 @@
-package models.prolod.server
+package prolod.common.models
 
-import play.api.libs.json.{Json, Writes}
-
+import play.api.libs.json.Json
 
 case class Dataset(id: Int, name: String, size:Int, groups: List[Group])
 

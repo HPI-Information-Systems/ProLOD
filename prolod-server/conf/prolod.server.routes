@@ -1,13 +1,19 @@
 
-GET        /                                         controllers.prolod.server.Application.index()
+GET        /                                controllers.prolod.server.Application.index()
 
-GET        /index2                                   controllers.prolod.server.Application.index2()
+GET        /index2                          controllers.prolod.server.Application.index2()
 
-GET        /datasets                                 controllers.prolod.server.Datasets.datasets()
+GET        /datasets                        controllers.prolod.server.Datasets.datasets()
 
-GET        /graphstatistics/:dataset                 controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int)
+GET        /graphstatistics/:dataset        controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int)
+#GET        /graphstatistics/:dataset/:groups                 controllers.prolod.server.GraphLod.getGraphStatistics(dataset: Int, groups: String)
 
-# GET        /graphstatistics/:dataset/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, pattern: Integer)
+#GET        /graphstatistics/pattern/:dataset/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, pattern: Integer)
+#GET        /graphstatistics/pattern/:dataset/:groups/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: Integer, groups: String , pattern: Integer)
 
-GET        /assets/*file                             controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
+#GET        /graphstatistics/bigcomponent/:dataset/        controllers.prolod.server.GraphLod.getBigComponent(dataset: Integer, pattern: Integer)
+#GET        /graphstatistics/bigcomponent/:dataset/:groups        controllers.prolod.server.GraphLod.getBigComponent(dataset: Integer, pattern: Integer)
+
+
+GET        /assets/*file                    controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
 
