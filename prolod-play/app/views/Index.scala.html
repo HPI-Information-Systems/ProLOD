@@ -81,7 +81,7 @@
                                 <div id="view" ng-view>loading...</div>
                             </bg-pane>
                             <bg-pane  ng-show="nav.view != 'index'">
-                                <div class="lowerpanel">
+                                <div class="lowerpanel" ng-controller="PanelCtrl">
                                     <fieldset>
                                         <legend>Panel:</legend>
                                         <div class="datagrid">
