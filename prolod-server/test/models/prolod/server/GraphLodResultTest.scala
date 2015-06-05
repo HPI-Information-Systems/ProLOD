@@ -10,7 +10,7 @@ import models.prolod.server.GraphLodResultFormats.{graphLodResultFormat, mapForm
 class GraphLodResultTest {
 
   @Test def testDeserialize() {
-      val result = GraphLodResult(0, nodeDegreeDistribution = Map(1->2, 2->3))
+      val result = GraphLodResult(0, nodeDegreeDistribution = Map(1->2, 2->5))
       val json = Json.obj("data" -> result)
       val str = Json.stringify(json)
       assertThat(str, equalTo("asd"))

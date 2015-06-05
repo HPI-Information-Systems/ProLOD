@@ -20,7 +20,7 @@ case class GraphLodResult(datasetId : Int,
 	                      var giantComponentNodes : Int = 0,
 	                      var giantComponentDiameter : Float = 0,
 
-							 					var nodeDegreeDistribution : Map[Int, Int] = Map(0 -> 0)
+							 					nodeDegreeDistribution : Map[Int, Int] = Map(0 -> 0)
                           // val patternJson : HashMap[JSONObject, Integer] = new HashMap()
 
 	                         ) {
@@ -34,7 +34,6 @@ object GraphLodResult {
 }
 
 object GraphLodResultFormats {
-	implicit val graphLodResultFormat = Json.format[GraphLodResult]
 
 	implicit val mapReads: Reads[Map[Int, Int]] = new Reads[Map[Int, Int]] {
 		def reads(jv: JsValue): JsResult[Map[Int, Int]] =
@@ -50,5 +49,6 @@ object GraphLodResultFormats {
 			}.toSeq:_*)
 	}
 	implicit val mapFormat: Format[Map[Int, Int]] = Format(mapReads, mapWrites)
+	implicit val graphLodResultFormat = Json.format[GraphLodResult]
 
 }
