@@ -1,4 +1,4 @@
-<div class="graph-grid">
+<div id="view" class="graph-grid">
     <a ng-repeat="graph in statistics.patterns" href="#{{::routeBuilder.getGraphPatternUrl(graph.id)}}">
         <prolod-graph-thumbnail class="graph-cell"  graph="graph"></prolod-graph-thumbnail>
     </a>
