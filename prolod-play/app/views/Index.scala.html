@@ -75,67 +75,7 @@
                     </div>
 
 
-                    <div class="row view-container">
-                        <bg-splitter orientation="vertical">
-                            <bg-pane>
-                                <div id="view" ng-view>loading...</div>
-                            </bg-pane>
-                            <bg-pane  ng-show="nav.view != 'index'">
-                                <div class="lowerpanel" ng-controller="PanelCtrl">
-                                    <fieldset>
-                                        <legend>Panel:</legend>
-                                        <div class="datagrid">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>header</th>
-                                                        <th>header</th>
-                                                        <th>header</th>
-                                                        <th>header</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                    </tr>
-                                                    <tr class="alt">
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                    </tr>
-                                                    <tr class="alt">
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                        <td>data</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </fieldset>
-                                    <fieldset>
-                                        <legend>Chart:</legend>
-                                    <div id="bchart"></div>
-                                    </fieldset>
-                                </div>
-                            </bg-pane>
-                        </bg-splitter>
+                    <div id="view" ng-view>loading...</div>
 
                     </div>
                     @*<div class="row">Version: v<span app-version></span></div>*@

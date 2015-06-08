@@ -1,9 +1,70 @@
-<div class="graph-grid">
-    <a ng-repeat="graph in statistics.patterns" href="#/graphstatistics/{{::nav.dataset}}/pattern/{{::graph.id}}">
-        <prolod-graph-thumbnail class="graph-cell"  graph="graph"></prolod-graph-thumbnail>
-    </a>
+<div class="row view-container">
+    <bg-splitter orientation="vertical">
+        <bg-pane>
+            <div class="graph-grid">
+                <a ng-repeat="graph in statistics.patterns" href="#/graphstatistics/{{::nav.dataset}}/pattern/{{::graph.id}}">
+                    <prolod-graph-thumbnail class="graph-cell"  graph="graph"></prolod-graph-thumbnail>
+                </a>
+            </div>        </bg-pane>
+        <bg-pane  ng-show="nav.view != 'index'">
+            <div class="lowerpanel" ng-controller="PanelCtrl">
+                <fieldset>
+                    <legend>Panel:</legend>
+                    <div class="datagrid">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>header</th>
+                                <th>header</th>
+                                <th>header</th>
+                                <th>header</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                            </tr>
+                            <tr class="alt">
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                            </tr>
+                            <tr>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                            </tr>
+                            <tr class="alt">
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                            </tr>
+                            <tr>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                                <td>data</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Chart:</legend>
+                    <div id="bchart"></div>
+                </fieldset>
+            </div>
+        </bg-pane>
+    </bg-splitter>
 </div>
 
+<!--
 <div></div>
 <div class="onoffswitch">
     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch" checked>
@@ -38,3 +99,4 @@
 
 
 
+-->

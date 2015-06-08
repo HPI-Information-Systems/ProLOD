@@ -96,6 +96,7 @@ define(function () {
 // d.value; })   /*$('circle').tipsy({ gravity: 'w', html: true, title: function() { var d = this.__data__; return "Node: "+ d.id+" | Name: "+ d.firstName+" "+ d.lastName+" | Age: "+ d.age+" | Group: "+ d.group; } }); */    force.on("tick", function() { link.attr("x1", function(d) { return d.source.x; }) .attr("y1", function(d) { return d.source.y; }) .attr("x2", function(d) { return d.target.x; }) .attr("y2", function(d) { return d.target.y; });  node.attr("cx", function(d) { return d.x; }) .attr("cy", function(d) { return d.y; }); });   //Toggle stores whether the highlighting is on var toggle = 0; var i;  //Create an array logging what is connected to what var linkedByIndex = {}; for (i = 0; i < graph.nodes.length; i++) { linkedByIndex[i + "," + i] = 1; }; graph.links.forEach(function (d) { linkedByIndex[d.source.index + "," + d.target.index] = 1; });  //This function looks up whether a pair are neighbours function neighboring(a, b) { return linkedByIndex[a.index + "," + b.index]; }   function link_in(){ var link = d3.select(this); var mark = d3.select(".marker"); mark.style("stroke", "black"); link.style('stroke-width', 2); link.style("stroke", "black"); } function link_out(){ var link = d3.select(this); link.style('stroke-width', 1); link.style("stroke", "#bbb"); }  function node_in(){ var node = d3.select(this); node.style('stroke-width', 2);  var labels = node.append("text") .text(function(d) { return d.name; }); } function node_out(){ var node = d3.select(this); node.style('stroke-width', 1); }  function clicklink(){ var link = d3.select(this); link.append("text") .text(function(d) { return "safasfa"; }); }   function connectedNodes() {  if (toggle == 0) { //Reduce the opacity of all but the neighbouring nodes var d = d3.select(this).node().__data__; node.style("opacity", function (o) { return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1; });  link.style("opacity", function (o) { return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1; });  //Reduce the op  toggle = 1; } else { //Put them back to opacity=1 node.style("opacity", 1); link.style("opacity", 1); toggle = 0; }  } });
 
 
+/*
         var width = 1200,
             height = 600,
             fill = d3.scale.category20();
@@ -380,8 +381,9 @@ define(function () {
 
 
 
-        });
+        });*/
     };
+
 
     GraphCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
 
