@@ -28,12 +28,12 @@
                     <a class="navbar-brand" href="#/">ProLOD++ 2</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
+                    @*<ul class="nav navbar-nav navbar-right">
                         <li><a href="#">Dashboard</a></li>
                         <li><a href="#">Settings</a></li>
                         <li><a href="#">Profile</a></li>
                         <li><a href="#">Help</a></li>
-                    </ul>
+                    </ul>*@
                 </div>
             </div>
         </nav>
@@ -52,15 +52,16 @@
                     <!-- main content -->
                 <div class="col-xs-9 col-xs-offset-3 main heightlimited">
                     <div class="row">
-                        <ul class="nav nav-tabs" ng-if="nav.view != 'index'">
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'view0'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view0">overview</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'view1'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/view1">table with detail</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'charts'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/charts">charts</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'graphs'}"><a ng-href="#/graphstatistics/{{nav.dataset}}">graph</a></li>
+                        <ul class="nav nav-tabs" ng-if="currentRoute.activetab != 'index'">
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'view0'}"><a ng-href="#{{::routeBuilder.getOverviewUrl()}}">overview</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'graphs'}"><a ng-href="#{{::routeBuilder.getGraphUrl()}}">graph</a></li>
 
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/predicates">Predicates</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/inversePredicates">Inverse Predicates</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'associationRules'}"><a ng-href="#/{{nav.dataset}}/{{nav.group}}/associationRules">Association Rules</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'view1'}"><a ng-href="#{{::routeBuilder.getTableUrl()}}">table with detail</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'charts'}"><a ng-href="#{{::routeBuilder.getChartsUrl()}}">charts</a></li>
+
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#{{::routeBuilder.getPredicateUrl()}}">Predicates</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#{{::routeBuilder.getInversePredicateUrl()}}">Inverse Predicates</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'associationRules'}"><a ng-href="#{{::routeBuilder.getAssociationRuleUrl()}}">Association Rules</a></li>
                                 <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li>
@@ -80,7 +81,7 @@
                             <bg-pane>
                                 <div id="view" ng-view>loading...</div>
                             </bg-pane>
-                            <bg-pane  ng-show="nav.view != 'index'">
+                            <bg-pane  ng-show="currentRoute.activetab != 'index'">
                                 <div class="lowerpanel" ng-controller="PanelCtrl">
                                     <fieldset>
                                         <legend>Panel:</legend>

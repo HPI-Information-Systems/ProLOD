@@ -10,23 +10,22 @@ define(function () {
 
 
   controllers.IndexViewCtrl = function ($scope, $routeParams) {
-    $scope.updateView(['index']);
+    $scope.updateBreadcrumb([]);
   };
   controllers.IndexViewCtrl.$inject = ['$scope', '$routeParams'];
 
 
-  controllers.OverviewCtrl = function ($scope) {
-    $scope.updateView(['view0']);
-
+  controllers.OverviewCtrl = function ($scope, $routeParams, routeBuilder) {
+    $scope.updateBreadcrumb([{name:'view0', url: routeBuilder.getOverviewUrl()}]);
   };
-  controllers.OverviewCtrl.$inject = ['$scope'];
+  controllers.OverviewCtrl.$inject = ['$scope', '$routeParams', 'routeBuilder'];
 
 
-  controllers.TableViewCtrl = function ($scope, httpApi) {
-    $scope.updateView(['view1']);
+  controllers.TableViewCtrl = function ($scope, httpApi, routeBuilder) {
+    $scope.updateBreadcrumb([{name:'view1', url: routeBuilder.getTableUrl()}]);
 
     $scope.detailUrl = function (detail) {
-      return $scope.makeUrl({view: ['view1', detail]})
+      return routeBuilder.getTableDetailUrl(detail);
     };
 
     $scope.model = {
@@ -51,12 +50,15 @@ define(function () {
     });
 
   };
-  controllers.TableViewCtrl.$inject = ['$scope', 'httpApi'];
+  controllers.TableViewCtrl.$inject = ['$scope', 'httpApi', 'routeBuilder'];
 
 
-  controllers.TableDetailViewCtrl = function ($scope, $routeParams, httpApi) {
+  controllers.TableDetailViewCtrl = function ($scope, $routeParams, httpApi, routeBuilder) {
     var id = $routeParams.detail;
-    $scope.updateView(['view1', id]);
+    $scope.updateBreadcrumb([
+      {name:'view1', url: routeBuilder.getTableUrl()},
+      {name:'detail ' + id, url: routeBuilder.getTableDetailUrl(id)}
+    ]);
 
     $scope.model = {
       data: null
@@ -66,7 +68,7 @@ define(function () {
       $scope.model.data = evt.data.data;
     });
   };
-  controllers.TableDetailViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi'];
+  controllers.TableDetailViewCtrl.$inject = ['$scope', '$routeParams', 'httpApi', 'routeBuilder'];
 
   return controllers;
 

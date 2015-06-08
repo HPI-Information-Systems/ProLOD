@@ -52,7 +52,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       './controllers/controllers', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
       './controllers/graphpatterncontroller',
       './directives/directives', './directives/graphThumbnail',
-      './filters/filters', './services/services', './services/httpApi',
+      './filters/filters', './services/services', './services/httpApi', './services/routeBuilder',
       'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
   function (angular,  viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
     // Declare app level module which depends on filters, and services
@@ -60,29 +60,25 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
     var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'chart.js'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
-      $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});
+      $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl, activetab: 'index'});
 
-      $routeProvider.when('/:dataset/:group/view0', {templateUrl: 'assets/partials/partial0.html', controller: viewcontrollers.OverviewCtrl, activetab: 'view0'});
+      $routeProvider.when('/view0/:dataset', {templateUrl: 'assets/partials/partial0.html', controller: viewcontrollers.OverviewCtrl, activetab: 'view0'});
 
-      $routeProvider.when('/:dataset/:group/view1', {templateUrl: 'assets/partials/table.html', controller: viewcontrollers.TableViewCtrl, activetab: 'view1'});
-      $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'assets/partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl, activetab: 'view1'});
-
-      $routeProvider.when('/:dataset/:group/charts', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
-      $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graphs.html', controller: GraphCtrl, activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: GraphCtrl, activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: "GraphPatternCtrl", activetab: 'graphs'});
 
-      $routeProvider.when('/:dataset/:group/predicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
-      $routeProvider.when('/:dataset/:group/inversePredicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});
-      $routeProvider.when('/:dataset/:group/associationRules', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
-      $routeProvider.when('/:dataset/:group/synonyms', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
-      $routeProvider.when('/:dataset/:group/factGeneration', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
-      $routeProvider.when('/:dataset/:group/suggestions', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
-      $routeProvider.when('/:dataset/:group/uniqueness', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});
+      $routeProvider.when('/charts/:dataset', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
 
-      // redirects
-      $routeProvider.when('/:dataset/:group/index', {redirectTo: '/:dataset/:group/view0'});
-      $routeProvider.when('/:dataset/:group', {redirectTo: '/:dataset/:group/index'});
-      $routeProvider.when('/:dataset', {redirectTo: '/:dataset/all'});
+      $routeProvider.when('/view1/:dataset', {templateUrl: 'assets/partials/table.html', controller: viewcontrollers.TableViewCtrl, activetab: 'view1'});
+      $routeProvider.when('/view1/:dataset/:detail', {templateUrl: 'assets/partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl, activetab: 'view1'});
+
+      $routeProvider.when('/predicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
+      $routeProvider.when('/inversePredicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});
+      $routeProvider.when('/associationRules/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
+      /*$routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
+      $routeProvider.when('/factGeneration/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
+      $routeProvider.when('/suggestions/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
+      $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});*/
 
       // other
       $routeProvider.otherwise({redirectTo: '/'});

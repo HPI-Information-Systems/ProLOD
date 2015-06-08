@@ -2,7 +2,7 @@
 
 define(['angular', './controllers'], function (angular) {
     angular.module('Prolod2.controllers')
-        .controller("TreeViewController", ['$scope', 'httpApi', function ($scope, httpApi) {
+        .controller("TreeViewController", ['$scope', '$route', '$location', 'httpApi', 'routeBuilder', function ($scope, $route, $location, httpApi, routeBuilder) {
             $scope.model = {
                 treeOptions: {
                     nodeChildren: 'children',
@@ -57,8 +57,23 @@ define(['angular', './controllers'], function (angular) {
             });
 
             $scope.onSelection = function (selected) {
-                var view = $scope.nav.view ? [$scope.nav.view[0]] : [];
-                $scope.goTo({dataset: selected.dataset, group: selected.group || "all", view: view});
+                var params = angular.extend({},$route.current.params);
+                if ($route.current.activetab == 'index') {
+                    var url = routeBuilder.getOverviewUrl({dataset: selected.dataset, group: selected.group});
+                    $location.path(url);
+                    return;
+                }
+
+                if($route.current.params.dataset == selected.dataset) {
+                    if(selected.group) {
+                        params.group = selected.group;
+                    } else {
+                        params.group = undefined;
+                    }
+                } else {
+                    params.dataset = selected.dataset;
+                }
+                $route.updateParams(params);
             }
         }]);
 

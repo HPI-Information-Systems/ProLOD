@@ -2,9 +2,8 @@
 
 define(function () {
 
-
-    var ChartCtrl = function ($scope) {
-        $scope.updateView(['view2']);
+    var ChartCtrl = function ($scope, routeBuilder) {
+        $scope.updateBreadcrumb([{name: 'charts', url: routeBuilder.getGraphUrl()}]);
 
         // Pie Chart
         var width1 = 400,
@@ -113,7 +112,7 @@ define(function () {
             return d;
         }
     };
-    ChartCtrl.$inject = ['$scope'];
+    ChartCtrl.$inject = ['$scope', 'routeBuilder'];
 
     return ChartCtrl;
 

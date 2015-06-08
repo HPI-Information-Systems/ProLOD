@@ -3,44 +3,30 @@
 define(['angular', './controllers'], function (angular) {
     // controller for the lower panel
     angular.module('Prolod2.controllers')
-        .controller("MainCtrl", ['$scope', '$rootScope', '$routeParams', '$location', '$route', 'Events',
-         function ($scope, $rootScope, $routeParams, $location, $route, Events) {
+        .controller("MainCtrl", ['$scope', '$rootScope', '$location', '$route', 'routeBuilder', 'Events',
+         function ($scope, $rootScope, $location, $route, routeBuilder, Events) {
 
-             $scope.nav = {
-                 view: []
-             };
+             if(!$route.current) {
+                // fix route.current is undefined on load
+                 $route.current = {params: {}}
+             }
 
              $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-                 angular.extend($scope.nav, current.params);
                  $scope.currentRoute = current;
              });
 
-             $scope.makeUrl = function (params) {
-                 params = params || {};
-                 var dataset = params.dataset || $scope.nav.dataset;
-                 var group = params.group || $scope.nav.group;
-                 var view = params.view || $scope.nav.view;
-                 return '/' + dataset + '/' + group + '/' + view.join('/');
-             };
+             $scope.routeBuilder = routeBuilder;
 
              $scope.init = function () {
                  console.log('init!');
              };
 
-             $scope.updateView = function (viewChain) {
-                 $scope.nav.view = viewChain;
-                 console.log('view: ' + JSON.stringify($scope.nav));
-                 $rootScope.$emit(Events.VIEWCHANGED, $scope.nav);
-             };
-
-             $scope.goTo = function (params) {
-                 angular.extend($scope.nav, params);
-                 var url = $scope.makeUrl();
-                 $location.path(url);
+             $scope.updateBreadcrumb = function (viewChain) {
+                 console.log('view: ' + JSON.stringify(viewChain));
+                 $rootScope.$emit(Events.VIEWCHANGED, viewChain);
              };
 
          }]);
-
 });
 
 

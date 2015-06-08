@@ -10,8 +10,8 @@ define(function () {
 
   // this creates a controller for simple tables
   var createGenericTableView = function (name, httpCall) {
-    var ctrl = function ($scope, $routeParams, httpApi) {
-      $scope.updateView([name]);
+    var ctrl = function ($scope, $routeParams, httpApi, routeBuilder) {
+      $scope.updateBreadcrumb([{name: name, url: routeBuilder.getGenericUrl(name)}]);
 
       $scope.model = {
         gridOptions: {
@@ -24,7 +24,7 @@ define(function () {
         $scope.model.data = evt.data.data;
       });
     };
-    ctrl.$inject = ['$scope', '$routeParams', 'httpApi'];
+    ctrl.$inject = ['$scope', '$routeParams', 'httpApi', 'routeBuilder'];
     return ctrl
   };
 

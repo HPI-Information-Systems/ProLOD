@@ -1,9 +1,9 @@
 <div class="graph-grid">
-    <a ng-repeat="graph in statistics.patterns" href="#/graphstatistics/{{::nav.dataset}}/pattern/{{::graph.id}}">
+    <a ng-repeat="graph in statistics.patterns" href="#{{::routeBuilder.getGraphPatternUrl(graph.id)}}">
         <prolod-graph-thumbnail class="graph-cell"  graph="graph"></prolod-graph-thumbnail>
     </a>
 </div>
-
+<!--
 <div></div>
 <div class="onoffswitch">
     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="switch" checked>
@@ -33,7 +33,7 @@
 
 
 <div id="graph_1"></div>
-<div id="graph_2"></div>
+<div id="graph_2"></div>-->
 
 
 
