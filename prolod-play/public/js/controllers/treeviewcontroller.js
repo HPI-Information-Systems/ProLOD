@@ -42,12 +42,12 @@ define(['angular', './controllers'], function (angular) {
                     return {
                         name: ds.name,
                         size: ds.size,
-                        dataset: ds.name,
+                        dataset: ds.id,
                         children: ds.groups.map(function (group) {
                             return {
                                 name: group.name,
                                 size: group.size,
-                                dataset: ds.name,
+                                dataset: ds.id,
                                 group: group.name
                             }
                         })

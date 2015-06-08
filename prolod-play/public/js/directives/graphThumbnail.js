@@ -2,7 +2,7 @@
 
 define(['angular', './directives'], function (angular) {
 
-    angular.module('Prolod2.controllers')
+    angular.module('Prolod2.directives')
         .directive('prolodGraphThumbnail', [function () {
 
             function linkFunction($scope, element, attrs) {
@@ -114,7 +114,7 @@ define(['angular', './directives'], function (angular) {
                     graph: '='
                 },
                 restrict: 'EA',
-                template: '<div>{{graph.name}} ({{graph.count}}x)</div>'
+                template: '<div>{{graph.name}} ({{graph.occurences}}x)</div>'
             };
         }
     ])

@@ -5,6 +5,10 @@ define(["angular", "./services"], function () {
             getDatasets: function () {
                 return $http.get('server/datasets');
             },
+            getGraphstatistics: function (dataset, groups) {
+                return $http.get('server/graphstatistics/' + encodeURIComponent(dataset), {groups : groups});
+            },
+
             getTable1: function () {
                 return $http.get('persons');
             },

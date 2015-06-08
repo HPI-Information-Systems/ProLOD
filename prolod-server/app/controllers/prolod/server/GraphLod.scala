@@ -4,42 +4,44 @@ import prolod.common.models.{Pattern, GraphLodResultFormats, GraphLodResult}
 import GraphLodResultFormats.graphLodResultFormat
 
 import play.api.libs.json._
+import play.api.Logger
 import play.api.mvc.{Action, Controller}
+import prolod.common.models.PatternFormats.patternFormat
+import prolod.common.models.Pattern
 
 object GraphLod extends Controller {
-	def getGraphStatistics(datasetId: Int, groups: List[Int] = List()) = Action {
-		/*		val data: GraphLodResult = GraphLodResult(datasetId)
-                                        //Json.format[GraphLodResult]
-        // val json = Json.obj("datasets" -> Json.format[GraphLodResult])
-               val json = Json.format[GraphLodResult]
-    //		val json = Json.toJson(graphlodResult)
-    Ok(Json.toJson(json))
-    */
-		val data: GraphLodResult = GraphLodResult(0)
-		data.nodes = 2000
-		data.edges = 1000
-		data.patterns = List(
-			Pattern(Json.parse("{\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}"), 15),
-			Pattern(Json.parse("{\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}"), 3)
-		)
+  def getGraphStatistics(datasetId: Int, groups: List[Int] = List()) = Action {
+    
+    val p1 = Json.parse("{\"id\": 1, \"name\": \"thing1\", \"occurences\":100,\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}").validate[Pattern]
+    val p2 = Json.parse("{\"id\": 2, \"name\": \"thing2\", \"occurences\":7,\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}").validate[Pattern]
+    val patterns = List(p1, p2).filter(p => p.isSuccess).map(p => p.get)
+    val errors = List(p1, p2).filter(p => p.isError)
+    if (errors.nonEmpty) {
+      Logger.warn("Could not validate " + errors)
+    }
 
-		val json = Json.obj("statistics" -> data)
-		Ok(json)
-	}
+    val data: GraphLodResult = GraphLodResult(0)
+    data.nodes = 2000
+    data.edges = 1000
+    data.patterns = patterns
 
-	/*
-	def getGraphPatternStatistics(datasetId: Integer, pattern: Integer) = Action {
-		//new GraphFeatures()
-		val json = Json.toJson(graphlodResult)
-		Ok(json)
-	}
-	*/
-	def getGraphPatternStatistics(dataset: Int, groups: List[Int], pattern: Int) = Action {
-		val json = Json.obj("dataset" -> dataset, "groups" -> groups, "pattern" -> pattern)
-		Ok(json)
-	}
+    val json = Json.obj("statistics" -> data)
+    Ok(json)
+  }
 
-	def getBigComponent(dataset: Int, groups: List[Int], pattern: Int) = Action {
-		Ok("this is big!")
-	}
+  /*
+  def getGraphPatternStatistics(datasetId: Integer, pattern: Integer) = Action {
+    //new GraphFeatures()
+    val json = Json.toJson(graphlodResult)
+    Ok(json)
+  }
+  */
+  def getGraphPatternStatistics(dataset: Int, groups: List[Int], pattern: Int) = Action {
+    val json = Json.obj("dataset" -> dataset, "groups" -> groups, "pattern" -> pattern)
+    Ok(json)
+  }
+
+  def getBigComponent(dataset: Int, groups: List[Int], pattern: Int) = Action {
+    Ok("this is big!")
+  }
 }

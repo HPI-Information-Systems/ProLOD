@@ -1,5 +1,5 @@
 <div class="graph-grid">
-    <a ng-repeat="graph in ::graphs" href="#/{{::nav.dataset}}/{{::nav.group}}/samples/{{::graph.id}}">
+    <a ng-repeat="graph in statistics.patterns" href="#/graphstatistics/{{::nav.dataset}}/pattern/{{::graph.id}}">
         <prolod-graph-thumbnail class="graph-cell"  graph="graph"></prolod-graph-thumbnail>
     </a>
 </div>
