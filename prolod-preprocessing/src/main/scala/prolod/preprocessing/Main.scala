@@ -1,11 +1,9 @@
 package prolod.preprocessing
 
+import com.typesafe.config.ConfigFactory
 import graphlod.algorithms.GraphFeatures
 import graphlod.dataset.Dataset
 
-import prolod.common.Configuration
-
-import scala.collection.JavaConversions._
 
 object Main {
     def main(args: Array[String]) {
@@ -19,8 +17,9 @@ object Main {
         val minImportantSubgraphSize: Int = 3
         val importantDegreeCount: Int = 3
 
-        val dataset = Dataset.fromFiles(datasetFiles, namespace, ontns, excludedNamespaces)
-        val graphFeatures = new GraphFeatures("main_graph", dataset.getGraph, dataset.getSimpleGraph)
+        // val dataset = Dataset.fromFiles(datasetFiles, namespace, ontns, excludedNamespaces)
+        // val graphFeatures = new GraphFeatures("main_graph", dataset.getGraph, dataset.getSimpleGraph)
 
-        System.out.println("Hello World" + Configuration.foo);    }
+        var config = new Configuration()
+        }
 }

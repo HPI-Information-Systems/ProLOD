@@ -19,7 +19,7 @@ case class GraphLodResult(datasetId: Int,
                           var giantComponentNodes: Int = 0,
                           var giantComponentDiameter: Float = 0,
                           var patterns: List[Pattern] = Nil,
-                          nodeDegreeDistribution: Map[Int, Int] = Map(0 -> 0)
+                          var nodeDegreeDistribution: Map[Int, Int] = Map(0 -> 0)
                           // val patternJson : HashMap[JSONObject, Integer] = new HashMap()
 
                            ) {
