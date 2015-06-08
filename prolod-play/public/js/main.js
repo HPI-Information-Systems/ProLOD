@@ -50,6 +50,7 @@ requirejs.config({
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphcontroller', './controllers/chartcontroller',
       './controllers/controllers', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
+      './controllers/graphpatterncontroller',
       './directives/directives', './directives/graphThumbnail',
       './filters/filters', './services/services', './services/httpApi',
       'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
@@ -67,7 +68,8 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/:dataset/:group/view1/:detail', {templateUrl: 'assets/partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl, activetab: 'view1'});
 
       $routeProvider.when('/:dataset/:group/charts', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
-      $routeProvider.when('/:dataset/:group/graphs', {templateUrl: 'assets/partials/graphs.html', controller: GraphCtrl, activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graphs.html', controller: GraphCtrl, activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: "GraphPatternCtrl", activetab: 'graphs'});
 
       $routeProvider.when('/:dataset/:group/predicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
       $routeProvider.when('/:dataset/:group/inversePredicates', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});

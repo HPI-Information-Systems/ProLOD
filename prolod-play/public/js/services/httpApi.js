@@ -5,8 +5,12 @@ define(["angular", "./services"], function () {
             getDatasets: function () {
                 return $http.get('server/datasets');
             },
-            getGraphstatistics: function (dataset, groups) {
+            getGraphStatistics: function (dataset, groups) {
                 return $http.get('server/graphstatistics/' + encodeURIComponent(dataset), {groups : groups});
+            },
+            getGraphPatternStatistics: function (dataset, groups, pattern) {
+                return $http.get('server/graphstatistics/' + encodeURIComponent(dataset)
+                                 + '/pattern/' + encodeURIComponent(pattern), {groups : groups});
             },
 
             getTable1: function () {

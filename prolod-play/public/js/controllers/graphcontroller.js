@@ -6,9 +6,9 @@ define(function () {
 
         $scope.updateView(['graphs']);
 
-        $scope.graphs = {};
+        $scope.statistics = {};
 
-        httpApi.getGraphstatistics($routeParams.dataset, [$routeParams.group]).then(function(data) {
+        httpApi.getGraphStatistics($routeParams.dataset, [$routeParams.group]).then(function(data) {
             $scope.statistics = data.data.statistics;
         });
 
