@@ -13,7 +13,9 @@ define(function () {
 
 
 
-    /*    var width = 1200,
+
+/*
+        var width = 1200,
             height = 600,
             fill = d3.scale.category20();
 
