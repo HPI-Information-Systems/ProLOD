@@ -7,39 +7,108 @@
             </a>
         </div>
     </bg-pane>
+
+
+
+<!--    var nodes: Int = 0,
+    var edges: Int = 0,
+    var connectedComponents: Int = 0,
+    var connectedComponentsMinEdges: Int = 0,
+    var connectedComponentsMaxEdges: Int = 0,
+    var connectedComponentsAvgEdges: Float = 0,
+    var stronglyConnectedComponents: Int = 0,
+    var stronglyConnectedComponentsMinEdges: Int = 0,
+    var stronglyConnectedComponentsMaxEdges: Int = 0,
+    var stronglyConnectedComponentsAvgEdges: Int = 0,
+    var averageDiameter: Float = 0,
+    var giantComponentEdges: Int = 0,
+    var giantComponentNodes: Int = 0,
+    var giantComponentDiameter: Float = 0,-->
+
+
     <bg-pane>
         <div class="lowerpanel">
-            <h3>Panel:</h3>
+
+            <table width=100% font-size="35">
+            <td>
+            <h3>Statistics:</h3>
             <table class="table">
                 <thead>
                 <tr>
-                    <th>header</th>
-                    <th>header</th>
-                    <th>header</th>
-                    <th>header</th>
+                    <th>Nodes:</th>
+                    <td>{{nodes}}</td>
+                </tr>
+                <tr>
+                    <th>Edges:</th>
+                    <td>{{edges}}</td>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>data</td>
-                    <td>data</td>
-                    <td>data</td>
-                    <td>data</td>
+                    <th>Connected Components:</th>
+                    <td>{{connectedComponents}}</td>
                 </tr>
                 <tr>
-                    <td>data</td>
-                    <td>data</td>
-                    <td>data</td>
-                    <td>data</td>
+                    <th>Connected Components - Minimum Edges:</th>
+                    <td>{{connectedComponentsMinEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Connected Components - Maximum Edges:</th>
+                    <td>{{connectedComponentsMaxEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Connected Components - Average Edges:</th>
+                    <td>{{connectedComponentsAvgEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Strongly Connected Components:</th>
+                    <td>{{stronglyConnectedComponents}}</td>
+                </tr>
+                <tr>
+                    <th>Strongly Connected Components - Minimum Edges:</th>
+                    <td>{{stronglyConnectedComponentsMinEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Strongly Connected Components - Maximum Edges:</th>
+                    <td>{{stronglyConnectedComponentsMaxEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Strongly Connected Components - Average Edges:</th>
+                    <td>{{stronglyConnectedComponentsAvgEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Average Diameter:</th>
+                    <td>{{averageDiameter}}</td>
+                </tr>
+                <tr>
+                    <th>Giant Component Edges:</th>
+                    <td>{{giantComponentEdges}}</td>
+                </tr>
+                <tr>
+                    <th>Giant Component Nodes:</th>
+                    <td>{{giantComponentNodes}}</td>
+                </tr>
+                <tr>
+                    <th>Giant Component Diameter:</th>
+                    <td>{{giantComponentDiameter}}</td>
                 </tr>
                 </tbody>
             </table>
-            <h3>Chart:</h3>
+
+
+            </td>
+
+            <td align="center" valign="top">
+            <h3>Node degree distribution:</h3>
 
             <div id="bchart"></div>
             <div class="pattern-chart">
                 <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels"></canvas>
             </div>
+
+            </td>
+            </table>
+
         </div>
     </bg-pane>
 </bg-splitter>
