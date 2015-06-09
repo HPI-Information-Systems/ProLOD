@@ -44,51 +44,51 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr ng-if="connectedComponents!=0">
                     <th>Connected Components:</th>
                     <td>{{connectedComponents}}</td>
                 </tr>
-                <tr>
-                    <th>Connected Components - Minimum Edges:</th>
+                <tr ng-if="connectedComponents!=0">
+                    <th>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</th>
                     <td>{{connectedComponentsMinEdges}}</td>
                 </tr>
-                <tr>
-                    <th>Connected Components - Maximum Edges:</th>
+                <tr ng-if="connectedComponents!=0">
+                    <th>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</th>
                     <td>{{connectedComponentsMaxEdges}}</td>
                 </tr>
-                <tr>
-                    <th>Connected Components - Average Edges:</th>
+                <tr ng-if="connectedComponents!=0">
+                    <th>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</th>
                     <td>{{connectedComponentsAvgEdges}}</td>
                 </tr>
-                <tr>
+                <tr ng-if="stronglyConnectedComponents!=0">
                     <th>Strongly Connected Components:</th>
                     <td>{{stronglyConnectedComponents}}</td>
                 </tr>
-                <tr>
-                    <th>Strongly Connected Components - Minimum Edges:</th>
+                <tr ng-if="stronglyConnectedComponents!=0">
+                    <th>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</th>
                     <td>{{stronglyConnectedComponentsMinEdges}}</td>
                 </tr>
-                <tr>
-                    <th>Strongly Connected Components - Maximum Edges:</th>
+                <tr ng-if="stronglyConnectedComponents!=0">
+                    <th>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</th>
                     <td>{{stronglyConnectedComponentsMaxEdges}}</td>
                 </tr>
-                <tr>
-                    <th>Strongly Connected Components - Average Edges:</th>
+                <tr ng-if="stronglyConnectedComponents!=0">
+                    <th>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</th>
                     <td>{{stronglyConnectedComponentsAvgEdges}}</td>
                 </tr>
-                <tr>
+                <tr ng-if="averageDiameter!=0">
                     <th>Average Diameter:</th>
                     <td>{{averageDiameter}}</td>
                 </tr>
-                <tr>
+                <tr ng-if="giantComponentEdges!=0">
                     <th>Giant Component Edges:</th>
                     <td>{{giantComponentEdges}}</td>
                 </tr>
-                <tr>
+                <tr ng-if="giantComponentNodes!=0">
                     <th>Giant Component Nodes:</th>
                     <td>{{giantComponentNodes}}</td>
                 </tr>
-                <tr>
+                <tr ng-if="giantComponentDiameter!=0">
                     <th>Giant Component Diameter:</th>
                     <td>{{giantComponentDiameter}}</td>
                 </tr>

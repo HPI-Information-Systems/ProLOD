@@ -23,6 +23,8 @@ object GraphLod extends Controller {
     val data: GraphLodResult = GraphLodResult(0)
     data.nodes = 2000
     data.edges = 1000
+    data.connectedComponents = 123
+    data.stronglyConnectedComponents = 100
     data.patterns = patterns
     data.nodeDegreeDistribution = Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
 
