@@ -30,13 +30,6 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
-  /*
-  def getGraphPatternStatistics(datasetId: Integer, pattern: Integer) = Action {
-    //new GraphFeatures()
-    val json = Json.toJson(graphlodResult)
-    Ok(json)
-  }
-  */
   def getGraphPatternStatistics(dataset: Int, groups: List[Int], pattern: Int) = Action {
 
     val p1 = Json.parse("{\"id\": 1, \"name\": \"thing1\", \"occurences\":100,\"nodes\":[{\"id\":1, \"group\": \"1\"},{\"id\":2, \"group\": \"2\"},{\"id\":3, \"group\": \"2\"}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}").validate[Pattern]

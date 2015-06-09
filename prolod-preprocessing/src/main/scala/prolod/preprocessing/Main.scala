@@ -21,5 +21,6 @@ object Main {
         // val graphFeatures = new GraphFeatures("main_graph", dataset.getGraph, dataset.getSimpleGraph)
 
         var config = new Configuration()
-        }
+        DatabaseConnection.main(config)
+    }
 }
