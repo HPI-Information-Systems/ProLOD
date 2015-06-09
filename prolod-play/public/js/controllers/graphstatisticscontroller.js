@@ -5,10 +5,20 @@ define(function () {
     var GraphCtrl = function ($scope, $routeParams, httpApi, routeBuilder) {
         $scope.updateBreadcrumb([{name:'graphs', url: routeBuilder.getGraphUrl()}]);
 
-        $scope.statistics = {};
+        $scope.data = {
+            pattern: {},
+            chart: {}
+        };
 
         httpApi.getGraphStatistics($routeParams.dataset, $routeParams.group).then(function(data) {
-            $scope.statistics = data.data.statistics;
+            var stats = data.data.statistics;
+            $scope.data.pattern = stats.patterns;
+            var keys = Object.keys(stats.nodeDegreeDistribution);
+            var values = keys.map(function(key) {
+                return stats.nodeDegreeDistribution[key];
+            });
+            $scope.data.chart.labels = keys;
+            $scope.data.chart.data = [values];
         });
 
 

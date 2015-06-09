@@ -48,7 +48,7 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphcontroller', './controllers/chartcontroller',
+require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphstatisticscontroller', './controllers/chartcontroller',
       './controllers/controllers', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
       './controllers/graphpatterncontroller',
       './directives/directives', './directives/graphThumbnail',

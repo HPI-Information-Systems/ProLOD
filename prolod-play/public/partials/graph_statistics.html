@@ -1,64 +1,45 @@
 <bg-splitter orientation="vertical">
     <bg-pane>
         <div id="view" class="graph-grid">
-            <a ng-repeat="graph in statistics.patterns" href="#{{::routeBuilder.getGraphPatternUrl(graph.id)}}">
-                <prolod-graph-thumbnail class="graph-cell" graph="graph"></prolod-graph-thumbnail>
+            <a ng-repeat="pattern in data.pattern"
+               href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
+                <prolod-graph-thumbnail class="graph-cell" graph="pattern"></prolod-graph-thumbnail>
             </a>
         </div>
     </bg-pane>
-    <bg-pane ng-show="nav.view != 'index'">
-        <div class="lowerpanel" ng-controller="PanelCtrl">
-            <fieldset>
-                <legend>Panel:</legend>
-                <div class="datagrid">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>header</th>
-                            <th>header</th>
-                            <th>header</th>
-                            <th>header</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                        </tr>
-                        <tr class="alt">
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                        </tr>
-                        <tr>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                        </tr>
-                        <tr class="alt">
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                        </tr>
-                        <tr>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                            <td>data</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>Chart:</legend>
-                <div id="bchart"></div>
-            </fieldset>
+    <bg-pane>
+        <div class="lowerpanel">
+            <h3>Panel:</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>header</th>
+                    <th>header</th>
+                    <th>header</th>
+                    <th>header</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                </tr>
+                <tr>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                </tr>
+                </tbody>
+            </table>
+            <h3>Chart:</h3>
+
+            <div id="bchart"></div>
+            <div class="pattern-chart">
+                <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels"></canvas>
+            </div>
         </div>
     </bg-pane>
 </bg-splitter>
