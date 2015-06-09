@@ -21,3 +21,4 @@ server.pid
 *.iml
 *.eml
 activator-*.sbt
+application.conf
