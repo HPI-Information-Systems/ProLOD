@@ -14,11 +14,8 @@ object DatabaseConnection {
 		var password = config.dbDb2Password
 
 		try {
-			// val db = Database.forURL("jdbc:db2:"+config.dbDb2Host+":"+config.dbDb2Port+":"+config.dbDb2Database, driver="com.typesafe.slick.driver.db2.DB2Driver")
-
 			var driver = com.typesafe.slick.driver.db2.DB2Driver.api
-			var driverName ="com.typesafe.slick.driver.db2.DB2Driver.api"
-			val db = Database.forDriver(driver, "jdbc:db2://"+config.dbDb2Host+":"+config.dbDb2Port+"/"+config.dbDb2Database, username, password)
+			val db = Database.forURL("jdbc:db2://"+config.dbDb2Host+":"+config.dbDb2Port+"/"+config.dbDb2Database, username, password)
 
 			/*
 

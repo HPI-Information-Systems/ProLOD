@@ -10,6 +10,6 @@ case class Configuration() {
 	var dbDb2Host = conf.getString("db.db2.host")
 	var dbDb2Port = conf.getInt("db.db2.port")
 	var dbDb2Database = conf.getString("db.db2.database")
-	var dbDb2Username = ("db.db2.username")
-	var db2Driver = ("db.db2.driver")
+	var dbDb2Username = conf.getString("db.db2.username")
+	var db2Driver = conf.getString("db.db2.driver")
 }
