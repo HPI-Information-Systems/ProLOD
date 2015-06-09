@@ -1,8 +1,9 @@
 'use strict';
 
-define(function () {
-
-    var GraphCtrl = function ($scope, $routeParams, httpApi, routeBuilder) {
+define(['angular', './controllers'], function (angular) {
+    // controller for the lower panel
+    angular.module('Prolod2.controllers')
+        .controller("GraphCtrl", ['$scope', '$routeParams', 'routeBuilder', 'httpApi', function ($scope, $routeParams, routeBuilder, httpApi) {
         $scope.updateBreadcrumb([{name:'graphs', url: routeBuilder.getGraphUrl()}]);
 
         $scope.data = {
@@ -20,9 +21,6 @@ define(function () {
             $scope.data.chart.labels = keys;
             $scope.data.chart.data = [values];
         });
-
-
-
 
 /*
         var width = 1200,
@@ -310,9 +308,6 @@ define(function () {
 
 
         });*/
-    };
 
-    GraphCtrl.$inject = ['$scope', '$routeParams', 'httpApi', 'routeBuilder'];
-
-    return GraphCtrl;
+    }]);
 });

@@ -48,13 +48,13 @@ requirejs.config({
   }
 });
 
-require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/graphstatisticscontroller', './controllers/chartcontroller',
-      './controllers/controllers', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
-      './controllers/graphpatterncontroller',
-      './directives/directives', './directives/graphThumbnail',
-      './filters/filters', './services/services', './services/httpApi', './services/routeBuilder',
-      'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
-  function (angular,  viewcontrollers, tableviewcontrollers, GraphCtrl, ChartCtrl) {
+require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
+         './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
+         './controllers/graphpatterncontroller', './controllers/graphdetailcontroller',
+         './directives/directives', './directives/graphThumbnail',
+         './filters/filters', './services/services', './services/httpApi', './services/routeBuilder',
+         'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
+  function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
     var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'chart.js'])
@@ -64,8 +64,9 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
 
       $routeProvider.when('/view0/:dataset', {templateUrl: 'assets/partials/partial0.html', controller: viewcontrollers.OverviewCtrl, activetab: 'view0'});
 
-      $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: GraphCtrl, activetab: 'graphs'});
-      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: "GraphPatternCtrl", activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/:detail', {templateUrl: 'assets/partials/graph_detail.html', controller: 'GraphDetailCtrl', activetab: 'graphs'});
 
       $routeProvider.when('/charts/:dataset', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
 
@@ -85,6 +86,6 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
     }]);
 
     angular.bootstrap(document, ['Prolod2']);
-    console.log("bootstrapped!");
+    console.log('bootstrapped!');
 
   });
