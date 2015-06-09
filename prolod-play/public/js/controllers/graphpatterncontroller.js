@@ -10,10 +10,13 @@ define(['angular', './controllers'], function (angular) {
                 {name:'pattern ' + pattern, url: routeBuilder.getGraphPatternUrl(pattern)}
             ]);
 
-            $scope.statistics = {};
+            $scope.data = {
+                pattern: {}
+            };
 
             httpApi.getGraphPatternStatistics($routeParams.dataset, [$routeParams.group], pattern).then(function(data) {
-                $scope.statistics = data.data.statistics;
+                var stats = data.data.statistics;
+                $scope.data.pattern = stats.patterns;
             });
         }]);
 

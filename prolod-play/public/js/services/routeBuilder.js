@@ -40,6 +40,10 @@ define(["angular", "./services"], function () {
                 params = params || $route.current.params;
                 return buildUri(['graphstatistics', params.dataset, 'pattern', pattern], {group: params.group});
             },
+            getGraphDetailUrl: function (pattern, detail, params) {
+                params = params || $route.current.params;
+                return buildUri(['graphstatistics', params.dataset, 'pattern', pattern, detail], {group: params.group});
+            },
             getChartsUrl: function (params) {
                 params = params || $route.current.params;
                 return buildUri(['charts', params.dataset], {group: params.group});

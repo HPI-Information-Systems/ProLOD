@@ -1,6 +1,6 @@
 <div id="view" class="graph-grid">
-    <a ng-repeat="pattern in data.pattern" href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}">
+    <span ng-repeat="pattern in data.pattern">
         <prolod-graph-thumbnail class="graph-cell" graph="pattern"></prolod-graph-thumbnail>
-    </a>
+    </span>
 </div>
 

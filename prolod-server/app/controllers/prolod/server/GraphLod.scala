@@ -24,7 +24,7 @@ object GraphLod extends Controller {
     data.nodes = 2000
     data.edges = 1000
     data.patterns = patterns
-    data.nodeDegreeDistribution = Map(1 -> 12, 23 -> 4)
+    data.nodeDegreeDistribution = Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
 
     val json = Json.obj("statistics" -> data)
     Ok(json)
@@ -50,7 +50,7 @@ object GraphLod extends Controller {
     data.nodes = 2000
     data.edges = 1000
     data.patterns = patterns
-    data.nodeDegreeDistribution = Map(1 -> 12, 23 -> 4)
+    data.nodeDegreeDistribution = Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
 
     val json = Json.obj("statistics" -> data)
 
