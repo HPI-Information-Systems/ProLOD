@@ -40,7 +40,7 @@
 
         <div class="container-fluid heightlimited">
             <div class="row heightlimited" ng-cloak>
-                <div class="col-xs-3 sidebar ng-cloak" ng-controller="TreeViewController">
+                <div class="col-xs-2 sidebar ng-cloak" ng-controller="TreeViewController">
                     <treecontrol class="tree-classic"
                     tree-model="model.treeData"
                     options="model.treeOptions"
@@ -50,7 +50,7 @@
                     </treecontrol>
                 </div>
                     <!-- main content -->
-                <div class="col-xs-9 col-xs-offset-3 main heightlimited">
+                <div class="col-xs-10 col-xs-offset-2 main heightlimited">
                     <div class="row">
                         <ul class="nav nav-tabs" ng-if="currentRoute.activetab != 'index'">
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'view0'}"><a ng-href="#{{::routeBuilder.getOverviewUrl()}}">overview</a></li>
