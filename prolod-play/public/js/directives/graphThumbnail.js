@@ -49,9 +49,10 @@ define(['angular', './directives'], function (angular) {
                     .enter().append("circle")
                     .attr("class", "node")
                     .attr("r", 5)
-                    .style("fill", function (d) {
-                               return color(d.group);
-                           })
+                    /*.style("fill", function (d) {
+                        return color(d.group);
+                    }) */
+                    .style("fill", "white")
                     .call(force.drag);
 
                 force.nodes(graph.nodes)
