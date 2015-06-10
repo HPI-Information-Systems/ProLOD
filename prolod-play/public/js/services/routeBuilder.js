@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ *  Creates urls for each view. the params parameter is optional and can be used
+ *  to override the dataset and the groups but this shouldn't be neccessary in most cases.
+ */
+
 define(["angular", "./services"], function () {
     angular.module('Prolod2.services').factory('routeBuilder', ['$route', function ($route) {
         function buildUri(parts, args) {
@@ -43,6 +48,10 @@ define(["angular", "./services"], function () {
             getGraphDetailUrl: function (pattern, detail, params) {
                 params = params || $route.current.params;
                 return buildUri(['graphstatistics', params.dataset, 'pattern', pattern, detail], {group: params.group});
+            },
+            getGiantComponentUrl: function (params) {
+                params = params || $route.current.params;
+                return buildUri(['graphstatistics', params.dataset, 'giantComponent'], {group: params.group});
             },
             getChartsUrl: function (params) {
                 params = params || $route.current.params;
