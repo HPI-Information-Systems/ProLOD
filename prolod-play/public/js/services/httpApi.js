@@ -19,6 +19,9 @@ define(["angular", "./services"], function () {
                 return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern, detail]),
                     {groups: groups});
             },
+            getGiantComponent: function (dataset, giantomponent){
+                return $http.get(uri(['server', 'giantcomponent', 'dataset']));
+            },
 
             getTable1: function () {
                 return $http.get('persons');
