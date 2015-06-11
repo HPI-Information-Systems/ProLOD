@@ -38,6 +38,7 @@ class DatabaseConnection(config : Configuration) {
 	 // DriverManager.getConnection(url, username, password)
 
 	 db = Database.forURL(url, username, password, driver="com.ibm.db2.jcc.DB2Driver")
+	var connection:Connection = DriverManager.getConnection(url, username, password)
 
 
 	def getDB() : Database = {
@@ -56,9 +57,22 @@ class DatabaseConnection(config : Configuration) {
 		*/
 	}
 
+	def getGroups(s: String): List[Group] = {
+		var groups : List[Group] = Nil
+		val statement = connection.createStatement()
+		val resultSet = statement.executeQuery("SELECT label, cluster_size FROM "+ s+".CLUSTERS WHERE username = 'ontology'")
+		var id : Int = 0
+		while ( resultSet.next() ) {
+			val label = resultSet.getString("label")
+			val size = resultSet.getInt("cluster_size")
+			groups :::= List(new Group(id, label, size))
+		}
+		groups
+	}
+
 	def getDatasets() : List[Dataset] = {
 		var datasets : List[Dataset] = Nil
-		var connection:Connection = DriverManager.getConnection(url, username, password)
+
 		val statement = connection.createStatement()
 		val resultSet = statement.executeQuery("SELECT id, schema_name, entities FROM PROLOD_MAIN.SCHEMATA")
 		while ( resultSet.next() ) {
@@ -66,7 +80,7 @@ class DatabaseConnection(config : Configuration) {
 			val name = resultSet.getString("schema_name")
 			val entities = resultSet.getInt("entities")
 			if (entities > 0) {
-				datasets :::= List(new Dataset(id, name, entities, Nil))
+				datasets :::= List(new Dataset(id, name, entities, getGroups(id)))
 			}
 		}
 		datasets
