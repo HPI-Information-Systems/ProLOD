@@ -33,8 +33,8 @@ class DatabaseConnection(config : Configuration) {
 	 val url = "jdbc:db2://"+config.dbDb2Host+":"+config.dbDb2Port+"/"+config.dbDb2Database
 	 var username = config.dbDb2Username
 	 var password = config.dbDb2Password
-	 Class.forName("com.typesafe.slick.driver.db2.DB2Driver")
-	 // Class.forName("com.ibm.db2.jcc.DB2Driver");
+	 // Class.forName("com.typesafe.slick.driver.db2.DB2Driver")
+	 Class.forName("com.ibm.db2.jcc.DB2Driver");
 	 // DriverManager.getConnection(url, username, password)
 
 	 db = Database.forURL(url, username, password, driver="com.ibm.db2.jcc.DB2Driver")
@@ -66,9 +66,10 @@ class DatabaseConnection(config : Configuration) {
 			val name = resultSet.getString("schema_name")
 			val entities = resultSet.getInt("entities")
 			if (entities > 0) {
-				datasets = datasets ::: List(new Dataset(id, name, entities, Nil))
+				datasets :::= List(new Dataset(id, name, entities, Nil))
 			}
 		}
+		println(datasets)
 		datasets
 	 }
 
