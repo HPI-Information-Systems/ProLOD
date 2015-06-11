@@ -3,7 +3,7 @@ package prolod.common.models
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 
-case class GraphLodResult(datasetId: Int,
+case class GraphLodResult(datasetId: String,
                           var nodes: Int = 0,
                           var edges: Int = 0,
                           var connectedComponents: Int = 0,
@@ -27,7 +27,7 @@ case class GraphLodResult(datasetId: Int,
 }
 
 object GraphLodResultLoader {
-  def load(datasetId: Integer) = {
+  def load(datasetId: String) = {
     new GraphLodResult(datasetId)
   }
 }
