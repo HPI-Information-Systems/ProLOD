@@ -6,7 +6,6 @@ define(['angular', './directives'], function (angular) {
         .directive('prolodGraphThumbnail', [function () {
 
             function linkFunction($scope, element, attrs) {
-                console.log("link!");
 
                 var graph = buildGraph($scope.graph);
 
