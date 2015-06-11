@@ -69,7 +69,6 @@ class DatabaseConnection(config : Configuration) {
 				datasets :::= List(new Dataset(id, name, entities, Nil))
 			}
 		}
-		println(datasets)
 		datasets
 	 }
 

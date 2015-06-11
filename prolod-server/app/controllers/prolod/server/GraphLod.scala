@@ -10,7 +10,7 @@ import prolod.common.models.PatternFormats.patternFormat
 import prolod.common.models.Pattern
 
 object GraphLod extends Controller {
-  def getGraphStatistics(datasetId: Int, groups: List[Int] = List()) = Action {
+  def getGraphStatistics(datasetId: String, groups: List[Int] = List()) = Action {
 
     val p1 = Json.parse("{\"id\": 1, \"name\": \"thing1\", \"occurences\":100,\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}").validate[Pattern]
     val p2 = Json.parse("{\"id\": 2, \"name\": \"thing2\", \"occurences\":7,\"nodes\":[{\"id\":1},{\"id\":2},{\"id\":3}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}").validate[Pattern]
@@ -35,7 +35,7 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
-  def getGraphPatternStatistics(dataset: Int, groups: List[Int], pattern: Int) = Action {
+  def getGraphPatternStatistics(dataset: String, groups: List[Int], pattern: Int) = Action {
 
     val p1 = Json.parse("{\"id\": 1, \"name\": \"thing1\", \"occurences\":100,\"nodes\":[{\"id\":1, \"group\": \"1\"},{\"id\":2, \"group\": \"2\"},{\"id\":3, \"group\": \"2\"}],\"links\":[{\"source\":1,\"target\":3},{\"source\":2,\"target\":1}]}").validate[Pattern]
     val patterns = List(p1).filter(p => p.isSuccess).map(p => p.get)
@@ -55,7 +55,7 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
-  def getBigComponent(dataset: Int, groups: List[Int], pattern: Int) = Action {
+  def getBigComponent(dataset: String, groups: List[Int], pattern: Int) = Action {
     Ok("this is big!")
   }
 }
