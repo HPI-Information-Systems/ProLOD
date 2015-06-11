@@ -20,7 +20,8 @@ class GraphLodImport(var db: DatabaseConnection, name : String, namespace: Strin
 	val graphLod : GraphLOD = GraphLOD.loadDataset(name, files.asJava, namespace, ontologyNamespace, excludedNamespaces.asJava)
 	// TODO tuples
 	db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount)
-	db.insertPatterns(name, graphLod.patterns)
+	db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns)
+
 	//db.insertStats(name, graphLod)
 
 	/*
