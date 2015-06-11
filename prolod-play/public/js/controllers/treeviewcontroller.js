@@ -11,7 +11,7 @@ define(['angular', './controllers'], function (angular) {
                     injectClasses: {
                         ul: 'a1',
                         li: 'a2',
-                        liSelected: 'a7',
+                        liSelected: 'tree-selected',
                         iExpanded: 'glyphicon glyphicon-triangle-bottom',
                         iCollapsed: 'glyphicon glyphicon-triangle-right',
                         iLeaf: 'glyphicon glyphicon-asterisk',
