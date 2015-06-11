@@ -3,7 +3,8 @@
 define(['angular', './controllers'], function (angular) {
     // controller for the lower panel
     angular.module('Prolod2.controllers')
-        .controller("GraphPatternCtrl", ['$scope', '$routeParams', 'routeBuilder', 'httpApi', function ($scope, $routeParams, routeBuilder, httpApi) {
+        .controller("GraphPatternCtrl", ['$scope', '$routeParams', 'routeBuilder', 'httpApi', 'colorHash', function (
+                                         $scope, $routeParams, routeBuilder, httpApi, colorHash) {
             var pattern = $routeParams.pattern;
             $scope.updateBreadcrumb([
                 {name:'graphs', url: routeBuilder.getGraphUrl()},
@@ -14,10 +15,9 @@ define(['angular', './controllers'], function (angular) {
                 pattern: {}
             };
 
-            var color = d3.scale.category20();
 
-            $scope.colorFunction = function (d) {
-                return color(d.group);
+            $scope.colorFunction = function(d) {
+                return colorHash(d.group);
             };
 
             httpApi.getGraphPatternStatistics($routeParams.dataset, [$routeParams.group], pattern).then(function(data) {

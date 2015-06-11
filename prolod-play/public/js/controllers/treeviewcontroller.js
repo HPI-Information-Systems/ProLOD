@@ -2,7 +2,8 @@
 
 define(['angular', './controllers'], function (angular) {
     angular.module('Prolod2.controllers')
-        .controller("TreeViewController", ['$scope', '$route', '$location', 'httpApi', 'routeBuilder', function ($scope, $route, $location, httpApi, routeBuilder) {
+        .controller("TreeViewController", ['$scope', '$route', '$location', 'httpApi', 'routeBuilder', 'colorHash', function (
+                                           $scope, $route, $location, httpApi, routeBuilder, colorHash) {
             $scope.model = {
                 treeOptions: {
                     nodeChildren: 'children',
@@ -48,7 +49,8 @@ define(['angular', './controllers'], function (angular) {
                                 name: group.name,
                                 size: group.size,
                                 dataset: ds.id,
-                                group: group.name
+                                group: group.name,
+                                color: colorHash(group.name)
                             }
                         })
                     }

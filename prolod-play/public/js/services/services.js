@@ -14,5 +14,6 @@ angular.module('Prolod2.services', [])
         VIEWCHANGED: 'VIEWCHANGED'
     }))
 
+
 });
 

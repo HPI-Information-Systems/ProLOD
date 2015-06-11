@@ -52,7 +52,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
          './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller',
          './directives/directives', './directives/graphThumbnail',
-         './filters/filters', './services/services', './services/httpApi', './services/routeBuilder',
+         './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
          'angular-route', 'angular-chart', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'nv', 'jquery'],
   function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
     // Declare app level module which depends on filters, and services
