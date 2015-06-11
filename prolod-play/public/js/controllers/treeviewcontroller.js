@@ -12,9 +12,9 @@ define(['angular', './controllers'], function (angular) {
                         ul: 'a1',
                         li: 'a2',
                         liSelected: 'a7',
-                        iExpanded: 'a3',
-                        iCollapsed: 'a4',
-                        iLeaf: 'a5',
+                        iExpanded: 'glyphicon glyphicon-triangle-bottom',
+                        iCollapsed: 'glyphicon glyphicon-triangle-right',
+                        iLeaf: 'glyphicon glyphicon-asterisk',
                         label: 'a6',
                         labelSelected: 'a8'
                     }
