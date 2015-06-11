@@ -99,3 +99,7 @@
 .x.axis path {
     display: none;
 }
+
+.labelchart{
+    color : #666666;
+}

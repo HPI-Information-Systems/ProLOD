@@ -110,10 +110,15 @@
                     <td align="center" valign="top">
                         <h3>Node degree distribution:</h3>
 
-                        <div id="bchart"></div>
-                        <div class="pattern-chart">
-                            <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels"></canvas>
-                        </div>
+                        <table>
+                            <tr><td valign="top" class="labelchart">#node &nbsp &nbsp</td>
+                                <td><div id="bchart"></div>
+                                    <div class="pattern-chart">
+                                        <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels" title="data.chart.title"></canvas>
+                                    </div></td></tr>
+                            <tr><td></td>
+                                <td align="center" class="labelchart">node degree</td></tr>
+                        </table>
                     </td>
                 </tr>
             </table>

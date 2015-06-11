@@ -95,8 +95,10 @@ body {
 }
 
 .lowerpanel .pattern-chart {
-    width: 300px;
+    width: 450px;
 }
+
+
 
 .node {
     stroke: #000;
