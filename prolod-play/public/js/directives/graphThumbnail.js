@@ -8,7 +8,7 @@ define(['angular', './directives'], function (angular) {
             function linkFunction($scope, element, attrs) {
                 console.log("link!");
 
-                var graph = buildGraph($scope);
+                var graph = buildGraph($scope.graph);
 
                 // do d3 stuff
                 var width = 200,
@@ -16,7 +16,7 @@ define(['angular', './directives'], function (angular) {
 
                 var fill = d3.scale.category20();
 
-                var color = d3.scale.category20();
+                var color = $scope.colorFunction;
 
                 var svg = d3.select(element[0])
                     .append("svg")
@@ -49,10 +49,7 @@ define(['angular', './directives'], function (angular) {
                     .enter().append("circle")
                     .attr("class", "node")
                     .attr("r", 5)
-                    /*.style("fill", function (d) {
-                        return color(d.group);
-                    }) */
-                    .style("fill", "white")
+                    .style("fill", color)
                     .call(force.drag);
 
                 force.nodes(graph.nodes)
@@ -83,14 +80,14 @@ define(['angular', './directives'], function (angular) {
                         });
             }
 
-            function buildGraph($scope) {
+            function buildGraph(scopeGraph) {
                 var graph = {
                     nodes: [],
                     links: []
                 };
 
                 var nodeMap = {};
-                $scope.graph.nodes.forEach(function (node) {
+                scopeGraph.nodes.forEach(function (node) {
                     var n = {
                         group: node.group
                     };
@@ -98,7 +95,7 @@ define(['angular', './directives'], function (angular) {
                     graph.nodes.push(n)
                 });
 
-                $scope.graph.links.forEach(function (link) {
+                scopeGraph.links.forEach(function (link) {
                     graph.links.push({
                         source: nodeMap[link.source],
                         target: nodeMap[link.target]
@@ -109,14 +106,14 @@ define(['angular', './directives'], function (angular) {
 
             return {
                 link: linkFunction,
-                controller: ['$scope', '$http', function ($http) {
-                }],
+                controller: ['$scope', '$http', function ($http) { }],
                 scope: {
-                    graph: '='
+                    graph: '=',
+                    colorFunction: '='
                 },
                 restrict: 'EA',
                 template: '<div>{{graph.name}} ({{graph.occurences}}x)</div>'
             };
         }
-    ])
+        ])
 });
