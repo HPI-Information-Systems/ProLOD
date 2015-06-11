@@ -61,7 +61,7 @@ define(['angular', './controllers'], function (angular) {
             $scope.onSelection = function (selected) {
                 var params = angular.extend({},$route.current.params);
                 if ($route.current.activetab == 'index') {
-                    var url = routeBuilder.getOverviewUrl({dataset: selected.dataset, group: selected.group});
+                    var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
                     $location.path(url);
                     return;
                 }
