@@ -6,7 +6,7 @@
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"></prolod-graph-thumbnail>
             </a>
 
-            <a href="#{{::routeBuilder.getGiantComponentUrl()}}">
+            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-show="data.pattern.length">
                 <div class="graph-cell">
                     <div>Giant Component: {{test}}</div>
                     <svg width="200px" height="150px">
