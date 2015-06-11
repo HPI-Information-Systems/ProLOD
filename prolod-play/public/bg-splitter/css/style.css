@@ -103,3 +103,8 @@
 .labelchart{
     color : #666666;
 }
+
+.vertical-text {
+    transform: rotate(270deg);
+    transform-origin: left top 0;
+}

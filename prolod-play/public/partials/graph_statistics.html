@@ -111,13 +111,22 @@
                         <h3>Node degree distribution:</h3>
 
                         <table>
-                            <tr><td valign="top" class="labelchart">#node &nbsp &nbsp</td>
-                                <td><div id="bchart"></div>
+                            <tr>
+                                <td>
+                                    <div class="labelchart vertical-text">#node</div>
+                                </td>
+                                <td>
+                                    <div id="bchart"></div>
                                     <div class="pattern-chart">
-                                        <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels" title="data.chart.title"></canvas>
-                                    </div></td></tr>
-                            <tr><td></td>
-                                <td align="center" class="labelchart">node degree</td></tr>
+                                        <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels"
+                                                config="chartConfig"></canvas>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td align="center" class="labelchart">node degree</td>
+                            </tr>
                         </table>
                     </td>
                 </tr>

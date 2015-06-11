@@ -68,6 +68,9 @@ define(['angular', './directives'], function (angular) {
                             node.attr("cx", function (d) {return d.x;})
                                 .attr("cy", function (d) {return d.y;});
                         });
+
+                for (var i = 0; i < 20; ++i) force.tick();
+
             }
 
             function buildGraph(scopeGraph) {
