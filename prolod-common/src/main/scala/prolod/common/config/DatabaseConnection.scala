@@ -107,10 +107,10 @@ class DatabaseConnection(config : Configuration) {
 		var patterns : List[Pattern] = Nil
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT pattern, occurences FROM "+ s+".PATTERNS WHERE id = "+id)
+			val resultSet = statement.executeQuery("SELECT pattern FROM "+ s+".COLOREDPATTERNS WHERE id = "+id)
 			while ( resultSet.next() ) {
 				val pattern = resultSet.getString("pattern")
-				val occurences = resultSet.getInt("occurences")
+				// val occurences = resultSet.getInt("occurences")
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
 				patterns :::= List(new Pattern(id, "", 1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
