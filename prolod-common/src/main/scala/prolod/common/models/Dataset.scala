@@ -2,7 +2,7 @@ package prolod.common.models
 
 import play.api.libs.json.Json
 
-case class Dataset(id: Int, name: String, size:Int, groups: List[Group])
+case class Dataset(id: String, name: String, size:Int, groups: List[Group])
 
 case class Group(id: Int, name: String, size:Int)
 

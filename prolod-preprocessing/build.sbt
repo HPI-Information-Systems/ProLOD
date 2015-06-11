@@ -6,4 +6,4 @@ libraryDependencies ++= Seq(
 
 resolvers += Resolver.mavenLocal
 
-mainClass in (Compile, run)  := Some("prolod.preprocessing.Main")
+mainClass in (Compile, run)  := Some("prolod.preprocessing.ImportDataset")
