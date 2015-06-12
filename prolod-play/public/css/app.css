@@ -216,3 +216,7 @@ body {
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0;
 }
+
+.alignright {
+    text-align: right;
+}

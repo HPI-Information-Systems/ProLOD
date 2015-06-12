@@ -30,7 +30,7 @@ object ImportDataset {
     private def printUsage() {
         println("usage:")
         println("  name namespace ontologyNamespace [files]")
-        println("  name namespace ontologyNamespace -excludeNS [namespaces] -files [files]")
+        println("  name namespace ontologyNamespace [excludeNamespaces] [files]")
     }
 
 }
