@@ -7,8 +7,8 @@ define(['angular', './controllers'], function (angular) {
                                          $scope, $routeParams, routeBuilder, httpApi, colorHash) {
             var pattern = $routeParams.pattern;
             $scope.updateBreadcrumb([
-                {name:'graphs', url: routeBuilder.getGraphUrl()},
-                {name:'pattern ' + pattern, url: routeBuilder.getGraphPatternUrl(pattern)}
+                {name:'Graphs', url: routeBuilder.getGraphUrl()},
+                {name:'Pattern ' + pattern, url: routeBuilder.getGraphPatternUrl(pattern)}
             ]);
 
             $scope.data = {

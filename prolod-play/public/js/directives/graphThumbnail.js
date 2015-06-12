@@ -90,10 +90,33 @@ define(['angular', './directives'], function (angular) {
                     node.append("svg:title")
                         .text(
                         function(d){
-                            return ("uri: "+ d.uri)
+                            return (d.uri)
                         }
                     );
+
+                    link.append("svg:title")
+                        .text(
+                        function(d){
+                            return (d.uri)
+                        }
+                    );
+
+                    link.on("mouseover", mouseover);
+                    link.on("mouseout", mouseout);
+
                 }
+
+                function mouseover() {
+                    link.attr('stroke-width', 2);
+                    svg.append("defs").selectAll("marker")
+                        .enter().append("marker")
+                        .attr("refX", 1);
+                }
+
+                function mouseout() {
+                    link.attr('stroke-width', 1);
+                }
+
 
                 force.nodes(graph.nodes)
                     .links(graph.links)
@@ -131,7 +154,8 @@ define(['angular', './directives'], function (angular) {
                 scopeGraph.links.forEach(function (link) {
                     graph.links.push({
                         source: nodeMap[link.source],
-                        target: nodeMap[link.target]
+                        target: nodeMap[link.target],
+                        uri: link.uri
                     })
                 });
                 return graph;
