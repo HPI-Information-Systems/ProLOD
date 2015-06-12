@@ -138,22 +138,26 @@ define(['angular', './directives'], function (angular) {
                         }
                     );
 
-                    /*link.on("mouseover", mouseover);
+                   /* link.on("mouseover", mouseover);
                     link.on("mouseout", mouseout);*/
 
                 }
 
-                function mouseover() {
-                    link.attr('stroke-width', 2);
-                    svg.append("defs").selectAll("marker")
-                        .enter().append("marker")
-                        .attr("refX", 1);
+                /*function mouseover() {
+                    var link = d3.select(this);
+                    link.style('stroke-width', 2);
+                    link.style("stroke", "black");
+                    var path = svg.append("svg:g").selectAll("path")
+                        .data(force.links())
+                        .enter().append("svg:path")
                 }
 
                 function mouseout() {
-                    link.attr('stroke-width', 1);
+                    var link = d3.select(this);
+                    link.style('stroke-width', 1);
+                    link.style("stroke", "#bbb");
                 }
-
+*/
             }
 
             function buildGraph(scopeGraph) {

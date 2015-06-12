@@ -23,9 +23,14 @@ object GraphLod extends Controller {
 
     data.nodes = db.getDatasetEntities(datasetId)
     data.edges = statistics.get("edges").get.toInt
+    data.giantComponentEdges = statistics.get("gcnodes").get.toInt
     // data.connectedComponents = 123
     // data.stronglyConnectedComponents = 100
     data.patterns = patternList
+
+    data.connectedComponents = statistics.get("connectedcomponents").get.toInt
+    data.stronglyConnectedComponents = statistics.get("stronglyconnectedcomponents").get.toInt
+
     var nodeDegreeDistribution = statistics.get("nodedegreedistribution").get
     val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
     data.nodeDegreeDistribution =  nodeDegreeDistributionMap
