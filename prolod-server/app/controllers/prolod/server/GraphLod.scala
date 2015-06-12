@@ -3,6 +3,7 @@ package controllers.prolod.server
 import prolod.common.config.{DatabaseConnection, Configuration}
 import prolod.common.models._
 import GraphLodResultFormats.graphLodResultFormat
+import prolod.common.models.GraphLodResultFormats.mapIntIntFormat
 
 import play.api.libs.json._
 import play.api.Logger
@@ -25,10 +26,9 @@ object GraphLod extends Controller {
     // data.connectedComponents = 123
     // data.stronglyConnectedComponents = 100
     data.patterns = patternList
-    //var nodeDegreeDistribution = statistics.get("nodeDegreeDistribution").get
-    // val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
-    // nodeDegreeDistributionMap
-    data.nodeDegreeDistribution =  Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
+    var nodeDegreeDistribution = statistics.get("nodedegreedistribution").get
+    val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
+    data.nodeDegreeDistribution =  nodeDegreeDistributionMap // Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
 
     val json = Json.obj("statistics" -> data)
     Ok(json)
