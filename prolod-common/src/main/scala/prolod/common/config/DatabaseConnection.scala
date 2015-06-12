@@ -226,11 +226,36 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
-		/*
-				db withSession((session: Session) => {
-					(sql"""INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES) VALUES ('caterpillar','caterpillar',20,3)""")
-				}
-				*/
+
+		try {
+			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("DROP TABLE "+name+".CLUSTERS")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("CREATE TABLE "+name+".CLUSTERS "+
+				"(                                                                   "+
+				 "       ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),    "+
+				"USERNAME VARCHAR(50) DEFAULT 'default' NOT NULL,       "+
+				//"SESSION_ID INT NOT NULL,                    "+
+				//"SESSION_LOCAL_ID INT,                  "+
+				"LABEL VARCHAR(255),                      "+
+				//"CHILD_SESSION INT,                         "+
+				//"AVG_ERROR FLOAT(53),                         "+
+				"CLUSTER_SIZE INT,                              "+
+				//"PARTITIONNAME VARCHAR(255) DEFAULT 'MAINTABLE', "+
+				"PRIMARY KEY (ID, USERNAME)                                "+
+				")")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+			/*
+					db withSession((session: Session) => {
+						(sql"""INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES) VALUES ('caterpillar','caterpillar',20,3)""")
+					}
+					*/
 
 		     /*
 		db withSession {
@@ -314,6 +339,22 @@ class DatabaseConnection(config : Configuration) {
 			case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
 			case e: SqlException => println(e.getMessage)
 		}
+	}
+
+	def insertClasses(name: String, clusters: util.List[String]) = {
+		var clusterUris = clusters.asScala.toList
+		clusterUris.foreach {
+			case (cluster) =>
+				try {
+					val statement = connection.createStatement()
+					val resultSet = statement.execute("INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
+				} catch {
+					case e: SqlIntegrityConstraintViolationException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
+					case e: SqlException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
+					case e: SqlSyntaxErrorException   => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
+				}
+		}
+
 	}
 
 }
