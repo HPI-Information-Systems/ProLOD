@@ -26,8 +26,8 @@ define(['angular', './directives'], function (angular) {
                     .attr("pointer-events", "all")
                     .attr("preserveAspectRatio", "xMinYMin meet")
                     .on('tick', function() {
-                                                     var g = svg.select('g');
-                                                      svg.attr("viewBox", "0 0 300 300") })
+                          var g = svg.select('g');
+                          svg.attr("viewBox", "0 0 300 300") })
                     .append('svg:g');
 
                 svg.append('svg:rect')
@@ -35,12 +35,6 @@ define(['angular', './directives'], function (angular) {
                     .attr('height', height)
                     .attr('fill', 'white');
 
-
-
-                var force = d3.layout.force()
-                    .charge(-120)
-                    .linkDistance(40)
-                    .size([width, height]);
 
                 var link = svg.selectAll(".link")
                     .data(graph.links)
@@ -58,7 +52,20 @@ define(['angular', './directives'], function (angular) {
                     .attr("uri", function (d) { return d.uri; })
                     .attr("r", 5)
                     .style("fill", color)
-                    .call(force.drag);
+
+                var tickTime = 2000;
+                var initialTicks = 20;
+
+                var force = d3.layout.force()
+                    .charge(-120)
+                    .linkDistance(40)
+                    .size([width, height]);
+
+                setTimeout(function() {
+                    force.stop();
+                },tickTime);
+
+                node.call(force.drag);
 
 
 
@@ -109,7 +116,7 @@ define(['angular', './directives'], function (angular) {
                                 .attr("cy", function (d) {return d.y;});
                         });
 
-                for (var i = 0; i < 20; ++i) force.tick();
+                for (var i = 0; i < initialTicks; ++i) force.tick();
 
             }
 
@@ -146,7 +153,11 @@ define(['angular', './directives'], function (angular) {
                     showArrows: '@'
                 },
                 restrict: 'EA',
-                template: '<div>{{graph.name}} ({{graph.occurences}}x)</div>'
+                template: [
+                    '<div>{{graph.name}} ',
+                        '<span ng-if="graph.occurences>=0">({{graph.occurences}}x)</span>',
+                    '</div>'
+                ].join('\n')
             };
         }
         ])

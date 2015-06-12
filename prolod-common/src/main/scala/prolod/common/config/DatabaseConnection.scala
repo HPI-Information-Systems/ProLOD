@@ -89,6 +89,16 @@ class DatabaseConnection(config : Configuration) {
 		groups
 	}
 
+	def getDatasetEntities(name : String) : Int = {
+		var entities : Int = -1
+		val statement = connection.createStatement()
+		val resultSet = statement.executeQuery("SELECT entities FROM PROLOD_MAIN.SCHEMATA WHERE id = '" + name + "'")
+		while ( resultSet.next() ) {
+			entities = resultSet.getInt("entities")
+		}
+		entities
+	}
+
 	def getDatasets() : List[Dataset] = {
 		var datasets : List[Dataset] = Nil
 		val statement = connection.createStatement()
@@ -175,7 +185,7 @@ class DatabaseConnection(config : Configuration) {
 			var createStatement = connection.createStatement()
 			var createResultSet = createStatement.execute("CREATE SCHEMA " + name)
 		} catch {
-			case e : SqlSyntaxErrorException => println("Schema already exists")
+			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
 		try {
@@ -186,9 +196,9 @@ class DatabaseConnection(config : Configuration) {
 		}
 		try {
 			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("CREATE TABLE "+name+".patterns (id INT not null GENERATED ALWAYS AS IDENTITY (START WITH 0 INCREMENT BY 1), pattern CLOB, occurences INT, PRIMARY KEY (id))")
+			var createResultSet = createStatement.execute("CREATE TABLE "+name+".patterns (id INT, pattern CLOB, occurences INT)")
 		} catch {
-			case e : SqlSyntaxErrorException => println("Table already exists")
+			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
 		try {
@@ -201,7 +211,7 @@ class DatabaseConnection(config : Configuration) {
 			var createStatement = connection.createStatement()
 			var createResultSet = createStatement.execute("CREATE TABLE "+name+".coloredpatterns (id INT, pattern CLOB)")
 		} catch {
-			case e : SqlSyntaxErrorException => println("Table already exists")
+			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
 		try {
@@ -261,34 +271,37 @@ class DatabaseConnection(config : Configuration) {
           */
 	}
 
-	def insertPatterns(name: String, patterns: util.HashMap[String, Integer], coloredPatterns: util.HashMap[Integer, util.List[String]]) {
-		var id : Int = 0
+	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]]) {
 		val coloredPatternsMap = coloredPatterns.asScala.toMap
-		patterns.asScala.toMap.foreach {
-			case (pattern, occurences) => {
-				try {
-					val statement = connection.createStatement()
-					val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (PATTERN, OCCURENCES) VALUES ('" + pattern + "'," + occurences + ")")
-				} catch {
-					case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
-					case e: SqlException => {
-						println(e.getMessage)
-					}
-				}
-				val cPattern = coloredPatternsMap.get(id).get.asScala.toList
-				cPattern.foreach { case (coloredpattern) =>
-					try {
-						val statement = connection.createStatement()
-						val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
-						// println(pattern)
-					} catch {
-						case e: SqlException => {
-							println(e.getMessage)
-							println(coloredpattern)
+		val patternsMap = patterns.asScala.toMap
+		patternsMap.foreach {
+			case (id, patternHashMap) => {
+				patternHashMap.asScala.toMap.foreach {
+					case (pattern, occurences) => {
+						try {
+							val statement = connection.createStatement()
+							val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (ID, PATTERN, OCCURENCES) VALUES (" + id + ", '" + pattern + "'," + occurences + ")")
+						} catch {
+							case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
+							case e: SqlException => println(e.getMessage)
+							case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".PATTERNS (ID, PATTERN, OCCURENCES) VALUES (" + id + ", '" + pattern + "'," + occurences + ")")
+						}
+						val cPattern = coloredPatternsMap.get(id).get.asScala.toList
+						cPattern.foreach { case (coloredpattern) =>
+							try {
+								val statement = connection.createStatement()
+								val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
+								// println(pattern)
+							} catch {
+								case e: SqlException => {
+									println(e.getMessage)
+									println(coloredpattern)
+								}
+							}
 						}
 					}
 				}
-				id += 1
+
 			}
 		}
 	}
