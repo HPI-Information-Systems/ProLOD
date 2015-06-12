@@ -66,14 +66,14 @@ define(['angular', './controllers'], function (angular) {
                 var params = angular.extend({},$route.current.params);
                 if ($route.current.activetab == 'index') {
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
-                    $location.path(url);
+                    $location.url(url);
                     return;
                 }
 
                 if ($route.current.activetab == 'graphs' &&
                     ($route.current.params.dataset != selected.dataset || ! selected.group)) {
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
-                    $location.path(url);
+                    $location.url(url);
                     return;
                 }
 

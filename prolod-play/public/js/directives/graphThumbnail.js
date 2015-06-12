@@ -107,14 +107,21 @@ define(['angular', './directives'], function (angular) {
                 }
 
                 function mouseover() {
-                    link.attr('stroke-width', 2);
+                    var link = d3.select(this);
+                    link.style('stroke-width', 2);
+                    link.style("stroke", "black");
+                    d3.select(".mark")
+                        .style("stroke", "black");
+                    /*link.attr('stroke-width', 2);
                     svg.append("defs").selectAll("marker")
                         .enter().append("marker")
-                        .attr("refX", 1);
+                        .attr("refX", 1);*/
                 }
 
                 function mouseout() {
-                    link.attr('stroke-width', 1);
+                    var link = d3.select(this);
+                    link.style('stroke-width', 1);
+                    link.style("stroke", "#bbb");
                 }
 
 
