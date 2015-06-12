@@ -89,6 +89,16 @@ class DatabaseConnection(config : Configuration) {
 		groups
 	}
 
+	def getDatasetEntities(name : String) : Int = {
+		var entities : Int = -1
+		val statement = connection.createStatement()
+		val resultSet = statement.executeQuery("SELECT entities FROM PROLOD_MAIN.SCHEMATA WHERE id = '" + name + "'")
+		while ( resultSet.next() ) {
+			entities = resultSet.getInt("entities")
+		}
+		entities
+	}
+
 	def getDatasets() : List[Dataset] = {
 		var datasets : List[Dataset] = Nil
 		val statement = connection.createStatement()
