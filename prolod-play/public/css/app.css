@@ -99,7 +99,7 @@ body {
 }
 
 
-.tree-selected {
+.tree-label.tree-selected {
     font-weight: bold;
 }
 
