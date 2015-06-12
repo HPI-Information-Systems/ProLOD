@@ -35,25 +35,6 @@ define(['angular', './directives'], function (angular) {
                     .attr('height', height)
                     .attr('fill', 'white');
 
-                if (showArrows) {
-                    svg.append("defs").selectAll("marker")
-                        .data(["suit", "licensing", "resolved"])
-                        .enter().append("marker")
-                        .attr("id", function (d) {
-                            return d;
-                        })
-                        .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 16)
-                        .attr("refY", 0)
-                        .attr("markerWidth", 10)
-                        .attr("markerHeight", 10)
-                        .attr("orient", "auto")
-                        .append("path")
-                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-                        .style("stroke", "#BBBBBB")
-                        .style("stroke-width",1.1)
-                        .style("opacity", "1");
-                }
 
 
                 var force = d3.layout.force()
@@ -74,9 +55,46 @@ define(['angular', './directives'], function (angular) {
                     .data(graph.nodes)
                     .enter().append("circle")
                     .attr("class", "node")
+                    .attr("uri", function (d) { return d.uri; })
                     .attr("r", 5)
                     .style("fill", color)
                     .call(force.drag);
+
+
+
+                //if it's the second view
+                if (showArrows) {
+                    svg.append("defs").selectAll("marker")
+                        .data(["suit", "licensing", "resolved"])
+                        .enter().append("marker")
+                        .attr("id", function (d) {
+                            return d;
+                        })
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 16)
+                        .attr("refY", 0)
+                        .attr("markerWidth", 10)
+                        .attr("markerHeight", 10)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+                        .style("stroke", "#BBBBBB")
+                        .style("stroke-width",1.1)
+                        .style("opacity", "1");
+
+                        node.on("mouseover", mouseover);
+
+                }
+
+
+                function mouseover() {
+                    node.append("svg:title")
+                        .text(
+                            function(d){
+                                return ("uri: "+ d.uri)
+                            }
+                         );
+                }
 
                 force.nodes(graph.nodes)
                     .links(graph.links)
