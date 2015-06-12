@@ -90,14 +90,14 @@ define(['angular', './directives'], function (angular) {
                     node.append("svg:title")
                         .text(
                         function(d){
-                            return ("node.uri: "+ d.uri)
+                            return (d.uri)
                         }
                     );
 
                     link.append("svg:title")
                         .text(
                         function(d){
-                            return ("link.uri: "+ d.uri)
+                            return (d.uri)
                         }
                     );
 

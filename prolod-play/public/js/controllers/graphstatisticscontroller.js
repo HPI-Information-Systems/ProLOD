@@ -4,7 +4,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
     angular.module('Prolod2.controllers')
         .controller("GraphCtrl", ['$scope', '$routeParams', 'routeBuilder', 'httpApi', function ($scope, $routeParams, routeBuilder, httpApi) {
-            $scope.updateBreadcrumb([{name: 'graphs', url: routeBuilder.getGraphUrl()}]);
+            $scope.updateBreadcrumb([{name: 'Graphs', url: routeBuilder.getGraphUrl()}]);
 
             $scope.data = {
                 pattern: {},
