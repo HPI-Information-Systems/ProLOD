@@ -25,18 +25,16 @@ define(['angular', './directives'], function (angular) {
                     .attr("height", height)
                     .attr("pointer-events", "all")
                     .attr("preserveAspectRatio", "xMinYMin meet")
-                    /*.on('tick', function() {
-                          var g = svg.select('g');
-                          svg.attr("viewBox", "0 0 300 300") })*/
-                    .append('svg:g');
 
-                svg.append('svg:rect')
+                var g = svg.append('svg:g');
+
+                g.append('svg:rect')
                     .attr('width', width)
                     .attr('height', height)
                     .attr('fill', 'white');
 
 
-                var link = svg.selectAll(".link")
+                var link = g.selectAll(".link")
                     .data(graph.links)
                     .enter().append("line")
                     .attr("class", "link")
@@ -45,13 +43,13 @@ define(['angular', './directives'], function (angular) {
                                return Math.sqrt(d.value);
                            });
 
-                var node = svg.selectAll(".node")
+                var node = g.selectAll(".node")
                     .data(graph.nodes)
                     .enter().append("circle")
                     .attr("class", "node")
                     .attr("uri", function (d) { return d.uri; })
                     .attr("r", 5)
-                    .style("fill", color)
+                    .style("fill", color);
 
                 var tickTime = 2000;
                 var initialTicks = 20;
@@ -63,11 +61,50 @@ define(['angular', './directives'], function (angular) {
 
                 setTimeout(function() {
                     force.stop();
-                },tickTime);
+                }, tickTime);
 
                 node.call(force.drag);
 
+                force.nodes(graph.nodes)
+                    .links(graph.links)
+                    .start()
+                    .on("tick", function () {
 
+                            link.attr("x1", function (d) {return d.source.x;})
+                                .attr("y1", function (d) {return d.source.y;})
+                                .attr("x2", function (d) {return d.target.x;})
+                                .attr("y2", function (d) {return d.target.y;});
+
+                            var inf = 10000;
+                            var minX = inf, maxX = -inf, minY=inf, maxY=-inf;
+                            node.attr("cx", function (d) {
+                                maxX = Math.max(maxX, d.x);
+                                minX = Math.min(minX, d.x);
+                                return d.x;
+                            }).attr("cy", function (d) {                                        
+                                maxY = Math.max(maxY, d.y);
+                                minY = Math.min(minY, d.y);
+                                return d.y;
+                            });
+
+                            var padding = 10;
+                            minX -= padding;
+                            maxX += padding;
+                            minY -= padding;
+                            maxY += padding;
+                            minX = Math.min(minX, 0);
+                            minY = Math.min(minY, 0);
+                            maxX = Math.max(maxX, width);
+                            maxY = Math.max(maxY, height);
+                            var w = maxX - minX;
+                            var h = maxY - minY;
+                            svg.attr("viewBox", "" + minX + " " + minY + " " + w + " " + h);
+
+                        });
+
+
+
+                for (var i = 0; i < initialTicks; ++i) force.tick();
 
                 //if it's the second view
                 if (showArrows) {
@@ -101,8 +138,8 @@ define(['angular', './directives'], function (angular) {
                         }
                     );
 
-                    link.on("mouseover", mouseover);
-                    link.on("mouseout", mouseout);
+                    /*link.on("mouseover", mouseover);
+                    link.on("mouseout", mouseout);*/
 
                 }
 
@@ -116,22 +153,6 @@ define(['angular', './directives'], function (angular) {
                 function mouseout() {
                     link.attr('stroke-width', 1);
                 }
-
-
-                force.nodes(graph.nodes)
-                    .links(graph.links)
-                    .start()
-                    .on("tick", function () {
-                            link.attr("x1", function (d) {return d.source.x;})
-                                .attr("y1", function (d) {return d.source.y;})
-                                .attr("x2", function (d) {return d.target.x;})
-                                .attr("y2", function (d) {return d.target.y;});
-
-                            node.attr("cx", function (d) {return d.x;})
-                                .attr("cy", function (d) {return d.y;});
-                        });
-
-                for (var i = 0; i < initialTicks; ++i) force.tick();
 
             }
 
