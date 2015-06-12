@@ -72,7 +72,7 @@ define(['angular', './directives'], function (angular) {
                 //if it's the second view
                 if (showArrows) {
                     svg.append("defs").selectAll("marker")
-                        .data(["arrow"])
+                        .data(["suit", "licensing", "resolved"])
                         .enter().append("marker")
                         .attr("id", function (d) { return d; })
                         .attr("viewBox", "0 -5 10 10")
@@ -90,10 +90,20 @@ define(['angular', './directives'], function (angular) {
                     node.append("svg:title")
                         .text(
                         function(d){
-                            return ("uri: "+ d.uri)
+                            return ("node.uri: "+ d.uri)
                         }
                     );
+
+                    link.append("svg:title")
+                        .text(
+                        function(d){
+                            return ("link.uri: "+ d.uri)
+                        }
+                    );
+
                 }
+
+
 
                 force.nodes(graph.nodes)
                     .links(graph.links)
@@ -131,7 +141,8 @@ define(['angular', './directives'], function (angular) {
                 scopeGraph.links.forEach(function (link) {
                     graph.links.push({
                         source: nodeMap[link.source],
-                        target: nodeMap[link.target]
+                        target: nodeMap[link.target],
+                        uri: link.uri
                     })
                 });
                 return graph;
