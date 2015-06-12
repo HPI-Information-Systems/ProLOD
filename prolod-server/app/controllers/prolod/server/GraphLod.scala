@@ -3,6 +3,7 @@ package controllers.prolod.server
 import prolod.common.config.{DatabaseConnection, Configuration}
 import prolod.common.models._
 import GraphLodResultFormats.graphLodResultFormat
+import prolod.common.models.GraphLodResultFormats.mapIntIntFormat
 
 import play.api.libs.json._
 import play.api.Logger
@@ -20,15 +21,14 @@ object GraphLod extends Controller {
 
     val statistics = db.getStatistics(datasetId)
 
-    //data.nodes = 2000
+    data.nodes = db.getDatasetEntities(datasetId)
     data.edges = statistics.get("edges").get.toInt
     // data.connectedComponents = 123
     // data.stronglyConnectedComponents = 100
     data.patterns = patternList
-    //var nodeDegreeDistribution = statistics.get("nodeDegreeDistribution").get
-    // val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
-    // nodeDegreeDistributionMap
-    data.nodeDegreeDistribution =  Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
+    var nodeDegreeDistribution = statistics.get("nodedegreedistribution").get
+    val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
+    data.nodeDegreeDistribution =  nodeDegreeDistributionMap
 
     val json = Json.obj("statistics" -> data)
     Ok(json)
@@ -40,11 +40,7 @@ object GraphLod extends Controller {
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
 
     val data: GraphLodResult = GraphLodResult(datasetId)
-    data.nodes = 2000
-    data.edges = 1000
     data.patterns = patternList
-    data.nodeDegreeDistribution = Map(1 -> 12, 2 -> 5, 3 -> 41, 5 -> 2, 21 -> 8, 23 -> 4)
-
     val json = Json.obj("statistics" -> data)
 
     Ok(json)
