@@ -4,7 +4,8 @@
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
             <a ng-repeat="pattern in data.pattern"
                href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
-                <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"></prolod-graph-thumbnail>
+                <prolod-graph-thumbnail class="graph-cell" graph="pattern"
+                                        color-function="colorFunction"></prolod-graph-thumbnail>
             </a>
 
             <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-show="data.pattern.length">
@@ -40,98 +41,75 @@
 
     <bg-pane>
         <div class="lowerpanel">
-
-            <table width=100% font-size="35">
-                <tr>
-                    <td>
-                        <h3>Statistics:</h3>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Nodes:</th>
-                                <td><span id='number-default'>{{nodes | number}}</span></td>
-                            </tr>
-                            <tr>
-                                <th>Edges:</th>
-                                <td>{{edges | number}}</td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-if="connectedComponents!=0">
-                                <th>Connected Components:</th>
-                                <td>{{connectedComponents | number}}</td>
-                            </tr>
-                            <tr ng-if="connectedComponents!=0">
-                                <th>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</th>
-                                <td>{{connectedComponentsMinEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="connectedComponents!=0">
-                                <th>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</th>
-                                <td>{{connectedComponentsMaxEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="connectedComponents!=0">
-                                <th>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</th>
-                                <td>{{connectedComponentsAvgEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="stronglyConnectedComponents!=0">
-                                <th>Strongly Connected Components:</th>
-                                <td>{{stronglyConnectedComponents | number}}</td>
-                            </tr>
-                            <tr ng-if="stronglyConnectedComponents!=0">
-                                <th>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</th>
-                                <td>{{stronglyConnectedComponentsMinEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="stronglyConnectedComponents!=0">
-                                <th>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</th>
-                                <td>{{stronglyConnectedComponentsMaxEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="stronglyConnectedComponents!=0">
-                                <th>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</th>
-                                <td>{{stronglyConnectedComponentsAvgEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="averageDiameter!=0">
-                                <th>Average Diameter:</th>
-                                <td>{{averageDiameter | number}}</td>
-                            </tr>
-                            <tr ng-if="giantComponentEdges!=0">
-                                <th>Giant Component Edges:</th>
-                                <td>{{giantComponentEdges | number}}</td>
-                            </tr>
-                            <tr ng-if="giantComponentNodes!=0">
-                                <th>Giant Component Nodes:</th>
-                                <td>{{giantComponentNodes | number}}</td>
-                            </tr>
-                            <tr ng-if="giantComponentDiameter!=0">
-                                <th>Giant Component Diameter:</th>
-                                <td>{{giantComponentDiameter | number}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                    <td align="center" valign="top">
-                        <h3>Node degree distribution:</h3>
-
-                        <table>
-                            <tr>
-                                <td>
-                                    <div class="labelchart vertical-text">#node</div>
-                                </td>
-                                <td>
-                                    <div id="bchart"></div>
-                                    <div class="pattern-chart">
-                                        <canvas id="bar" chart-bar data="data.chart.data" labels="data.chart.labels"
-                                                config="chartConfig"></canvas>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td align="center" class="labelchart">node degree</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+            <div>
+                <h3>Statistics:</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>Nodes:</td>
+                        <td><span id='number-default'>{{nodes | number}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Edges:</td>
+                        <td>{{edges | number}}</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-if="connectedComponents!=0">
+                        <td>Connected Components:</td>
+                        <td>{{connectedComponents | number}}</td>
+                    </tr>
+                    <tr ng-if="connectedComponents!=0">
+                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
+                        <td>{{connectedComponentsMinEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="connectedComponents!=0">
+                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
+                        <td>{{connectedComponentsMaxEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="connectedComponents!=0">
+                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
+                        <td>{{connectedComponentsAvgEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stronglyConnectedComponents!=0">
+                        <td>Strongly Connected Components:</td>
+                        <td>{{stronglyConnectedComponents | number}}</td>
+                    </tr>
+                    <tr ng-if="stronglyConnectedComponents!=0">
+                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
+                        <td>{{stronglyConnectedComponentsMinEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stronglyConnectedComponents!=0">
+                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
+                        <td>{{stronglyConnectedComponentsMaxEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stronglyConnectedComponents!=0">
+                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
+                        <td>{{stronglyConnectedComponentsAvgEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="averageDiameter!=0">
+                        <td>Average Diameter:</td>
+                        <td>{{averageDiameter | number}}</td>
+                    </tr>
+                    <tr ng-if="giantComponentEdges!=0">
+                        <td>Giant Component Edges:</td>
+                        <td>{{giantComponentEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="giantComponentNodes!=0">
+                        <td>Giant Component Nodes:</td>
+                        <td>{{giantComponentNodes | number}}</td>
+                    </tr>
+                    <tr ng-if="giantComponentDiameter!=0">
+                        <td>Giant Component Diameter:</td>
+                        <td>{{giantComponentDiameter | number}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h3>Node degree distribution:</h3>
+                <div id="distribution-chart"></div>
+            </div>
         </div>
     </bg-pane>
 </bg-splitter>

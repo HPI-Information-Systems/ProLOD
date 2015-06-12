@@ -1,6 +1,6 @@
 'use strict';
 
-define(['angular', './controllers'], function (angular) {
+define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
     angular.module('Prolod2.controllers')
         .controller("GraphCtrl", ['$scope', '$routeParams', 'routeBuilder', 'httpApi', function ($scope, $routeParams, routeBuilder, httpApi) {
@@ -19,12 +19,8 @@ define(['angular', './controllers'], function (angular) {
                 $scope.loading = false;
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
-                var keys = Object.keys(stats.nodeDegreeDistribution);
-                var values = keys.map(function (key) {
-                    return stats.nodeDegreeDistribution[key];
-                });
-                $scope.data.chart.labels = keys;
-                $scope.data.chart.data = [values];
+
+                drawChart(stats.nodeDegreeDistribution);
 
                 $scope.nodes = stats.nodes;
                 $scope.edges = stats.edges;
@@ -43,4 +39,27 @@ define(['angular', './controllers'], function (angular) {
             });
 
         }]);
+
+        function drawChart(distribution) {
+            var xaxis = "node degree", yaxis = "number of nodes";
+
+            var data = Object.keys(distribution).map(function (key) {
+                var obj = {};
+                obj[xaxis] = key;
+                obj[yaxis] = distribution[key];
+                return obj;
+            });
+
+            var width = 500, height = 300;
+            var svg = dimple.newSvg("#distribution-chart", width, height);
+            var myChart = new dimple.chart(svg, data);
+            var border = 50;
+            myChart.setBounds(border, 0.5 * border, width -1.5*border, height-1.5*border);
+            var x = myChart.addCategoryAxis("x", xaxis);
+            //x.addOrderRule("Date");
+            myChart.addMeasureAxis("y", yaxis);
+            myChart.addSeries(null, dimple.plot.bar);
+            myChart.draw();
+        }
+
 });
