@@ -14,7 +14,7 @@ define(['angular', './controllers'], function (angular) {
                         liSelected: 'tree-selected',
                         iExpanded: 'glyphicon glyphicon-triangle-bottom',
                         iCollapsed: 'glyphicon glyphicon-triangle-right',
-                        iLeaf: 'glyphicon glyphicon-asterisk',
+                        iLeaf: 'glyphicon glyphicon-triangle-bottom',
                         label: 'a6',
                         labelSelected: 'a8'
                     }
