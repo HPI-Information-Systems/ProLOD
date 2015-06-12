@@ -17,6 +17,8 @@ define(['angular', './directives'], function (angular) {
 
                 var color = $scope.colorFunction;
 
+                var showArrows = $scope.showArrows == 'true';
+
                 var svg = d3.select(element[0])
                     .append("svg")
                     .attr("width", width)
@@ -101,7 +103,8 @@ define(['angular', './directives'], function (angular) {
                 controller: ['$scope', '$http', function ($http) { }],
                 scope: {
                     graph: '=',
-                    colorFunction: '='
+                    colorFunction: '=',
+                    showArrows: '@'
                 },
                 restrict: 'EA',
                 template: '<div>{{graph.name}} ({{graph.occurences}}x)</div>'
