@@ -18,13 +18,13 @@ define(["angular", "./services"], function () {
 
         return {
             getDatasets: function () {
-                return $http.get(uri(['server', 'datasets']));
+                return getCached(uri(['server', 'datasets']));
             },
             getGraphStatistics: function (dataset, groups) {
                 return getCached(uri(['server', 'graphstatistics', dataset]), {groups: groups});
             },
             getGraphPatternStatistics: function (dataset, groups, pattern) {
-                return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {groups: groups});
+                return getCached(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {groups: groups});
             },
             getGraphDetail: function (dataset, groups, pattern, detail) {
                 return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern, detail]),
