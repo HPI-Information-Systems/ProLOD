@@ -117,11 +117,14 @@ class DatabaseConnection(config : Configuration) {
 	def getStatistics(s: String) : Map[String, String] = {
 		var statistics = scala.collection.mutable.Map[String, String]()
 		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT nodedegreedistribution, averagelinks, edges FROM " + s+ ".graphstatistics")
+		val resultSet = statement.executeQuery("SELECT nodedegreedistribution, averagelinks, edges, gcnodes, connectedcomponents, stronglyconnectedcomponents FROM " + s+ ".graphstatistics")
 		while ( resultSet.next() ) {
 			statistics += ("nodedegreedistribution" -> resultSet.getString("nodedegreedistribution"))
 			statistics += ("averagelinks" -> resultSet.getString("averagelinks"))
 			statistics += ("edges" -> resultSet.getString("edges"))
+			statistics += ("gcnodes" -> resultSet.getString("gcnodes"))
+			statistics += ("connectedcomponents" -> resultSet.getString("connectedcomponents"))
+			statistics += ("stronglyconnectedcomponents" -> resultSet.getString("stronglyconnectedcomponents"))
 		}
 		statistics
 	}
@@ -222,7 +225,7 @@ class DatabaseConnection(config : Configuration) {
 		}
 		try {
 			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT)")
+			var createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT)")
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
@@ -331,10 +334,10 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
-	def insertStatistics(name: String, nodes: String, links: Double, edges: Int) = {
+	def insertStatistics(name: String, nodes: String, links: Double, edges: Int, gcNodes : Int, connectedcomponents : Int, stronglyconnectedcomponents : Int) = {
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, edges) VALUES ('" + nodes + "'," + links + ", " + edges + ")")
+			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, edges, gcnodes, connectedcomponents, stronglyconnectedcomponents) VALUES ('" + nodes + "'," + links + ", " + edges + ", " + gcNodes + ", " + connectedcomponents + ", " + stronglyconnectedcomponents + ")")
 		} catch {
 			case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
 			case e: SqlException => println(e.getMessage)
