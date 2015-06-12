@@ -43,15 +43,15 @@ define(['angular', './directives'], function (angular) {
                             return d;
                         })
                         .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 19)
+                        .attr("refX", 16)
                         .attr("refY", 0)
-                        .attr("markerWidth", 6)
-                        .attr("markerHeight", 6)
+                        .attr("markerWidth", 10)
+                        .attr("markerHeight", 10)
                         .attr("orient", "auto")
                         .append("path")
                         .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
                         .style("stroke", "#BBBBBB")
-                        .style("stroke-width",1.3)
+                        .style("stroke-width",1.1)
                         .style("opacity", "1");
                 }
 
