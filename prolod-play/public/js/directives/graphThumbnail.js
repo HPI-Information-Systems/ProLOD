@@ -2,9 +2,7 @@
 
 define(['angular', './directives'], function (angular) {
 
-    angular.module('Prolod2.directives')
-        .directive('prolodGraphThumbnail', [function () {
-
+    angular.module('Prolod2.directives').directive('prolodGraphThumbnail', [function () {
             function linkFunction($scope, element, attrs) {
 
                 var graph = buildGraph($scope.graph);
