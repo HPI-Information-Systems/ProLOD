@@ -17,7 +17,7 @@ define(['angular', './directives'], function (angular) {
 
                 var color = $scope.colorFunction;
 
-                var showArrows = $scope.showArrows == 'false';
+                var showArrows = $scope.showArrows == 'true';
 
                 var svg = d3.select(element[0])
                     .append("svg")
