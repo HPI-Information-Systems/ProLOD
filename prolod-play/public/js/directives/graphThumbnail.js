@@ -72,11 +72,9 @@ define(['angular', './directives'], function (angular) {
                 //if it's the second view
                 if (showArrows) {
                     svg.append("defs").selectAll("marker")
-                        .data(["suit", "licensing", "resolved"])
+                        .data(["arrow"])
                         .enter().append("marker")
-                        .attr("id", function (d) {
-                            return d;
-                        })
+                        .attr("id", function (d) { return d; })
                         .attr("viewBox", "0 -5 10 10")
                         .attr("refX", 16)
                         .attr("refY", 0)
@@ -89,18 +87,12 @@ define(['angular', './directives'], function (angular) {
                         .style("stroke-width",1.1)
                         .style("opacity", "1");
 
-                        node.on("mouseover", mouseover);
-
-                }
-
-
-                function mouseover() {
                     node.append("svg:title")
                         .text(
-                            function(d){
-                                return ("uri: "+ d.uri)
-                            }
-                         );
+                        function(d){
+                            return ("uri: "+ d.uri)
+                        }
+                    );
                 }
 
                 force.nodes(graph.nodes)
