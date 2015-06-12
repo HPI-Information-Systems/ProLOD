@@ -111,7 +111,8 @@ define(['angular', './directives'], function (angular) {
                 var nodeMap = {};
                 scopeGraph.nodes.forEach(function (node) {
                     var n = {
-                        group: node.group
+                        group: node.group,
+                        uri: node.uri
                     };
                     nodeMap[node.id] = n;
                     graph.nodes.push(n)
