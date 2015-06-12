@@ -20,7 +20,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
             $scope.limit = 10;
             function increaseLimit() {
-                $scope.limit+= 1;
+                $scope.limit += 3;
 
                 if($scope.limit < $scope.data.pattern.length){
                     $timeout(increaseLimit, 50);

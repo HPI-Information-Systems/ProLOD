@@ -24,7 +24,7 @@ angular.module('bgDirectives', [])
         var handler = angular.element('<div class="split-handler"></div>');
         var pane1 = scope.panes[0];
         var pane2 = scope.panes[1];
-        var vertical = scope.orientation == 'vertical';
+        var vertical = scope.orientation === 'vertical';
         var pane1Min = pane1.minSize || 0;
         var pane2Min = pane2.minSize || 0;
         var drag = false;
@@ -86,7 +86,7 @@ angular.module('bgDirectives', [])
         });
 
         angular.element($window).bind('resize', function() {
-          if(lastPos == -1) // not moved yet
+          if(lastPos === -1) // not moved yet
             return;
 
           var bounds = element[0].getBoundingClientRect();
