@@ -133,7 +133,7 @@ class DatabaseConnection(config : Configuration) {
 				}
 
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
-				patterns :::= List(new Pattern(id, "", 1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
 		} catch {
 			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + s)
