@@ -72,7 +72,7 @@ define(['angular', './directives'], function (angular) {
                 //if it's the second view
                 if (showArrows) {
                     svg.append("defs").selectAll("marker")
-                        .data(["arrow"])
+                        .data(["suit", "licensing", "resolved"])
                         .enter().append("marker")
                         .attr("id", function (d) { return d; })
                         .attr("viewBox", "0 -5 10 10")

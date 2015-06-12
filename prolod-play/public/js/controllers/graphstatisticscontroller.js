@@ -57,7 +57,8 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             myChart.setBounds(border, 0.5 * border, width -1.5*border, height-1.5*border);
             var x = myChart.addCategoryAxis("x", xaxis);
             x.addOrderRule(xaxis);
-            myChart.addMeasureAxis("y", yaxis);
+            var y = myChart.addMeasureAxis("y", yaxis);
+            y.tickFormat = "d";
             myChart.addSeries(null, dimple.plot.bar);
             myChart.draw();
         }
