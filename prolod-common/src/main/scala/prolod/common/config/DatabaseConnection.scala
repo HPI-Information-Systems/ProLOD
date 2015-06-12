@@ -7,6 +7,7 @@ import com.typesafe.slick.driver.db2.DB2Driver
 import com.typesafe.slick.driver.db2.DB2Driver.api._
 import prolod.common.models.{PatternFromDB, Pattern, Group, Dataset}
 import slick.jdbc.{GetResult, StaticQuery => Q}
+import scala.collection.mutable
 import scala.slick.jdbc.StaticQuery
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.slick.jdbc.JdbcBackend.Session
@@ -15,6 +16,7 @@ import scala.collection.JavaConverters._
 import play.api.libs.json._
 import prolod.common.models.PatternFormats.patternFormat
 import prolod.common.models.PatternFormats.patternDBFormat
+import scala.collection.mutable.Map
 
       /*
 case class Schemata(id : String, schema_name : String, entities : Int, tuples : Int)
@@ -102,6 +104,17 @@ class DatabaseConnection(config : Configuration) {
 		datasets
 	 }
 
+	def getStatistics(s: String) : Map[String, String] = {
+		var statistics = scala.collection.mutable.Map[String, String]()
+		val statement = connection.createStatement()
+		val resultSet = statement.executeQuery("SELECT nodedegreedistribution, averagelinks, edges FROM " + s+ ".graphstatistics")
+		while ( resultSet.next() ) {
+			statistics += ("nodedegreedistribution" -> resultSet.getString("nodedegreedistribution"))
+			statistics += ("averagelinks" -> resultSet.getString("averagelinks"))
+			statistics += ("edges" -> resultSet.getString("edges"))
+		}
+		statistics
+	}
 
 	def getColoredPatterns(s: String, id : Int): List[Pattern] = {
 		var patterns : List[Pattern] = Nil
@@ -111,6 +124,14 @@ class DatabaseConnection(config : Configuration) {
 			while ( resultSet.next() ) {
 				val pattern = resultSet.getString("pattern")
 				// val occurences = resultSet.getInt("occurences")
+
+				val patternJsonT = Json.parse(pattern).validate[PatternFromDB]
+				val patternsV = List(patternJsonT).filter(p => p.isSuccess).map(p => p.get)
+				val errors = List(patternJsonT).filter(p => p.isError)
+				if (errors.nonEmpty) {
+					println("Could not validate " + errors)
+				}
+
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
 				patterns :::= List(new Pattern(id, "", 1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
@@ -159,6 +180,12 @@ class DatabaseConnection(config : Configuration) {
 
 		try {
 			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("DROP TABLE "+name+".patterns")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			var createStatement = connection.createStatement()
 			var createResultSet = createStatement.execute("CREATE TABLE "+name+".patterns (id INT not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), pattern CLOB, occurences INT, PRIMARY KEY (id))")
 		} catch {
 			case e : SqlSyntaxErrorException => println("Table already exists")
@@ -166,9 +193,28 @@ class DatabaseConnection(config : Configuration) {
 
 		try {
 			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("DROP TABLE "+name+".coloredpatterns")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			var createStatement = connection.createStatement()
 			var createResultSet = createStatement.execute("CREATE TABLE "+name+".coloredpatterns (id INT, pattern CLOB)")
 		} catch {
 			case e : SqlSyntaxErrorException => println("Table already exists")
+		}
+
+		try {
+			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("DROP TABLE "+name+".graphstatistics")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT)")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 		/*
 				db withSession((session: Session) => {
@@ -218,30 +264,41 @@ class DatabaseConnection(config : Configuration) {
 	def insertPatterns(name: String, patterns: util.HashMap[String, Integer], coloredPatterns: util.HashMap[Integer, util.List[String]]) {
 		var id : Int = 0
 		val coloredPatternsMap = coloredPatterns.asScala.toMap
-		patterns.asScala.toMap.foreach { case (pattern, occurences) => {
-			try {
-				val statement = connection.createStatement()
-				val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (PATTERN, OCCURENCES) VALUES ('" + pattern + "'," + occurences + ")")
-			} catch {
-				case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
-				case e: SqlException => {
-					println(e.getMessage)
-					println(pattern)
-				}
-			}
-			coloredPatternsMap.get(id).foreach { case (pattern) =>
+		patterns.asScala.toMap.foreach {
+			case (pattern, occurences) => {
 				try {
 					val statement = connection.createStatement()
-					val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + pattern + "')")
+					val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (PATTERN, OCCURENCES) VALUES ('" + pattern + "'," + occurences + ")")
 				} catch {
+					case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
 					case e: SqlException => {
 						println(e.getMessage)
-						println(pattern)
 					}
 				}
+				coloredPatternsMap.get(id).foreach { case (pattern) =>
+					try {
+						val statement = connection.createStatement()
+						val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + pattern + "')")
+						println(pattern)
+					} catch {
+						case e: SqlException => {
+							println(e.getMessage)
+							println(pattern)
+						}
+					}
+				}
+				id += 1
 			}
-			id += 1
-			}
+		}
+	}
+
+	def insertStatistics(name: String, nodes: String, links: Double, edges: Int) = {
+		try {
+			val statement = connection.createStatement()
+			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, edges) VALUES ('" + nodes + "'," + links + ", " + edges + ")")
+		} catch {
+			case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
+			case e: SqlException => println(e.getMessage)
 		}
 	}
 

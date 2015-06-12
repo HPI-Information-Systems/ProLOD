@@ -21,6 +21,7 @@ class GraphLodImport(var db: DatabaseConnection, name : String, namespace: Strin
 	// TODO tuples
 	db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount)
 	db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns)
+	db.insertStatistics(name, graphLod.nodeDegreeDistribution.toString, graphLod.averageLinks, graphLod.graphFeatures.getEdgeCount)
 
 	//db.insertStats(name, graphLod)
 
