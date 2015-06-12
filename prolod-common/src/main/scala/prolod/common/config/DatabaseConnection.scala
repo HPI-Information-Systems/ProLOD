@@ -133,7 +133,7 @@ class DatabaseConnection(config : Configuration) {
 				}
 
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
-				patterns :::= List(new Pattern(id, "", 1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
 		} catch {
 			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + s)
@@ -186,7 +186,7 @@ class DatabaseConnection(config : Configuration) {
 		}
 		try {
 			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("CREATE TABLE "+name+".patterns (id INT not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), pattern CLOB, occurences INT, PRIMARY KEY (id))")
+			var createResultSet = createStatement.execute("CREATE TABLE "+name+".patterns (id INT not null GENERATED ALWAYS AS IDENTITY (START WITH 0 INCREMENT BY 1), pattern CLOB, occurences INT, PRIMARY KEY (id))")
 		} catch {
 			case e : SqlSyntaxErrorException => println("Table already exists")
 		}
@@ -275,15 +275,16 @@ class DatabaseConnection(config : Configuration) {
 						println(e.getMessage)
 					}
 				}
-				coloredPatternsMap.get(id).foreach { case (pattern) =>
+				val cPattern = coloredPatternsMap.get(id).get.asScala.toList
+				cPattern.foreach { case (coloredpattern) =>
 					try {
 						val statement = connection.createStatement()
-						val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + pattern + "')")
-						println(pattern)
+						val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
+						// println(pattern)
 					} catch {
 						case e: SqlException => {
 							println(e.getMessage)
-							println(pattern)
+							println(coloredpattern)
 						}
 					}
 				}
