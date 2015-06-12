@@ -51,7 +51,8 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             });
 
             var width = 500, height = 300;
-            var svg = dimple.newSvg("#distribution-chart", width, height);
+            var svg = dimple.newSvg("#distribution-chart", "100%", "100%");
+            svg.attr("viewBox", "0 0 500 300");
             var myChart = new dimple.chart(svg, data);
             var border = 50;
             myChart.setBounds(border, 0.5 * border, width -1.5*border, height-1.5*border);

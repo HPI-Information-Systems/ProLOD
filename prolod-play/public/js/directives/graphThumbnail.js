@@ -25,9 +25,9 @@ define(['angular', './directives'], function (angular) {
                     .attr("height", height)
                     .attr("pointer-events", "all")
                     .attr("preserveAspectRatio", "xMinYMin meet")
-                    .on('tick', function() {
+                    /*.on('tick', function() {
                           var g = svg.select('g');
-                          svg.attr("viewBox", "0 0 300 300") })
+                          svg.attr("viewBox", "0 0 300 300") })*/
                     .append('svg:g');
 
                 svg.append('svg:rect')
