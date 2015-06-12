@@ -1,4 +1,5 @@
 <div id="view" class="graph-grid">
+    <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
     <a ng-repeat="pattern in data.pattern" href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}">
         <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction" show-arrows="false"></prolod-graph-thumbnail>
     </a>

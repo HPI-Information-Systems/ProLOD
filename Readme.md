@@ -9,6 +9,8 @@ commandline
 
 - install sbt
 - execute ```sbt "project prolod_play" run```
+- use -Dconfig.file=<path>/application.conf
+
 
 idea
 ----

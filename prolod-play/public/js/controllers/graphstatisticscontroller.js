@@ -13,7 +13,10 @@ define(['angular', './controllers'], function (angular) {
 
             $scope.colorFunction = function(d) { return 'white'; };
 
+            $scope.loading = true;
+
             httpApi.getGraphStatistics($routeParams.dataset, $routeParams.group).then(function (data) {
+                $scope.loading = false;
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
                 var keys = Object.keys(stats.nodeDegreeDistribution);

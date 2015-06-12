@@ -20,7 +20,10 @@ define(['angular', './controllers'], function (angular) {
                 return colorHash(d.group);
             };
 
+            $scope.loading = true;
+
             httpApi.getGraphPatternStatistics($routeParams.dataset, [$routeParams.group], pattern).then(function(data) {
+                $scope.loading = false;
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
             });

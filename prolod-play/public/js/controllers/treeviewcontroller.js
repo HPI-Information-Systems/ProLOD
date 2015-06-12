@@ -38,7 +38,11 @@ define(['angular', './controllers'], function (angular) {
              ]
              */
 
+            $scope.loading = true;
+
             httpApi.getDatasets().then(function (evt) {
+                $scope.loading = false;
+
                 var data = evt.data.datasets.map(function (ds) {
                     return {
                         name: ds.name,
@@ -61,6 +65,12 @@ define(['angular', './controllers'], function (angular) {
             $scope.onSelection = function (selected) {
                 var params = angular.extend({},$route.current.params);
                 if ($route.current.activetab == 'index') {
+                    var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
+                    $location.path(url);
+                    return;
+                }
+
+                if ($route.current.activetab == 'graphs' && $route.current.params.dataset != selected.dataset) {
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
                     $location.path(url);
                     return;

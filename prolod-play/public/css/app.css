@@ -99,6 +99,9 @@ body {
 }
 
 
+.tree-selected {
+    font-weight: bold;
+}
 
 .node {
     stroke: #000;

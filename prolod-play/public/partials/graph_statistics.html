@@ -1,6 +1,7 @@
 <bg-splitter orientation="vertical">
     <bg-pane>
         <div id="view" class="graph-grid">
+            <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
             <a ng-repeat="pattern in data.pattern"
                href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"></prolod-graph-thumbnail>
@@ -12,7 +13,7 @@
                     <svg width="200px" height="150px">
                         <g>
                             <rect width="200" height="150" fill="white"></rect>
-                            <circle class="node" r="15" style="fill: white;" cx="100" cy="75"></circle>
+                            <circle class="node" r="40" style="fill: white;" cx="100" cy="75"></circle>
                         </g>
                     </svg>
                 </div>
