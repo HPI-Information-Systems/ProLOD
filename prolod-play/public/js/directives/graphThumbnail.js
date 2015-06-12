@@ -17,7 +17,7 @@ define(['angular', './directives'], function (angular) {
 
                 var color = $scope.colorFunction;
 
-                var showArrows = $scope.showArrows == 'true';
+                var showArrows = $scope.showArrows == 'false';
 
                 var svg = d3.select(element[0])
                     .append("svg")
@@ -34,6 +34,27 @@ define(['angular', './directives'], function (angular) {
                     .attr('width', width)
                     .attr('height', height)
                     .attr('fill', 'white');
+
+                if (showArrows) {
+                    svg.append("defs").selectAll("marker")
+                        .data(["suit", "licensing", "resolved"])
+                        .enter().append("marker")
+                        .attr("id", function (d) {
+                            return d;
+                        })
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 16)
+                        .attr("refY", 0)
+                        .attr("markerWidth", 10)
+                        .attr("markerHeight", 10)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+                        .style("stroke", "#BBBBBB")
+                        .style("stroke-width",1.1)
+                        .style("opacity", "1");
+                }
+
 
                 var force = d3.layout.force()
                     .charge(-120)

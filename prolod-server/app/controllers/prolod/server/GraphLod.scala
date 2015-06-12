@@ -37,7 +37,7 @@ object GraphLod extends Controller {
   def getGraphPatternStatistics(datasetId: String, groups: List[Int], pattern: Int) = Action {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
-    val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
+    val patternList: List[Pattern] = db.getPatterns(datasetId)
 
     val data: GraphLodResult = GraphLodResult(datasetId)
     data.nodes = 2000
