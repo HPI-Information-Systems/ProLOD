@@ -101,8 +101,21 @@ define(['angular', './directives'], function (angular) {
                         }
                     );
 
+                    link.on("mouseover", mouseover);
+                    link.on("mouseout", mouseout);
+
                 }
 
+                function mouseover() {
+                    link.attr('stroke-width', 2);
+                    svg.append("defs").selectAll("marker")
+                        .enter().append("marker")
+                        .attr("refX", 1);
+                }
+
+                function mouseout() {
+                    link.attr('stroke-width', 1);
+                }
 
 
                 force.nodes(graph.nodes)
