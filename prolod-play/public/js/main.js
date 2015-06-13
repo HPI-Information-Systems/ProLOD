@@ -8,10 +8,8 @@ requirejs.config({
     'angular-route': ['../lib/angularjs/angular-route'],
     'ui-grid': ['../lib/ui-grid/ui-grid'],
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
-    'bg-splitter': ['../bg-splitter/js/splitter'],
     'd3': ['../lib/d3js/d3'],
     'dimple': ['../lib/dimple/dimple'],
-    'jquery': ['../lib/jquery/jquery']
 
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
@@ -47,7 +45,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
          './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller',
          './directives/directives', './directives/graphThumbnail',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
-         'angular-route', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'dimple', 'jquery'],
+         'angular-route', 'ui-grid', '../bg-splitter/js/splitter', 'treeControl', 'd3', 'dimple'],
   function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 

@@ -1,6 +1,6 @@
 'use strict';
 
-define(function () {
+define(['angular', 'd3'], function () {
 
     var ChartCtrl = function ($scope, routeBuilder) {
         $scope.updateBreadcrumb([{name: 'charts', url: routeBuilder.getGraphUrl()}]);

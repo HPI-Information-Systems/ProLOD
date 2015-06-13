@@ -1,5 +1,6 @@
 name := """prolod-play"""
 
+
 libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "1.4.0",
   "org.webjars" % "requirejs" % "2.1.17",
@@ -13,6 +14,6 @@ libraryDependencies ++= Seq(
 
 scalacOptions ++= Seq("-feature", "-language:reflectiveCalls")
 
-pipelineStages := Seq(/* rjs, */ digest, gzip)
+pipelineStages := Seq( rjs,  digest, gzip)
 
 // fork in run := true

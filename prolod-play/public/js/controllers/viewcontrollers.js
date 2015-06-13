@@ -2,7 +2,7 @@
 
 'use strict';
 
-define(function () {
+define(['angular'], function () {
 
   /* Controllers */
 
