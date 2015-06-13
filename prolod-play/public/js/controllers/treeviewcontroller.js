@@ -64,20 +64,20 @@ define(['angular', './controllers'], function (angular) {
 
             $scope.onSelection = function (selected) {
                 var params = angular.extend({},$route.current.params);
-                if ($route.current.activetab == 'index') {
+                if ($route.current.activetab === 'index') {
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
                     $location.url(url);
                     return;
                 }
 
-                if ($route.current.activetab == 'graphs' &&
-                    ($route.current.params.dataset != selected.dataset || ! selected.group)) {
+                if ($route.current.activetab === 'graphs' &&
+                    ($route.current.params.dataset !== selected.dataset || ! selected.group)) {
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
                     $location.url(url);
                     return;
                 }
 
-                if($route.current.params.dataset == selected.dataset) {
+                if($route.current.params.dataset === selected.dataset) {
                     if(selected.group) {
                         params.group = selected.group;
                     } else {

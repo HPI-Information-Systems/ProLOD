@@ -2,13 +2,13 @@
     <bg-pane>
         <div id="view" class="graph-grid">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
-            <a ng-repeat="pattern in data.pattern"
+            <a ng-repeat="pattern in data.pattern | limitTo: limit"
                href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern"
                                         color-function="colorFunction"></prolod-graph-thumbnail>
             </a>
 
-            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-show="data.pattern.length">
+            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-if="giantComponentEdges">
                 <div class="graph-cell">
                     <div>Giant Component: {{test}}</div>
                     <svg width="200px" height="150px">
@@ -38,51 +38,51 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="connectedComponents!=0">
+                    <tr ng-if="connectedComponents">
                         <td>Connected Components:</td>
                         <td class="alignright">{{connectedComponents | number}}</td>
                     </tr>
-                    <tr ng-if="connectedComponentsMinEdges!=0">
+                    <tr ng-if="connectedComponentsMinEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
                         <td class="alignright">{{connectedComponentsMinEdges | number}}</td>
                     </tr>
-                    <tr ng-if="connectedComponentsMaxEdges!=0">
+                    <tr ng-if="connectedComponentsMaxEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
                         <td class="alignright">{{connectedComponentsMaxEdges | number}}</td>
                     </tr>
-                    <tr ng-if="connectedComponentsAvgEdges!=0">
+                    <tr ng-if="connectedComponentsAvgEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
                         <td class="alignright">{{connectedComponentsAvgEdges | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponents!=0">
+                    <tr ng-if="stronglyConnectedComponents">
                         <td>Strongly Connected Components:</td>
                         <td class="alignright">{{stronglyConnectedComponents | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponentsMinEdges!=0">
+                    <tr ng-if="stronglyConnectedComponentsMinEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
                         <td class="alignright">{{stronglyConnectedComponentsMinEdges | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponentsMaxEdges!=0">
+                    <tr ng-if="stronglyConnectedComponentsMaxEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
                         <td class="alignright">{{stronglyConnectedComponentsMaxEdges | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponentsAvgEdges!=0">
+                    <tr ng-if="stronglyConnectedComponentsAvgEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
                         <td>{{stronglyConnectedComponentsAvgEdges | number}}</td>
                     </tr>
-                    <tr ng-if="averageDiameter!=0">
+                    <tr ng-if="averageDiameter">
                         <td>Average Diameter:</td>
                         <td class="alignright">{{averageDiameter | number}}</td>
                     </tr>
-                    <tr ng-if="giantComponentEdges!=0">
+                    <tr ng-if="giantComponentEdges">
                         <td>Giant Component - Edges:</td>
                         <td class="alignright">{{giantComponentEdges | number}}</td>
                     </tr>
-                    <tr ng-if="giantComponentNodes!=0">
+                    <tr ng-if="giantComponentNodes">
                         <td>Giant Component - Nodes:</td>
                         <td class="alignright">{{giantComponentNodes | number}}</td>
                     </tr>
-                    <tr ng-if="giantComponentDiameter!=0">
+                    <tr ng-if="giantComponentDiameter">
                         <td>Giant Component Diameter:</td>
                         <td class="alignright">{{giantComponentDiameter | number}}</td>
                     </tr>

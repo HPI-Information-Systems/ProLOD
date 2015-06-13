@@ -2,9 +2,7 @@
 
 define(['angular', './directives'], function (angular) {
 
-    angular.module('Prolod2.directives')
-        .directive('prolodGraphThumbnail', [function () {
-
+    angular.module('Prolod2.directives').directive('prolodGraphThumbnail', [function () {
             function linkFunction($scope, element, attrs) {
 
                 var graph = buildGraph($scope.graph);
@@ -17,14 +15,14 @@ define(['angular', './directives'], function (angular) {
 
                 var color = $scope.colorFunction;
 
-                var showArrows = $scope.showArrows == 'true';
+                var showArrows = $scope.showArrows === 'true';
 
                 var svg = d3.select(element[0])
                     .append("svg")
                     .attr("width", width)
                     .attr("height", height)
                     .attr("pointer-events", "all")
-                    .attr("preserveAspectRatio", "xMinYMin meet")
+                    .attr("preserveAspectRatio", "xMinYMin meet");
 
                 var g = svg.append('svg:g');
 
@@ -51,60 +49,57 @@ define(['angular', './directives'], function (angular) {
                     .attr("r", 5)
                     .style("fill", color);
 
-                var tickTime = 2000;
-                var initialTicks = 20;
+                var tickTime = 1000;
+                var initialTicks = 50;
 
                 var force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(40)
                     .size([width, height]);
 
-                setTimeout(function() {
-                    force.stop();
-                }, tickTime);
-
                 node.call(force.drag);
 
-                force.nodes(graph.nodes)
+                var forceNodes = force.nodes(graph.nodes)
                     .links(graph.links)
-                    .start()
-                    .on("tick", function () {
+                    .start();
 
-                            link.attr("x1", function (d) {return d.source.x;})
-                                .attr("y1", function (d) {return d.source.y;})
-                                .attr("x2", function (d) {return d.target.x;})
-                                .attr("y2", function (d) {return d.target.y;});
+                // do some initial ticks to decrease jumping
+                for (var i = 0; i < initialTicks; ++i) force.tick();
 
-                            var inf = 10000;
-                            var minX = inf, maxX = -inf, minY=inf, maxY=-inf;
-                            node.attr("cx", function (d) {
-                                maxX = Math.max(maxX, d.x);
-                                minX = Math.min(minX, d.x);
-                                return d.x;
-                            }).attr("cy", function (d) {                                        
-                                maxY = Math.max(maxY, d.y);
-                                minY = Math.min(minY, d.y);
-                                return d.y;
-                            });
+                // set svg update handler after initial ticks improves performance a lot!
+                forceNodes.on("tick", function () {
+                        link.attr("x1", function (d) {return d.source.x;})
+                            .attr("y1", function (d) {return d.source.y;})
+                            .attr("x2", function (d) {return d.target.x;})
+                            .attr("y2", function (d) {return d.target.y;});
 
-                            var padding = 10;
-                            minX -= padding;
-                            maxX += padding;
-                            minY -= padding;
-                            maxY += padding;
-                            minX = Math.min(minX, 0);
-                            minY = Math.min(minY, 0);
-                            maxX = Math.max(maxX, width);
-                            maxY = Math.max(maxY, height);
-                            var w = maxX - minX;
-                            var h = maxY - minY;
-                            svg.attr("viewBox", "" + minX + " " + minY + " " + w + " " + h);
+                        var inf = 1000000;
+                        var minX = inf, maxX = -inf, minY=inf, maxY=-inf;
+                        node.attr("cx", function (d) {
+                            maxX = Math.max(maxX, d.x);
+                            minX = Math.min(minX, d.x);
+                            return d.x;
+                        }).attr("cy", function (d) {
+                            maxY = Math.max(maxY, d.y);
+                            minY = Math.min(minY, d.y);
+                            return d.y;
+                        });
+
+                        var padding = 10;
+                        minX -= padding; maxX += padding;
+                        minY -= padding; maxY += padding;
+                        minX = Math.min(minX, 0); minY = Math.min(minY, 0);
+                        maxX = Math.max(maxX, width); maxY = Math.max(maxY, height);
+                        var w = maxX - minX; var h = maxY - minY;
+                        svg.attr("viewBox", "" + minX + " " + minY + " " + w + " " + h);
 
                         });
 
+                force.tick(); // one last tick that updates the nodes
 
-
-                for (var i = 0; i < initialTicks; ++i) force.tick();
+                setTimeout(function() {
+                    force.stop();
+                }, tickTime);
 
                 //if it's the second view
                 if (showArrows) {
