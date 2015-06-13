@@ -36,20 +36,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
                 drawChart(stats.nodeDegreeDistribution);
 
-                $scope.nodes = stats.nodes;
-                $scope.edges = stats.edges;
-                $scope.connectedComponents = stats.connectedComponents;
-                $scope.connectedComponentsMinEdges = stats.connectedComponentsMinEdges;
-                $scope.connectedComponentsMaxEdges = stats.connectedComponentsMaxEdges;
-                $scope.connectedComponentsAvgEdges = stats.connectedComponentsAvgEdges;
-                $scope.stronglyConnectedComponents = stats.stronglyConnectedComponents;
-                $scope.stronglyConnectedComponentsMinEdges = stats.stronglyConnectedComponentsMinEdges;
-                $scope.stronglyConnectedComponentsMaxEdges = stats.stronglyConnectedComponentsMaxEdges;
-                $scope.stronglyConnectedComponentsAvgEdges = stats.stronglyConnectedComponentsAvgEdges;
-                $scope.averageDiameter = stats.averageDiameter;
-                $scope.giantComponentEdges = stats.giantComponentEdges;
-                $scope.giantComponentNodes = stats.giantComponentNodes;
-                $scope.giantComponentDiameter = stats.giantComponentDiameter;
+                $scope.stats = stats;
             });
         }
     ]);

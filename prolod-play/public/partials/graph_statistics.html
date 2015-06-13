@@ -30,61 +30,61 @@
                     <thead>
                     <tr>
                         <td>Nodes:</td>
-                        <td class="alignright"><span id='number-default'>{{nodes | number}}</span></td>
+                        <td class="alignright"><span id='number-default'>{{stats.nodes | number}}</span></td>
                     </tr>
                     <tr>
                         <td>Edges:</td>
-                        <td class="alignright">{{edges | number}}</td>
+                        <td class="alignright">{{stats.edges | number}}</td>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="connectedComponents">
+                    <tr ng-if="stats.connectedComponents">
                         <td>Connected Components:</td>
-                        <td class="alignright">{{connectedComponents | number}}</td>
+                        <td class="alignright">{{stats.connectedComponents | number}}</td>
                     </tr>
-                    <tr ng-if="connectedComponentsMinEdges">
+                    <tr ng-if="stats.connectedComponentsMinEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
-                        <td class="alignright">{{connectedComponentsMinEdges | number}}</td>
+                        <td class="alignright">{{stats.connectedComponentsMinEdges | number}}</td>
                     </tr>
-                    <tr ng-if="connectedComponentsMaxEdges">
+                    <tr ng-if="stats.connectedComponentsMaxEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
-                        <td class="alignright">{{connectedComponentsMaxEdges | number}}</td>
+                        <td class="alignright">{{stats.connectedComponentsMaxEdges | number}}</td>
                     </tr>
-                    <tr ng-if="connectedComponentsAvgEdges">
+                    <tr ng-if="stats.connectedComponentsAvgEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
-                        <td class="alignright">{{connectedComponentsAvgEdges | number}}</td>
+                        <td class="alignright">{{stats.connectedComponentsAvgEdges | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponents">
+                    <tr ng-if="stats.stronglyConnectedComponents">
                         <td>Strongly Connected Components:</td>
-                        <td class="alignright">{{stronglyConnectedComponents | number}}</td>
+                        <td class="alignright">{{stats.stronglyConnectedComponents | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponentsMinEdges">
+                    <tr ng-if="stats.stronglyConnectedComponentsMinEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
-                        <td class="alignright">{{stronglyConnectedComponentsMinEdges | number}}</td>
+                        <td class="alignright">{{stats.stronglyConnectedComponentsMinEdges | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponentsMaxEdges">
+                    <tr ng-if="stats.stronglyConnectedComponentsMaxEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
-                        <td class="alignright">{{stronglyConnectedComponentsMaxEdges | number}}</td>
+                        <td class="alignright">{{stats.stronglyConnectedComponentsMaxEdges | number}}</td>
                     </tr>
-                    <tr ng-if="stronglyConnectedComponentsAvgEdges">
+                    <tr ng-if="stats.stronglyConnectedComponentsAvgEdges">
                         <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
-                        <td>{{stronglyConnectedComponentsAvgEdges | number}}</td>
+                        <td>{{stats.stronglyConnectedComponentsAvgEdges | number}}</td>
                     </tr>
-                    <tr ng-if="averageDiameter">
+                    <tr ng-if="stats.averageDiameter">
                         <td>Average Diameter:</td>
-                        <td class="alignright">{{averageDiameter | number}}</td>
+                        <td class="alignright">{{stats.averageDiameter | number}}</td>
                     </tr>
-                    <tr ng-if="giantComponentEdges">
+                    <tr ng-if="stats.giantComponentEdges">
                         <td>Giant Component - Edges:</td>
-                        <td class="alignright">{{giantComponentEdges | number}}</td>
+                        <td class="alignright">{{stats.giantComponentEdges | number}}</td>
                     </tr>
-                    <tr ng-if="giantComponentNodes">
+                    <tr ng-if="stats.giantComponentNodes">
                         <td>Giant Component - Nodes:</td>
-                        <td class="alignright">{{giantComponentNodes | number}}</td>
+                        <td class="alignright">{{stats.giantComponentNodes | number}}</td>
                     </tr>
-                    <tr ng-if="giantComponentDiameter">
+                    <tr ng-if="stats.giantComponentDiameter">
                         <td>Giant Component Diameter:</td>
-                        <td class="alignright">{{giantComponentDiameter | number}}</td>
+                        <td class="alignright">{{stats.giantComponentDiameter | number}}</td>
                     </tr>
                     </tbody>
                 </table>
