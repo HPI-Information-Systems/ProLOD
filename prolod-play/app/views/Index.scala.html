@@ -5,19 +5,20 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>ProLOD++</title>
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("img/favicon.png")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.css")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/ui-grid/ui-grid.css")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("lib/angular-tree-control/css/tree-control.css")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("css/app.css")">
-        <link rel="stylesheet" href="@routes.Assets.versioned("bg-splitter/css/style.css")">
-        <script data-main="@routes.Assets.versioned("js/main.js")" src="@routes.Assets.versioned("lib/requirejs/require.js")"></script>
+        <link rel="shortcut icon" type="image/png" href="@controllers.prolod.client.routes.Assets.versioned("img/favicon.png")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("bootstrap/css/bootstrap.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("ui-grid/ui-grid.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("angular-tree-control/css/tree-control.css")">
+        <link rel="stylesheet" href="@controllers.prolod.client.routes.Assets.versioned("css/app.css")">
+        <link rel="stylesheet" href="@controllers.prolod.client.routes.Assets.versioned("bg-splitter/css/style.css")">
+        <script data-main="@controllers.prolod.client.routes.Assets.versioned("js/main.js")"
+                src="@routes.Assets.versioned("requirejs/require.js")"></script>
 
     </head>
     <body ng-controller="MainCtrl" ng-init="init()">
- 
+
         <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container-fluid"> 
+            <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
@@ -41,7 +42,7 @@
         <div class="container-fluid heightlimited">
             <div class="row heightlimited" ng-cloak>
                 <div class="col-xs-2 sidebar ng-cloak" ng-controller="TreeViewController">
-                    <i class="glyphicon glyphicon-refresh" ng-show="loading" style="margin-left: 20px;"></i>
+                    <i class="glyphicon glyphicon-refresh" ng-show="loading" style="margin-left: 20px ;"></i>
                     <treecontrol class=""
                     tree-model="model.treeData"
                     options="model.treeOptions"
@@ -78,11 +79,10 @@
 
 
                     <div class="row view-container" ng-view>loading...</div>
-                    <!--<div class="">Scala version: @util.Properties.versionNumberString</div>-->
+                    <!--<div class="">Scala version:   @util.Properties.versionNumberString</div>-->
 
-                </div>
-                @*<div class="row">Version: v<span app-version></span></div>*@
             </div>
+            @*<div class="row">Version: v<span app-version></span></div>*@
         </div>
 
     </body>

@@ -4,9 +4,14 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.11.6"
 
+lazy val root = (project in file("."))
+  .enablePlugins(PlayScala)
+  .dependsOn(prolod_play)
+  .dependsOn(prolod_server)
+
 lazy val prolod_play = (project in file("prolod-play"))
   .enablePlugins(PlayScala)
-  .dependsOn(prolod_server)
+  .dependsOn(prolod_common)
 
 lazy val prolod_server = (project in file("prolod-server"))
   .enablePlugins(PlayScala)

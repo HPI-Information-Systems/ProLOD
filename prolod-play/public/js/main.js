@@ -4,13 +4,12 @@
 
 requirejs.config({
   paths: {
-    'angular': ['../lib/angularjs/angular'],
-    'angular-route': ['../lib/angularjs/angular-route'],
-    'ui-grid': ['../lib/ui-grid/ui-grid'],
-    'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
-    'd3': ['../lib/d3js/d3'],
-    'dimple': ['../lib/dimple/dimple'],
-
+    'angular': ['/lib/angularjs/angular'],
+    'angular-route': ['/lib/angularjs/angular-route'],
+    'ui-grid': ['/lib/ui-grid/ui-grid'],
+    'treeControl': ['/lib/angular-tree-control/angular-tree-control'],
+    'd3': ['/lib/d3js/d3'],
+    'dimple': ['/lib/dimple/dimple']
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
   shim: {
