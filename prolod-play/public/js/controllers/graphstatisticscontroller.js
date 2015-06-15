@@ -54,15 +54,44 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         }
     ]);
 
+    // Pass in an axis object and an interval.
+    var cleanAxis = function (axis, oneInEvery) {
+        // This should have been called after draw, otherwise do nothing
+        if (axis.shapes.length > 0) {
+            // Leave the first label
+            var del = 0;
+            // If there is an interval set
+            if (oneInEvery > 1) {
+                // Operate on all the axis text
+                axis.shapes.selectAll("text").each(function (d) {
+                    // Remove all but the nth label
+                    if (del % oneInEvery !== 0) {
+                        this.remove();
+                        // Find the corresponding tick line and remove
+                        axis.shapes.selectAll("line").each(function (d2) {
+                            if (d === d2) {
+                                this.remove();
+                            }
+                        });
+                    }
+                    del += 1;
+                });
+            }
+        }
+    };
+
     function drawChart(distribution) {
         var xaxis = "node degree", yaxis = "number of nodes";
 
-        var data = Object.keys(distribution).map(function (key) {
+        var keys = Object.keys(distribution).map(function(i) { return parseInt(i, 10)});
+        var max = Math.max.apply(null, keys);
+        var data = [];
+        for(var i=1; i<=max; i++) {
             var obj = {};
-            obj[xaxis] = key;
-            obj[yaxis] = distribution[key];
-            return obj;
-        });
+            obj[xaxis] = i;
+            obj[yaxis] = distribution[i] || 0;
+            data.push(obj);
+        }
 
         var width = 500, height = 300;
         var svg = dimple.newSvg("#distribution-chart", "100%", "100%");
@@ -77,6 +106,9 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         y.tickFormat = "d";
         myChart.addSeries(null, dimple.plot.bar);
         myChart.draw();
+
+        var maxLabels = 50;
+        cleanAxis(x, Math.ceil(data.length / maxLabels));
 
         window.onresize = function () {
             myChart.draw(0, true);
