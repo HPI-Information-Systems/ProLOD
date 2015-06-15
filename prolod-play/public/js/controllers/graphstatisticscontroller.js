@@ -86,7 +86,8 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         var keys = Object.keys(distribution).map(function(i) { return parseInt(i, 10)});
         var max = Math.max.apply(null, keys);
         var data = [];
-        for(var i=1; i<=max; i++) {
+        //for(var i=1; i<max; i++) {
+        for(var i in keys) {
             var obj = {};
             obj[xaxis] = i;
             obj[yaxis] = distribution[i] || 0;
