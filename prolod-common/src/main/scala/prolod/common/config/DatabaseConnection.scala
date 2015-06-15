@@ -2,34 +2,34 @@ package prolod.common.config
 
 import java.sql.{Connection, DriverManager}
 import java.util
-import com.ibm.db2.jcc.am.{SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
-import com.typesafe.slick.driver.db2.DB2Driver
-import com.typesafe.slick.driver.db2.DB2Driver.api._
-import prolod.common.models.{PatternFromDB, Pattern, Group, Dataset}
-import slick.jdbc.{GetResult, StaticQuery => Q}
-import scala.collection.mutable
-import scala.slick.jdbc.StaticQuery
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.slick.jdbc.JdbcBackend.Session
-import scala.util.control.NonFatal
-import scala.collection.JavaConverters._
-import play.api.libs.json._
-import prolod.common.models.PatternFormats.patternFormat
-import prolod.common.models.PatternFormats.patternDBFormat
-import scala.collection.mutable.Map
 
-      /*
+import com.ibm.db2.jcc.am.{SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
+import com.typesafe.slick.driver.db2.DB2Driver.api._
+import play.api.libs.json._
+import prolod.common.models.PatternFormats.patternDBFormat
+import prolod.common.models.{Dataset, Group, Pattern, PatternFromDB}
+import slick.profile.SqlStreamingAction
+
+import scala.Function.tupled
+import scala.collection.JavaConverters._
+import scala.collection.mutable
+import scala.collection.mutable.Map
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import scala.slick.jdbc.JdbcBackend.Session
+
+/*
 case class Schemata(id : String, schema_name : String, entities : Int, tuples : Int)
 
 class Schematas(tag: Tag)
-	extends Table[Schemata](tag, "PROLOD_MAIN.SCHEMATA") {
+extends Table[Schemata](tag, "PROLOD_MAIN.SCHEMATA") {
 
-	def id = column[String]("id", O.PrimaryKey)
-	def schema_name = column[String]("schema_name", O.NotNull)
-	def entities = column[Int]("entities", O.NotNull)
-	def tuples = column[Int]("tuples", O.NotNull)
+def id = column[String]("id", O.PrimaryKey)
+def schema_name = column[String]("schema_name", O.NotNull)
+def entities = column[Int]("entities", O.NotNull)
+def tuples = column[Int]("tuples", O.NotNull)
 
-	def * = (id, schema_name, entities, tuples) <> (Schemata.tupled, Schemata.unapply)
+def * = (id, schema_name, entities, tuples) <> (Schemata.tupled, Schemata.unapply)
 }
 */
 
@@ -40,82 +40,66 @@ class DatabaseConnection(config : Configuration) {
 
 	}
       */
-	var db : Database = null
 
 	var driver = com.typesafe.slick.driver.db2.DB2Driver.api
 
 	val url = "jdbc:db2://"+config.dbDb2Host+":"+config.dbDb2Port+"/"+config.dbDb2Database
-	var username = config.dbDb2Username
-	var password = config.dbDb2Password
+	val username = config.dbDb2Username
+	val password = config.dbDb2Password
 	// Class.forName("com.typesafe.slick.driver.db2.DB2Driver")
-	Class.forName("com.ibm.db2.jcc.DB2Driver");
+	Class.forName("com.ibm.db2.jcc.DB2Driver")
 	// DriverManager.getConnection(url, username, password)
 
-	db = Database.forURL(url, username, password, driver="com.ibm.db2.jcc.DB2Driver")
+	val db:Database = Database.forURL(url, username, password, driver="com.ibm.db2.jcc.DB2Driver")
 	var connection:Connection = DriverManager.getConnection(url, username, password)
 
 
-	def getDB() : Database = {
-		db
+	/**
+	 * execute sql and convert async result to sync - http://slick.typesafe.com/doc/3.0.0/sql.html
+	 */
+	def execute[T](implicit sql: SqlStreamingAction[Vector[T], T, Effect]): Vector[T] = {
+		val q = db.run(sql)
+		Await.result(q, Duration.Inf)
+		val value = q.value.get
+		value.get
 	}
 
-	def getSuppliers(): DBIO[Seq[String]] =
-		sql"SELECT id from PROLOD_MAIN.SCHEMATA".as[String]
-
-	def selectDatasets(implicit session: Session): Unit = {
-		/*
-		implicit val getResult = GetResult(r => Schemata(r.<<, r.<<, r.<<, r.<<))
-		StaticQuery.queryNA[Schemata]("select * from PROLOD_MAIN.SCHEMATA") foreach { c =>
-			println("* " + c.id)
-		}
-		*/
-	}
-
-	def getGroups(s: String): List[Group] = {
-		var groups : List[Group] = Nil
+	def getGroups(s: String): Seq[Group] = {
+		val table = s
+		var sql = sql"SELECT label, cluster_size FROM #${table}.CLUSTERS WHERE username = 'ontology'".as[(String, Int)]
+		var id : Int = -1
 		try {
-			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT label, cluster_size FROM "+ s+".CLUSTERS WHERE username = 'ontology'")
-			var id : Int = 0
-			while ( resultSet.next() ) {
-				val label = resultSet.getString("label")
-				val size = resultSet.getInt("cluster_size")
-				groups :::= List(new Group(id, label, size))
+			val result = execute(sql)
+			result map tupled((label, cluster_size) => {
 				id += 1
-			}
+				new Group(id, label, cluster_size)
+			})
 		} catch {
 			case e : SqlSyntaxErrorException => println("This dataset has no clusters: " + s)
+			Nil
 		}
-		groups
 	}
+
 
 	def getDatasetEntities(name : String) : Int = {
-		var entities : Int = -1
-		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT entities FROM PROLOD_MAIN.SCHEMATA WHERE id = '" + name + "'")
-		while ( resultSet.next() ) {
-			entities = resultSet.getInt("entities")
-		}
-		entities
+		val sql = sql"SELECT entities FROM PROLOD_MAIN.SCHEMATA WHERE id = ${name}".as[Int]
+		execute(sql).headOption.getOrElse(-1)
 	}
 
-	def getDatasets() : List[Dataset] = {
-		var datasets : List[Dataset] = Nil
-		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT id, schema_name, entities FROM PROLOD_MAIN.SCHEMATA")
-		while ( resultSet.next() ) {
-			val id = resultSet.getString("id")
-			val name = resultSet.getString("schema_name")
-			val entities = resultSet.getInt("entities")
-			if (entities > 0) {
-				datasets :::= List(new Dataset(id, name, entities, getGroups(id)))
-			}
-		}
-		datasets
-	 }
+	def getDatasets(): Seq[Dataset] = {
+		var datasets: List[Dataset] = Nil
 
-	def getStatistics(s: String) : Map[String, String] = {
-		var statistics = scala.collection.mutable.Map[String, String]()
+		val sql = sql"SELECT id, schema_name, entities FROM PROLOD_MAIN.SCHEMATA".as[(String, String, Int)]
+
+		val result = execute(sql) map tupled((id, schema, entities) => {
+			new Dataset(id, schema, entities, getGroups(id))
+		})
+		result.filter(_.size > 0)
+	}
+
+
+	def getStatistics(s: String) : mutable.Map[String, String] = {
+		var statistics = mutable.Map[String, String]()
 		val statement = connection.createStatement()
 		val resultSet = statement.executeQuery("SELECT nodedegreedistribution, averagelinks, edges, gcnodes, connectedcomponents, stronglyconnectedcomponents FROM " + s+ ".graphstatistics")
 		while ( resultSet.next() ) {
@@ -240,7 +224,7 @@ class DatabaseConnection(config : Configuration) {
 			var createStatement = connection.createStatement()
 			var createResultSet = createStatement.execute("CREATE TABLE "+name+".CLUSTERS "+
 				"(                                                                   "+
-				 "       ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),    "+
+				"       ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),    "+
 				"USERNAME VARCHAR(50) DEFAULT 'default' NOT NULL,       "+
 				//"SESSION_ID INT NOT NULL,                    "+
 				//"SESSION_LOCAL_ID INT,                  "+
@@ -254,40 +238,40 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
-			/*
-					db withSession((session: Session) => {
-						(sql"""INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES) VALUES ('caterpillar','caterpillar',20,3)""")
-					}
-					*/
+		/*
+        db withSession((session: Session) => {
+          (sql"""INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES) VALUES ('caterpillar','caterpillar',20,3)""")
+        }
+        */
 
-		     /*
-		db withSession {
-			val schemata = TableQuery[Schematas]
-			schemata.insertStatement
-			var res1: String = "insert into PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') values (?,?,?,?)"
-			schemata += Schemata("caterpillar","caterpillar",20,3)
-			implicit session => schemata.run
-		}
-		*/
+		/*
+db withSession {
+  val schemata = TableQuery[Schematas]
+  schemata.insertStatement
+  var res1: String = "insert into PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') values (?,?,?,?)"
+  schemata += Schemata("caterpillar","caterpillar",20,3)
+  implicit session => schemata.run
+}
+*/
 
 
-		  /*
+		/*
 
-		val plainQuery = sql"INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)"
+  val plainQuery = sql"INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)"
 
-		println("Generated SQL for plain query:\n" + plainQuery.getStatement)
+  println("Generated SQL for plain query:\n" + plainQuery.getStatement)
 
-		// Execute the query
-		println(plainQuery.list)
-            */
+  // Execute the query
+  println(plainQuery.list)
+          */
 
-           /*
-		db withSession { implicit sess =>
-			val st = sess.createStatement()
-			st.execute("INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)")
+		/*
+db withSession { implicit sess =>
+val st = sess.createStatement()
+st.execute("INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)")
 
-		}
-             */
+}
+       */
 
 
 		// sql"INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar','20','3')"
