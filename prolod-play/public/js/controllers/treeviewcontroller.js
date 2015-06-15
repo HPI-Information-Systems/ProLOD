@@ -8,6 +8,7 @@ define(['angular', './controllers'], function (angular) {
                 treeOptions: {
                     nodeChildren: 'children',
                     dirSelectable: true,
+                    multiSelection: true,
                     injectClasses: {
                         ul: 'a1',
                         li: 'a2',
@@ -19,7 +20,8 @@ define(['angular', './controllers'], function (angular) {
                         labelSelected: 'a8'
                     }
                 },
-                treeData: []
+                treeData: [],
+                selectedNodes: []
             };
 
             /* [
@@ -63,23 +65,37 @@ define(['angular', './controllers'], function (angular) {
             });
 
             $scope.onSelection = function (selected) {
-                var params = angular.extend({},$route.current.params);
+                var params = angular.extend({}, $route.current.params);
                 if ($route.current.activetab === 'index') {
-                    var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
+                    var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: [selected.group]});
                     $location.url(url);
                     return;
                 }
 
                 if ($route.current.activetab === 'graphs' &&
                     ($route.current.params.dataset !== selected.dataset || ! selected.group)) {
-                    var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: selected.group});
+                    $scope.model.selectedNodes.length = 0;
+                    $scope.model.selectedNodes.push(selected);
+                    var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: [selected.group]});
                     $location.url(url);
                     return;
                 }
 
                 if($route.current.params.dataset === selected.dataset) {
                     if(selected.group) {
-                        params.group = selected.group;
+                        console.log(params.group);
+                        if(!params.group) {
+                            params.group = [];
+                        }
+                        if(typeof(params.group) == 'string') {
+                            params.group = [params.group];
+                        }
+                        var index = params.group.indexOf(selected.group);
+                        if(index >= 0) {
+                            params.group.splice(index, 1);
+                        } else {
+                            params.group.push(selected.group);
+                        }
                     } else {
                         params.group = undefined;
                     }
