@@ -46,7 +46,7 @@
                     tree-model="model.treeData"
                     options="model.treeOptions"
                     on-selection="onSelection(node)"
-                    selected-node="model.selected">
+                    selected-nodes="model.selectedNodes">
                         {{node.name}} ({{ node.size | number}}) <span class="glyphicon glyphicon-stop" ng-if="node.color" ng-style="{color: node.color}"></span>
                     </treecontrol>
                 </div>
