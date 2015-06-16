@@ -3,7 +3,7 @@
 define(['angular', 'd3', './directives'], function (angular, d3) {
 
     angular.module('Prolod2.directives').directive('prolodGraphThumbnail', [function () {
-            function linkFunction($scope, element, attrs) {
+            function linkFunction($scope, element, attrs, $modal) {
 
                 var graph = buildGraph($scope.graph);
 
@@ -134,16 +134,29 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     );
 
 
-                   // node.on("click",nodeclick);
+                    node.on("click",nodeclick);
                    /* link.on("mouseover", mouseover);
                     link.on("mouseout", mouseout);*/
 
                 }
 
 
-                /*function nodeclick(){
-                    alert("test");
-                }*/
+                function nodeclick(){
+                    //alert("test");
+                    function nodeclick(){
+                        $modal.open({
+                            animation: true,
+                            templateUrl: 'myModalContent.html',
+                            controller: 'PopupCtrl',
+                            //size: size,
+                            resolve: {
+                                items: function () {
+                                    return ["a", "b", "c"];
+                                }
+                            }
+                        });
+                    }
+                }
                 /*function mouseover() {
                     var link = d3.select(this);
                     link.style('stroke-width', 2);
