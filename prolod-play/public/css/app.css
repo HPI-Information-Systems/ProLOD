@@ -120,20 +120,8 @@ body {
     fill: none;
     stroke: #bbb;
     cursor: pointer;
+    stroke-width: 1.5px;
 }
-
-.node {
-    stroke: #000;
-    stroke-width: 1px;
-    cursor: pointer;
-}
-
-.link {
-    fill: none;
-    stroke: #bbb;
-    cursor: pointer;
-}
-
 
 .onoffswitch {
     position: relative;

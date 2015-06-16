@@ -5,7 +5,7 @@ import java.util
 import com.ibm.db2.jcc.am.{SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
 import com.typesafe.slick.driver.db2.DB2Driver
 import com.typesafe.slick.driver.db2.DB2Driver.api._
-import prolod.common.models.{PatternFromDB, Pattern, Group, Dataset}
+import prolod.common.models._
 import slick.jdbc.{GetResult, StaticQuery => Q}
 import scala.collection.mutable
 import scala.slick.jdbc.StaticQuery
@@ -172,6 +172,10 @@ class DatabaseConnection(config : Configuration) {
 		patterns
 	}
 
+	def getEntityDetails(dataset: String, entity: String): Entity = {
+		var entityDetails = new Entity(entity, entity, Nil)
+	}
+
 	def insert: DBIO[Unit] = DBIO.seq(
 		// sqlu"INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)"
 	)
@@ -236,6 +240,7 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
+
 		try {
 			var createStatement = connection.createStatement()
 			var createResultSet = createStatement.execute("CREATE TABLE "+name+".CLUSTERS "+
@@ -253,6 +258,22 @@ class DatabaseConnection(config : Configuration) {
 				")")
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+
+		try {
+			var createStatement = connection.createStatement()
+
+			var createResultSet = createStatement.execute("CREATE TABLE "+name+".MAINTABLE "+
+				"("+
+				"        SUBJECT_ID INT,                                                       "+
+				"        PREDICATE_ID INT,                                                        "+
+				"        INTERNALLINK_ID INT,                                                        "+
+				"        DATATYPE_ID INT,                                                               "+
+				"        NORMALIZEDPATTERN_ID INT,                                                         "+
+				"        PATTERN_ID INT,                                                                      "+
+				"        PARSED_VALUE FLOAT(53),                                                                 "+
+				"        TUPLE_ID INT "+
+				"	)");
 		}
 			/*
 					db withSession((session: Session) => {

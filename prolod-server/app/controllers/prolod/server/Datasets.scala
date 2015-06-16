@@ -6,7 +6,6 @@ import prolod.common.models.DatasetFormats.datasetFormat
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
 
-
 object Datasets extends Controller {
 
 	def datasets = Action {

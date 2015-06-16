@@ -20,11 +20,7 @@ case class GraphLodResult(datasetId: String,
                           var giantComponentDiameter: Float = 0,
                           var patterns: List[Pattern] = Nil,
                           var nodeDegreeDistribution: Map[Int, Int] = Map(0 -> 0)
-                          // val patternJson : HashMap[JSONObject, Integer] = new HashMap()
-
-                           ) {
-
-}
+) { }
 
 object GraphLodResultLoader {
   def load(datasetId: String) = {
