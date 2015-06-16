@@ -108,7 +108,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         .enter().append("marker")
                         .attr("id", function (d) { return d; })
                         .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 16)
+                        .attr("refX", 14)
                         .attr("refY", 0)
                         .attr("markerWidth", 10)
                         .attr("markerHeight", 10)
@@ -133,11 +133,17 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         }
                     );
 
+
+                   // node.on("click",nodeclick);
                    /* link.on("mouseover", mouseover);
                     link.on("mouseout", mouseout);*/
 
                 }
 
+
+                /*function nodeclick(){
+                    alert("test");
+                }*/
                 /*function mouseover() {
                     var link = d3.select(this);
                     link.style('stroke-width', 2);

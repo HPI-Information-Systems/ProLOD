@@ -2,13 +2,27 @@
 
 define(['angular', './controllers'], function (angular) {
     // controller for the lower panel
-    angular.module('Prolod2.controllers').controller("GraphPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash',
-        function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash) {
+    angular.module('Prolod2.controllers').controller("GraphPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
+        function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
             var pattern = $routeParams.pattern;
             $scope.updateBreadcrumb([
                 {name: 'Graphs', url: routeBuilder.getGraphUrl()},
                 {name: 'Pattern ' + pattern, url: routeBuilder.getGraphPatternUrl(pattern)}
             ]);
+
+            $scope.open = function () {
+                var modalInstance = $modal.open({
+                    animation: true,
+                    templateUrl: 'myModalContent.html',
+                    controller: 'PopupCtrl',
+                    //size: size,
+                    resolve: {
+                        items: function () {
+                            return ["a", "b", "c"];
+                        }
+                    }
+                });
+            };
 
             $scope.data = {
                 pattern: {}
