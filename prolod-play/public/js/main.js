@@ -9,7 +9,7 @@ requirejs.config({
     'ui-grid': ['../lib/ui-grid/ui-grid'],
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
     'd3': ['../lib/d3js/d3'],
-    'dimple': ['../lib/dimple/dimple'],
+    'dimple': ['../lib/dimple/dimple']
 
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
@@ -42,8 +42,8 @@ requirejs.config({
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
-         './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller',
-         './directives/directives', './directives/graphThumbnail',
+         './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
+         './directives/directives', './directives/graphThumbnail','../lib/bootstrap',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
          'angular-route', 'ui-grid', '../bg-splitter/js/splitter', 'treeControl', 'd3', 'dimple'],
   function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
@@ -58,8 +58,9 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
 
       $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'PopupCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/giantComponent', {templateUrl: 'assets/partials/giant_component.html', controller: 'GiantComponentCtrl', activetab: 'graphs'});
-      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/:detail', {templateUrl: 'assets/partials/graph_detail.html', controller: 'GraphDetailCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/:detail', {templateUrl: 'assets/partials/chart.html', controller: 'PopupCtrl', activetab: 'graphs'});
 
       $routeProvider.when('/charts/:dataset', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
 
