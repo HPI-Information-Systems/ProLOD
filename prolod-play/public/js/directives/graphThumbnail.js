@@ -1,6 +1,6 @@
 "use strict";
 
-define(['angular', './directives'], function (angular) {
+define(['angular', 'd3', './directives'], function (angular, d3) {
 
     angular.module('Prolod2.directives').directive('prolodGraphThumbnail', [function () {
             function linkFunction($scope, element, attrs) {

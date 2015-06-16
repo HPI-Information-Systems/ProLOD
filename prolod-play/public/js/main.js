@@ -8,11 +8,9 @@ requirejs.config({
     'angular-route': ['../lib/angularjs/angular-route'],
     'ui-grid': ['../lib/ui-grid/ui-grid'],
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
-    'bg-splitter': ['../bg-splitter/js/splitter'],
     'd3': ['../lib/d3js/d3'],
     'dimple': ['../lib/dimple/dimple'],
-    'jquery': ['../lib/jquery/jquery']
-
+    'angular-ui-bootstrap': ['../lib/angular-ui-bootstrap/ui-bootstrap-tpls']
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
   shim: {
@@ -38,20 +36,25 @@ requirejs.config({
     'dimple': {
       deps: ['d3'],
       exports: 'dimple'
+    },
+    'angular-ui-bootstrap': {
+      deps: ['angular'],
+      exports: ''
     }
   }
 });
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
-         './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller',
+         './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
          './directives/directives', './directives/graphThumbnail',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
-         'angular-route', 'ui-grid', 'bg-splitter', 'treeControl', 'd3', 'dimple', 'jquery'],
+         'angular-route', 'ui-grid', '../bg-splitter/js/splitter', 'treeControl', 'd3', 'dimple', 'angular-ui-bootstrap'],
   function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
-    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl'])
+    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives',
+                                         'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'ui.bootstrap'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl, activetab: 'index'});
@@ -60,8 +63,9 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
 
       $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'PopupCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/giantComponent', {templateUrl: 'assets/partials/giant_component.html', controller: 'GiantComponentCtrl', activetab: 'graphs'});
-      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/:detail', {templateUrl: 'assets/partials/graph_detail.html', controller: 'GraphDetailCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/:detail', {templateUrl: 'assets/partials/chart.html', controller: 'PopupCtrl', activetab: 'graphs'});
 
       $routeProvider.when('/charts/:dataset', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});
 

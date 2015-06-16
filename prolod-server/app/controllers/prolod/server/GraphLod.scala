@@ -13,8 +13,8 @@ import prolod.common.models.PatternFormats.patternDBFormat
 
 object GraphLod extends Controller {
   def getGraphStatistics(datasetId: String, groups: List[Int] = List()) = Action {
-    var config = new Configuration()
-    var db = new DatabaseConnection(config)
+    val config = new Configuration()
+    val db = new DatabaseConnection(config)
     val patternList: List[Pattern] = db.getPatterns(datasetId)
 
     val data: GraphLodResult = GraphLodResult(datasetId)
@@ -31,7 +31,7 @@ object GraphLod extends Controller {
     data.connectedComponents = statistics.get("connectedcomponents").get.toInt
     data.stronglyConnectedComponents = statistics.get("stronglyconnectedcomponents").get.toInt
 
-    var nodeDegreeDistribution = statistics.get("nodedegreedistribution").get
+    val nodeDegreeDistribution = statistics.get("nodedegreedistribution").get
     val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
     data.nodeDegreeDistribution =  nodeDegreeDistributionMap
 

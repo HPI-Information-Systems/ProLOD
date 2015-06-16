@@ -2,6 +2,8 @@ name := """Prolod2"""
 
 version := "1.0-SNAPSHOT"
 
+scalaVersion in ThisBuild := "2.11.6"
+
 lazy val prolod_play = (project in file("prolod-play"))
   .enablePlugins(PlayScala)
   .dependsOn(prolod_server)
@@ -11,7 +13,7 @@ lazy val prolod_server = (project in file("prolod-server"))
   .dependsOn(prolod_common)
 
 lazy val prolod_preprocessing = (project in file("prolod-preprocessing"))
-    .dependsOn(prolod_common)
+  .dependsOn(prolod_common)
 
 lazy val prolod_common = project in file("prolod-common")
 

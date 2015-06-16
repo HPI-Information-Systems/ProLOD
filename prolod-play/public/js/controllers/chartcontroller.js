@@ -1,9 +1,23 @@
 'use strict';
 
-define(function () {
+define(['angular', 'd3'], function () {
 
-    var ChartCtrl = function ($scope, routeBuilder) {
+    var ChartCtrl = function ($scope, routeBuilder, $modal) {
         $scope.updateBreadcrumb([{name: 'charts', url: routeBuilder.getGraphUrl()}]);
+
+        $scope.open = function () {
+            var modalInstance = $modal.open({
+                animation: true,
+                templateUrl: 'myModalContent.html',
+                controller: 'PopupCtrl',
+                //size: size,
+                resolve: {
+                    items: function () {
+                        return ["a", "b", "c"];
+                    }
+                }
+            });
+        };
 
         // Pie Chart
         var width1 = 400,
@@ -114,7 +128,7 @@ define(function () {
             return d;
         }
     };
-    ChartCtrl.$inject = ['$scope', 'routeBuilder'];
+    ChartCtrl.$inject = ['$scope', 'routeBuilder', '$modal'];
 
     return ChartCtrl;
 

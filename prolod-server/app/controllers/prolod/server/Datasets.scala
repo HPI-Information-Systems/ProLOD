@@ -11,7 +11,7 @@ object Datasets extends Controller {
 	def datasets = Action {
 		var config = new Configuration()
 		var db = new DatabaseConnection(config)
-		val data: List[Dataset] = db.getDatasets()
+		val data: Seq[Dataset] = db.getDatasets()
 		val json = Json.obj("datasets" -> data)
 		Ok(json)
 	}
