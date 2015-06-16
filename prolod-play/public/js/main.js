@@ -9,8 +9,8 @@ requirejs.config({
     'ui-grid': ['../lib/ui-grid/ui-grid'],
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
     'd3': ['../lib/d3js/d3'],
-    'dimple': ['../lib/dimple/dimple']
-
+    'dimple': ['../lib/dimple/dimple'],
+    'angular-ui-bootstrap': ['../lib/angular-ui-bootstrap/ui-bootstrap-tpls']
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
   shim: {
@@ -36,6 +36,10 @@ requirejs.config({
     'dimple': {
       deps: ['d3'],
       exports: 'dimple'
+    },
+    'angular-ui-bootstrap': {
+      deps: ['angular'],
+      exports: ''
     }
   }
 });
@@ -43,13 +47,14 @@ requirejs.config({
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
          './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
-         './directives/directives', './directives/graphThumbnail','../lib/bootstrap',
+         './directives/directives', './directives/graphThumbnail',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
-         'angular-route', 'ui-grid', '../bg-splitter/js/splitter', 'treeControl', 'd3', 'dimple'],
+         'angular-route', 'ui-grid', '../bg-splitter/js/splitter', 'treeControl', 'd3', 'dimple', 'angular-ui-bootstrap'],
   function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 
-    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives', 'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl'])
+    var app = angular.module('Prolod2', ['Prolod2.controllers', 'Prolod2.filters', 'Prolod2.services', 'Prolod2.directives',
+                                         'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'ui.bootstrap'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl, activetab: 'index'});
