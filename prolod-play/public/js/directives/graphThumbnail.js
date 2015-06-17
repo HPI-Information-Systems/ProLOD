@@ -3,7 +3,7 @@
 define(['angular', 'd3', './directives'], function (angular, d3) {
 
     angular.module('Prolod2.directives').directive('prolodGraphThumbnail', [function () {
-            function linkFunction($scope, element, attrs, $modal) {
+            function linkFunction($scope, element, attrs) {
 
                 var graph = buildGraph($scope.graph);
 
@@ -121,10 +121,10 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
 
                     node.append("svg:title")
                         .text(
-                        function(d){
-                            return (d.uri)
-                        }
-                    );
+                            function(d){
+                                return (d.uri)
+                            }
+                        );
 
                     link.append("svg:title")
                         .text(
@@ -132,31 +132,12 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                             return (d.uri)
                         }
                     );
-
-
-                    node.on("click",nodeclick);
-                   /* link.on("mouseover", mouseover);
-                    link.on("mouseout", mouseout);*/
-
                 }
 
-
-                function nodeclick(){
-                    //alert("test");
-                    function nodeclick(){
-                        $modal.open({
-                            animation: true,
-                            templateUrl: 'myModalContent.html',
-                            controller: 'PopupCtrl',
-                            //size: size,
-                            resolve: {
-                                items: function () {
-                                    return ["a", "b", "c"];
-                                }
-                            }
-                        });
-                    }
+                if ($scope.clickHandler) {
+                    node.on("click", $scope.clickHandler);
                 }
+
                 /*function mouseover() {
                     var link = d3.select(this);
                     link.style('stroke-width', 2);
@@ -206,6 +187,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 scope: {
                     graph: '=',
                     colorFunction: '=',
+                    clickHandler: '=',
                     showArrows: '@'
                 },
                 restrict: 'EA',

@@ -10,15 +10,15 @@ define(['angular', './controllers'], function (angular) {
                 {name: 'Pattern ' + pattern, url: routeBuilder.getGraphPatternUrl(pattern)}
             ]);
 
-            $scope.open = function () {
+            $scope.nodeClick = function (node) {
                 var modalInstance = $modal.open({
                     animation: true,
                     templateUrl: 'myModalContent.html',
                     controller: 'PopupCtrl',
                     //size: size,
                     resolve: {
-                        items: function () {
-                            return ["a", "b", "c"];
+                        node: function() {
+                            return node;
                         }
                     }
                 });
