@@ -340,7 +340,7 @@ class DatabaseConnection(config : Configuration) {
 				statement3.close
 
 				val statement2 = connection.createStatement()
-				val resultSet2 = statement2.executeQuery("SELECT object FROM "+ dataset+".predicatetable WHERE id = "+predicateId)
+				val resultSet2 = statement2.executeQuery("SELECT predicate FROM "+ dataset+".predicatetable WHERE id = "+predicateId)
 				while ( resultSet2.next() ) {
 					predicateUri = resultSet2.getString("predicate")
 				}
@@ -348,7 +348,7 @@ class DatabaseConnection(config : Configuration) {
 
 				val statement1 = connection.createStatement()
 				val resultSet1 = statement1.executeQuery("SELECT subject FROM "+ dataset+".subjecttable WHERE id = "+subjectId)
-				while ( resultSet2.next() ) {
+				while ( resultSet1.next() ) {
 					subjectUri = resultSet1.getString("subject")
 				}
 				statement1.close
