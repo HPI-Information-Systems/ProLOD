@@ -7,8 +7,6 @@ define(['angular', './controllers'], function (angular) {
 
     angular.module('Prolod2.controllers').controller('PopupCtrl', function ($scope, $modalInstance, $routeParams, httpApi, node) {
 
-
-
         $scope.model = {
             gridOptions: {
                 data: 'model.data',
@@ -23,6 +21,7 @@ define(['angular', './controllers'], function (angular) {
         httpApi.getEntityDetail($routeParams.dataset, node.uri).then(function(data){
                 console.log(data);
                 $scope.model.data = data.data.entity.triples;
+                $scope.triples = data.data.entity.triples;
                 $scope.uri = data.data.entity.url;
                 $scope.label = data.data.entity.label;
             }
