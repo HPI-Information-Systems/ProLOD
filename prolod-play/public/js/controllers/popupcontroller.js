@@ -6,12 +6,25 @@ define(['angular', './controllers'], function (angular) {
 // It is not the same as the $modal service used above.
 
     angular.module('Prolod2.controllers').controller('PopupCtrl', function ($scope, $modalInstance, $routeParams, httpApi, node) {
+
+
+
+        $scope.model = {
+            gridOptions: {
+                data: 'model.data',
+                columnDefs: [
+                    {name: 'o', type: 'string'},
+                    {name: 'p', type: 'string'}
+                ]
+            },
+            data: []
+        };
+
         httpApi.getEntityDetail($routeParams.dataset, node.uri).then(function(data){
                 console.log(data);
-                $scope.triples = data.data.entity.triples;
+                $scope.model.data = data.data.entity.triples;
                 $scope.uri = data.data.entity.url;
                 $scope.label = data.data.entity.label;
-
             }
         );
 
