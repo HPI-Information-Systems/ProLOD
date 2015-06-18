@@ -13,8 +13,8 @@ define(['angular', './controllers'], function (angular) {
             gridOptions: {
                 data: 'model.data',
                 columnDefs: [
-                    {name: 'o', type: 'string'},
-                    {name: 'p', type: 'string'}
+                    {name: 'p', type: 'string'},
+                    {name: 'o', type: 'string'}
                 ]
             },
             data: []

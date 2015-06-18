@@ -2,13 +2,10 @@
     <bg-pane>
         <div id="view" class="graph-grid">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
-            <a ng-repeat="pattern in data.pattern | limitTo: limit"
-               href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
-                <prolod-graph-thumbnail class="graph-cell" graph="pattern"
-                                        color-function="colorFunction"></prolod-graph-thumbnail>
-            </a>
 
-            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-if="giantComponentEdges">
+
+
+            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" >
                 <div class="graph-cell">
                     <div>Giant Component: {{test}}</div>
                     <svg width="200px" height="150px">
@@ -19,6 +16,15 @@
                     </svg>
                 </div>
             </a>
+
+            <a ng-repeat="pattern in data.pattern | limitTo: limit"
+               href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
+                <prolod-graph-thumbnail class="graph-cell" graph="pattern"
+                                        color-function="colorFunction"></prolod-graph-thumbnail>
+            </a>
+
+
+
         </div>
     </bg-pane>
 
