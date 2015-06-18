@@ -15,7 +15,7 @@ define(['angular', './controllers'], function (angular) {
                     animation: true,
                     templateUrl: 'myModalContent.html',
                     controller: 'PopupCtrl',
-                    //size: size,
+                    size: 'lg',
                     resolve: {
                         node: function() {
                             return node;

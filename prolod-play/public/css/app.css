@@ -212,3 +212,20 @@ body {
 .alignright {
     text-align: right;
 }
+
+
+.modal-dialog {
+    position: relative;
+    width: auto;
+    max-width: 600px;
+    margin: 10px;
+}
+.modal-lg {
+    max-width: 40%;
+}
+@media (min-width: 920px) {
+    .modal-lg {
+        margin-right: auto;
+        margin-left: auto;
+    }
+}

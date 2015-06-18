@@ -7,12 +7,19 @@ define(['angular', './controllers'], function (angular) {
 
     angular.module('Prolod2.controllers').controller('PopupCtrl', function ($scope, $modalInstance, $routeParams, httpApi, node) {
 
+        var PredicateHeadTemplate = '<div>Predicate</div>';
+        var ObjectHeadTemplate = '<div>Object</div>';
+
+        var cellTemplate = '<div>{{row.entity[col.field]}}</div>';
+
+
         $scope.model = {
             gridOptions: {
                 data: 'model.data',
+                rowHeight: 'auto',
                 columnDefs: [
-                    {name: 'p', type: 'string'},
-                    {name: 'o', type: 'string'}
+                    {name: 'p', type: 'string', headerCellTemplate: PredicateHeadTemplate, editableCellTemplate: true, cellTemplate: cellTemplate},
+                    {name: 'o', type: 'string', headerCellTemplate: ObjectHeadTemplate,  editableCellTemplate: true, cellTemplate: cellTemplate }
                 ]
             },
             data: []
