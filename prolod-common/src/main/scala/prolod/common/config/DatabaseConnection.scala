@@ -269,15 +269,22 @@ class DatabaseConnection(config : Configuration) {
 
 	def getStatistics(s: String) : mutable.Map[String, String] = {
 		var statistics = mutable.Map[String, String]()
-		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT nodedegreedistribution, averagelinks, edges, gcnodes, connectedcomponents, stronglyconnectedcomponents FROM " + s+ ".graphstatistics")
-		while ( resultSet.next() ) {
-			statistics += ("nodedegreedistribution" -> resultSet.getString("nodedegreedistribution"))
-			statistics += ("averagelinks" -> resultSet.getString("averagelinks"))
-			statistics += ("edges" -> resultSet.getString("edges"))
-			statistics += ("gcnodes" -> resultSet.getString("gcnodes"))
-			statistics += ("connectedcomponents" -> resultSet.getString("connectedcomponents"))
-			statistics += ("stronglyconnectedcomponents" -> resultSet.getString("stronglyconnectedcomponents"))
+		val sql = sql"SELECT nodedegreedistribution, averagelinks, edges, connectedcomponents, stronglyconnectedcomponents FROM #$s.graphstatistics".as[(String, Float, Int, Int, Int)]
+		try {
+			val sql2 = sql"SELECT gcnodes FROM #$s.graphstatistics".as[(Int)]
+			val result2 = execute(sql2) map ((gcnodes) => {
+				statistics += ("gcnodes" -> gcnodes.toString)
+			})
+			val result = execute(sql) map tupled((nodedegreedistribution, averagelinks, edges, connectedcomponents, stronglyconnectedcomponents) => {
+				statistics += ("nodedegreedistribution" -> nodedegreedistribution)
+				statistics += ("averagelinks" -> averagelinks.toString)
+				statistics += ("edges" -> edges.toString)
+				statistics += ("connectedcomponents" -> connectedcomponents.toString)
+				statistics += ("stronglyconnectedcomponents" -> stronglyconnectedcomponents.toString)
+			})
+
+		} catch {
+			case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + sql.toString)
 		}
 		statistics
 	}
@@ -397,52 +404,6 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlIntegrityConstraintViolationException => println("Dataset already exists")
 		}
-
-
-
-			/*
-					db withSession((session: Session) => {
-						(sql"""INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES) VALUES ('caterpillar','caterpillar',20,3)""")
-					}
-					*/
-
-		     /*
-		db withSession {
-			val schemata = TableQuery[Schematas]
-			schemata.insertStatement
-			var res1: String = "insert into PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') values (?,?,?,?)"
-			schemata += Schemata("caterpillar","caterpillar",20,3)
-			implicit session => schemata.run
-		}
-		*/
-
-
-		/*
-
-  val plainQuery = sql"INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)"
-
-  println("Generated SQL for plain query:\n" + plainQuery.getStatement)
-
-  // Execute the query
-  println(plainQuery.list)
-          */
-
-		/*
-db withSession { implicit sess =>
-val st = sess.createStatement()
-st.execute("INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar',20,3)")
-
-}
-       */
-
-
-		// sql"INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'ENTITIES') VALUES ('caterpillar','caterpillar','20','3')"
-
-
-		/*
-		implicit val getSupplierResult = GetResult(r => r.nextString)
-		System.out.println(getSupplierResult)
-          */
 	}
 
 	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]]) {
