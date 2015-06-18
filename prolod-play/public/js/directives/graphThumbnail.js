@@ -36,7 +36,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     .data(graph.links)
                     .enter().append("line")
                     .attr("class", "link")
-                    .style("marker-end", "url(#suit)")
+                    .style("marker-end", "url(#target)")
                     .style("stroke-width", function (d) {
                                return Math.sqrt(d.value);
                            });
@@ -104,7 +104,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 //if it's the second view
                 if (showArrows) {
                     svg.append("defs").selectAll("marker")
-                        .data(["suit", "licensing", "resolved"])
+                        .data(["target"])
                         .enter().append("marker")
                         .attr("id", function (d) { return d; })
                         .attr("viewBox", "0 -5 10 10")
