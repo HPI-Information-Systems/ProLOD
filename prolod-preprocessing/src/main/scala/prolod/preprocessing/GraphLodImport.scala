@@ -16,7 +16,6 @@ class GraphLodImport(var db: DatabaseConnection, name : String, namespace: Strin
 	val datasetFilesJava: util.List[String] = files.asJava
 
 	val graphLod : GraphLOD = GraphLOD.loadDataset(name, files.asJava, namespace, ontologyNamespace, excludedNamespaces.asJava)
-	// TODO tuples
 	db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount, ontologyNamespace)
 	db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns)
 	var connectedGraphSizes = graphLod.connectedGraphSizes.asScala.toList.max[Integer]
