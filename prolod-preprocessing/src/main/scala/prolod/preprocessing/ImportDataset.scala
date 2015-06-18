@@ -1,6 +1,7 @@
 package prolod.preprocessing
 
 import java.io.FileInputStream
+import java.sql.SQLSyntaxErrorException
 import org.semanticweb.yars.nx.parser.NxParser
 import org.semanticweb.yars.nx.Node
 import prolod.common.config.{DatabaseConnection, Configuration}
@@ -57,8 +58,9 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
             } else {
                 objectId = db.getObjectId(name, o)
             }
-
-            db.insertTriples(name, subjectId, predicateId, objectId)
+            if (subjectId >= 0 && predicateId >= 0 && objectId >= 0) {
+                db.insertTriples(name, subjectId, predicateId, objectId)
+            }
         }
     }
 

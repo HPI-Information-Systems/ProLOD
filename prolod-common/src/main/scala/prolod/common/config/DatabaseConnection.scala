@@ -240,7 +240,13 @@ class DatabaseConnection(config : Configuration) {
 
 	private def removeOntologyNamespace(name: String, ontologyNamespace: String): String = {
 		var result = name
-		if (ontologyNamespace != null) result = result.replace(ontologyNamespace, "")
+		if (ontologyNamespace != null) {
+			if (ontologyNamespace.startsWith("\"group\":\"")) {
+				result = result.replace(ontologyNamespace, "\"group\":\"")
+			} else {
+				result = result.replace(ontologyNamespace, "")
+			}
+		}
 		result
 	}
 
@@ -282,7 +288,14 @@ class DatabaseConnection(config : Configuration) {
 			val statement = connection.createStatement()
 			val resultSet = statement.executeQuery("SELECT pattern FROM "+ s+".COLOREDPATTERNS WHERE id = "+id)
 			while ( resultSet.next() ) {
-				val pattern = resultSet.getString("pattern")
+				var pattern = resultSet.getString("pattern")
+
+				val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}".as[String]
+				val result = execute(sql)
+				result map (ontology_namespace => {
+					var replace = "\"group\":\"" + ontology_namespace.replace("/", "\\/")
+					pattern = removeOntologyNamespace(pattern, replace)
+				})
 				// val occurences = resultSet.getInt("occurences")
 
 				val patternJsonT = Json.parse(pattern).validate[PatternFromDB]
@@ -321,6 +334,7 @@ class DatabaseConnection(config : Configuration) {
 
 	def getEntityDetails(dataset: String, entity: String): Entity = {
 		var triples : List[Triple] = Nil
+		var label : String = entity
 		var subjectUri = ""
 		var predicateUri = ""
 		var objectUri = ""
@@ -332,12 +346,12 @@ class DatabaseConnection(config : Configuration) {
 				val objectId = resultSet.getString("tuple_id")
 				val predicateId = resultSet.getString("predicate_id")
 
-				val statement3 = connection.createStatement()
-				val resultSet3 = statement3.executeQuery("SELECT object FROM "+ dataset+".objecttable WHERE tuple_id = "+objectId)
-				while ( resultSet3.next() ) {
-					objectUri = resultSet3.getString("object")
+				val statement1 = connection.createStatement()
+				val resultSet1 = statement1.executeQuery("SELECT subject FROM "+ dataset+".subjecttable WHERE id = "+subjectId)
+				while ( resultSet1.next() ) {
+					subjectUri = resultSet1.getString("subject")
 				}
-				statement3.close
+				statement1.close
 
 				val statement2 = connection.createStatement()
 				val resultSet2 = statement2.executeQuery("SELECT predicate FROM "+ dataset+".predicatetable WHERE id = "+predicateId)
@@ -346,12 +360,16 @@ class DatabaseConnection(config : Configuration) {
 				}
 				statement2.close
 
-				val statement1 = connection.createStatement()
-				val resultSet1 = statement1.executeQuery("SELECT subject FROM "+ dataset+".subjecttable WHERE id = "+subjectId)
-				while ( resultSet1.next() ) {
-					subjectUri = resultSet1.getString("subject")
+				val statement3 = connection.createStatement()
+				val resultSet3 = statement3.executeQuery("SELECT object FROM "+ dataset+".objecttable WHERE tuple_id = "+objectId)
+				while ( resultSet3.next() ) {
+					objectUri = resultSet3.getString("object")
+					if (predicateUri.equals("http://www.w3.org/2000/01/rdf-schema#label")) {
+						label = objectUri
+					}
 				}
-				statement1.close
+				statement3.close
+
 				triples :::= List(new Triple(subjectUri, predicateUri, objectUri))
 			}
 			statement.close
@@ -360,7 +378,7 @@ class DatabaseConnection(config : Configuration) {
 		}
 
 		// TODO label
-		var entityDetails = new Entity(entity, entity, triples)
+		var entityDetails = new Entity(entity, label, triples)
 		entityDetails
 	}
 
@@ -517,7 +535,14 @@ st.execute("INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'EN
 		performInsert(name + ".objecttable", List("object"), List(s)) match {
 			case Some(i) => i
 			case None => {
-				getObjectId(name, s)
+				try {
+					getObjectId(name, s)
+				} catch {
+					case e: SqlSyntaxErrorException => {
+						println(e.getMessage + System.lineSeparator() + s)
+						-1
+					}
+				}
 			}
 		}
 	}
@@ -525,7 +550,7 @@ st.execute("INSERT INTO PROLOD_MAIN.SCHEMATA ('ID', 'SCHEMA_NAME', 'TUPLES', 'EN
 	def getObjectId(name: String, s: String): Int = {
 		var result : Int = -1
 		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT tuple_id FROM " + name + ".objecttable WHERE object='" + s + "'")
+		val resultSet = statement.executeQuery("SELECT tuple_id FROM " + name + ".objecttable WHERE object='" + s.replace("'", "") + "'")
 		resultSet.next()
 		result = resultSet.getInt("tuple_id")
 		statement.close

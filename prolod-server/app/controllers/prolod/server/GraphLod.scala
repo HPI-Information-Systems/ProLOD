@@ -16,23 +16,16 @@ object GraphLod extends Controller {
     val config = new Configuration()
     val db = new DatabaseConnection(config)
     val patternList: List[Pattern] = db.getPatterns(datasetId)
-
     val data: GraphLodResult = GraphLodResult(datasetId)
-
     val statistics = db.getStatistics(datasetId)
 
     data.nodes = db.getDatasetEntities(datasetId)
     data.edges = statistics.get("edges").get.toInt
     data.giantComponentEdges = statistics.get("gcnodes").get.toInt
-    // data.connectedComponents = 123
-    // data.stronglyConnectedComponents = 100
     data.patterns = patternList
-
     data.connectedComponents = statistics.get("connectedcomponents").get.toInt
     data.stronglyConnectedComponents = statistics.get("stronglyconnectedcomponents").get.toInt
-
-    val nodeDegreeDistribution = statistics.get("nodedegreedistribution").get
-    val nodeDegreeDistributionMap = Json.parse(nodeDegreeDistribution).as[Map[Int, Int]]
+    val nodeDegreeDistributionMap = Json.parse(statistics.get("nodedegreedistribution").get).as[Map[Int, Int]]
     data.nodeDegreeDistribution =  nodeDegreeDistributionMap
 
     val json = Json.obj("statistics" -> data)
@@ -43,11 +36,10 @@ object GraphLod extends Controller {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
-
     val data: GraphLodResult = GraphLodResult(datasetId)
     data.patterns = patternList
-    val json = Json.obj("statistics" -> data)
 
+    val json = Json.obj("statistics" -> data)
     Ok(json)
   }
 
