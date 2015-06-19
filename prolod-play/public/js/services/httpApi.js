@@ -7,11 +7,11 @@ define(["angular", "./services"], function () {
 
         var cache = new Map();
 
-        function getCached(uri, params) {
-            var key = JSON.stringify({u:uri, p:params});
+        function getCached(uri, config) {
+            var key = JSON.stringify({u:uri, c:config});
             if (cache[key])
                 return cache[key];
-            var result = $http.get(uri, params);
+            var result = $http.get(uri, config);
             cache[key] = result;
             return result;
         }
@@ -21,10 +21,10 @@ define(["angular", "./services"], function () {
                 return getCached(uri(['server', 'datasets']));
             },
             getGraphStatistics: function (dataset, groups) {
-                return getCached(uri(['server', 'graphstatistics', dataset]), {groups: groups});
+                return getCached(uri(['server', 'graphstatistics', dataset]), {params: {groups: groups}});
             },
             getGraphPatternStatistics: function (dataset, groups, pattern) {
-                return getCached(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {groups: groups});
+                return getCached(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {params: {groups: groups}});
             },
             getGraphDetail: function (dataset, groups, pattern, detail) {
                 return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern, detail]),
