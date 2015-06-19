@@ -4,7 +4,7 @@ import java.io.File
 import java.sql._
 import java.util
 
-import com.ibm.db2.jcc.am.{SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
+import com.ibm.db2.jcc.am.{SqlDataException, SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
 import com.typesafe.slick.driver.db2.DB2Driver.api._
 import prolod.common.models._
 import slick.jdbc.{GetResult, StaticQuery => Q}
@@ -463,6 +463,7 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlIntegrityConstraintViolationException => println(e.getMessage +  System.lineSeparator() + query)
 			case e : SqlSyntaxErrorException => println(e.getMessage +  System.lineSeparator() + query)
+			case e : SqlDataException =>  println(e.getMessage +  System.lineSeparator() + query)
 		}
 		None
 	}
@@ -486,8 +487,12 @@ class DatabaseConnection(config : Configuration) {
 		var result : Int = -1
 		val statement = connection.createStatement()
 		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".subjecttable WHERE subject='" + s + "'")
-		resultSet.next()
-		result = resultSet.getInt("id")
+		try {
+			resultSet.next()
+			result = resultSet.getInt("id")
+		} catch {
+			case e : SqlException => println(e.getMessage)
+		}
 		statement.close
 		result
 	}

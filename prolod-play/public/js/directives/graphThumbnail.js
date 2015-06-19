@@ -68,32 +68,31 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
 
                 // set svg update handler after initial ticks improves performance a lot!
                 forceNodes.on("tick", function () {
-                        link.attr("x1", function (d) {return d.source.x;})
-                            .attr("y1", function (d) {return d.source.y;})
-                            .attr("x2", function (d) {return d.target.x;})
-                            .attr("y2", function (d) {return d.target.y;});
+                    link.attr("x1", function (d) {return d.source.x;})
+                        .attr("y1", function (d) {return d.source.y;})
+                        .attr("x2", function (d) {return d.target.x;})
+                        .attr("y2", function (d) {return d.target.y;});
 
-                        var inf = 1000000;
-                        var minX = inf, maxX = -inf, minY=inf, maxY=-inf;
-                        node.attr("cx", function (d) {
-                            maxX = Math.max(maxX, d.x);
-                            minX = Math.min(minX, d.x);
-                            return d.x;
-                        }).attr("cy", function (d) {
-                            maxY = Math.max(maxY, d.y);
-                            minY = Math.min(minY, d.y);
-                            return d.y;
-                        });
+                    var inf = 1000000;
+                    var minX = inf, maxX = -inf, minY=inf, maxY=-inf;
+                    node.attr("cx", function (d) {
+                        maxX = Math.max(maxX, d.x);
+                        minX = Math.min(minX, d.x);
+                        return d.x;
+                    }).attr("cy", function (d) {
+                        maxY = Math.max(maxY, d.y);
+                        minY = Math.min(minY, d.y);
+                        return d.y;
+                    });
 
-                        var padding = 10;
-                        minX -= padding; maxX += padding;
-                        minY -= padding; maxY += padding;
-                        minX = Math.min(minX, 0); minY = Math.min(minY, 0);
-                        maxX = Math.max(maxX, width); maxY = Math.max(maxY, height);
-                        var w = maxX - minX; var h = maxY - minY;
-                        svg.attr("viewBox", "" + minX + " " + minY + " " + w + " " + h);
-
-                        });
+                    var padding = 10;
+                    minX -= padding; maxX += padding;
+                    minY -= padding; maxY += padding;
+                    minX = Math.min(minX, 0); minY = Math.min(minY, 0);
+                    maxX = Math.max(maxX, width); maxY = Math.max(maxY, height);
+                    var w = maxX - minX; var h = maxY - minY;
+                    svg.attr("viewBox", "" + minX + " " + minY + " " + w + " " + h);
+                });
 
                 force.tick(); // one last tick that updates the nodes
 
@@ -105,19 +104,32 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 if (showArrows) {
                     svg.append("defs").selectAll("marker")
                         .data(["target"])
-                        .enter().append("marker")
+                        .enter().append("svg:marker")
                         .attr("id", function (d) { return d; })
                         .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 14)
-                        .attr("refY", 0)
-                        .attr("markerWidth", 10)
-                        .attr("markerHeight", 10)
+                        .attr("refX", 15)
+                        .attr("refY", -1.5)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
                         .attr("orient", "auto")
-                        .append("path")
-                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-                        .style("stroke", "#BBBBBB")
-                        .style("stroke-width",1.1)
-                        .style("opacity", "1");
+                        .style("fill", "#bbb")
+                        .append("svg:path")
+                        .attr("d", "M0,-5L10,0L0,5");
+                        //.attr("id", "arrowHead");
+
+                    svg.append("defs").selectAll("marker")
+                        .data(["target_red"])
+                        .enter().append("svg:marker")
+                        .attr("id", function (d) { return d; })
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 15)
+                        .attr("refY", -1.5)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                        .style("fill", "red")
+                        .append("svg:path")
+                        .attr("d", "M0,-5L10,0L0,5");
 
                     node.append("svg:title")
                         .text(
@@ -138,21 +150,21 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     node.on("click", $scope.clickHandler);
                 }
 
-                /*function mouseover() {
+                link.on("mouseover", mouseover);
+                link.on("mouseout", mouseout);
+
+                function mouseover() {
                     var link = d3.select(this);
-                    link.style('stroke-width', 2);
-                    link.style("stroke", "black");
-                    var path = svg.append("svg:g").selectAll("path")
-                        .data(force.links())
-                        .enter().append("svg:path")
+                    link.style("stroke", "red");
+                    link.style("marker-end", "url(#target_red)");
                 }
 
                 function mouseout() {
                     var link = d3.select(this);
-                    link.style('stroke-width', 1);
                     link.style("stroke", "#bbb");
+                    link.style("marker-end", "url(#target)");
                 }
-*/
+
             }
 
             function buildGraph(scopeGraph) {
