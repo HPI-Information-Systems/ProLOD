@@ -19,7 +19,8 @@ case class GraphLodResult(datasetId: String,
                           var giantComponentNodes: Int = 0,
                           var giantComponentDiameter: Float = 0,
                           var patterns: List[Pattern] = Nil,
-                          var nodeDegreeDistribution: Map[Int, Int] = Map(0 -> 0)
+                          var nodeDegreeDistribution: Map[Int, Int] = Map(0 -> 0),
+                          var classDistribution: Map[String, Int] = Map("" -> 0)
 ) { }
 
 object GraphLodResultLoader {

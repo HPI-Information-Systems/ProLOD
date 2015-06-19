@@ -33,6 +33,12 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
+  def getGraphDistribution(pattern: List[Pattern]): Map[String, Int] = {
+
+
+    return Map()
+  }
+
   def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
     println("groups:" + groups)
     var config = new Configuration()

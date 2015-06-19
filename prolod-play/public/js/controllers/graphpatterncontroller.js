@@ -55,6 +55,9 @@ define(['angular', './controllers'], function (angular) {
         }
     ]);
 
+    function drawPieChart (){
+    }
+
 });
 
 
