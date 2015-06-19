@@ -12,7 +12,8 @@ import prolod.common.models.PatternFormats.patternFormat
 import prolod.common.models.PatternFormats.patternDBFormat
 
 object GraphLod extends Controller {
-  def getGraphStatistics(datasetId: String, groups: List[Int] = List()) = Action {
+  def getGraphStatistics(datasetId: String, groups: List[String]) = Action {
+    println("groups:" + groups)
     val config = new Configuration()
     val db = new DatabaseConnection(config)
     val patternList: List[Pattern] = db.getPatterns(datasetId)
@@ -32,7 +33,8 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
-  def getGraphPatternStatistics(datasetId: String, groups: List[Int], pattern: Int) = Action {
+  def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
+    println("groups:" + groups)
     var config = new Configuration()
     var db = new DatabaseConnection(config)
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
@@ -43,7 +45,7 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
-  def getBigComponent(dataset: String, groups: List[Int], pattern: Int) = Action {
+  def getBigComponent(dataset: String, groups: List[String], pattern: Int) = Action {
     Ok("this is big!")
   }
 }
