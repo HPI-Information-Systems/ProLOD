@@ -15,9 +15,9 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
     val excludeNamespaces: List[String] = if (excludeNS.isEmpty) Nil else List(excludeNS.get)
 
     db.createTables(name)
-    importTriples()
-
     new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
+
+    importTriples()
 
     def importTriples() = {
         for (dataset <- datasetFiles) {
