@@ -1,6 +1,9 @@
+<bg-splitter orientation="vertical">
+    <bg-pane>
 <div id="view" class="graph-grid">
     <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
-    <a ng-repeat="pattern in data.pattern | limitTo: limit">  <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
+            <a ng-repeat="pattern in data.pattern | limitTo: limit">
+                <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
         <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"
                                 show-arrows="true" click-handler="nodeClick"></prolod-graph-thumbnail>
     </a>
@@ -35,5 +38,34 @@
             </div>
         </script>
     </div>
+
+            <div id="view chart-view">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!-- http://jtblin.github.io/angular-chart.js/ -->
+                        <canvas id="doughnut" class="chart chart-doughnut"
+                                data="chart0.data" labels="chart0.labels"></canvas>
+                    </div>
+                    <div class="col-sm-6">
+                        <canvas id="bar" class="chart chart-bar"
+                                data="chart1.data" labels="chart1.labels"></canvas>
+                    </div>
 </div>
 
+                <table>
+                    <tr>
+                        <td id="piechart"></td>
+                        <td id="barchart"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </bg-pane>
+
+    <bg-pane>
+        <div class="lowerpanel">
+
+            <h3>Pie chart:</h3>
+        </div>
+    </bg-pane>
+</bg-splitter>
