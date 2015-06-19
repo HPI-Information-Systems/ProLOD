@@ -44,7 +44,7 @@ define(['angular', './controllers'], function (angular) {
                 }
             }
 
-            httpApi.getGraphPatternStatistics($routeParams.dataset, [$routeParams.group], pattern).then(function (data) {
+            httpApi.getGraphPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 

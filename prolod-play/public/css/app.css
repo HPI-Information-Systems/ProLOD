@@ -124,7 +124,7 @@ body {
     stroke-width: 1.5px;
 }
 
-.onoffswitch {
+/*.onoffswitch {
     position: relative;
     width: 140px;
     -webkit-user-select: none;
@@ -195,7 +195,7 @@ body {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 106px; /*34 di meno della larghezza*/
+    right: 106px; /!*34 di meno della larghezza*!/
     -moz-transition: all 0.3s ease-in 0s;
     -webkit-transition: all 0.3s ease-in 0s;
     -o-transition: all 0.3s ease-in 0s;
@@ -208,9 +208,9 @@ body {
 
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0;
-}
+}*/
 
-.alignright {
+.align-right {
     text-align: right;
 }
 
@@ -221,12 +221,15 @@ body {
     max-width: 600px;
     margin: 10px;
 }
+
 .modal-lg {
-    max-width: 40%;
+    max-width: 80%;
+    margin-right: auto;
+    margin-left: auto;
 }
+
 @media (min-width: 920px) {
     .modal-lg {
-        margin-right: auto;
-        margin-left: auto;
+        max-width: 70%;
     }
 }
