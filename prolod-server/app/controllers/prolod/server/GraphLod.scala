@@ -34,13 +34,27 @@ object GraphLod extends Controller {
   }
 
   def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
-    println("groups:" + groups)
     var config = new Configuration()
     var db = new DatabaseConnection(config)
-    val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
     val data: GraphLodResult = GraphLodResult(datasetId)
-    data.patterns = patternList
-
+    val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
+    if (groups.size > 0) {
+      var newPatternList: List[Pattern] = Nil
+      for (pattern : Pattern <- patternList) {
+        var newNodes: List[Node] = Nil
+        for (node : Node <- pattern.nodes) {
+          var newNode : Node = node
+          if (!groups.contains(node.group.getOrElse(""))) {
+            newNode = new Node(node.id, node.uri, None)
+          }
+          newNodes ::= newNode
+        }
+        newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
+      }
+      data.patterns = newPatternList
+    } else {
+      data.patterns = patternList
+    }
     val json = Json.obj("statistics" -> data)
     Ok(json)
   }
