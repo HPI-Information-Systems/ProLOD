@@ -6,12 +6,12 @@ GET        /datasets                                         controllers.prolod.
 
 GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: String)
 
-GET        /graphstatistics/:dataset                         controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, group: List[Int])
+GET        /graphstatistics/:dataset                         controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, groups: List[String])
 
 # example: http://localhost:9000/server/graphstatistics/0/pattern/0?group=1&group=2
-GET        /graphstatistics/:dataset/pattern/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, group: List[Int], pattern: Int)
+GET        /graphstatistics/:dataset/pattern/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /graphstatistics/bigcomponent/:dataset            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[Int], pattern: Int)
+GET        /graphstatistics/bigcomponent/:dataset            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String], pattern: Int)
 
 GET        /assets/*file                                     controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
 
