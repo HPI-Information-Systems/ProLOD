@@ -1,5 +1,6 @@
 package controllers.prolod.server
 
+import com.google.common.collect.{HashMultiset, Multiset}
 import prolod.common.config.{DatabaseConnection, Configuration}
 import prolod.common.models._
 import GraphLodResultFormats.graphLodResultFormat
@@ -35,9 +36,18 @@ object GraphLod extends Controller {
 
   def getGraphDistribution(pattern: List[Pattern]): Map[String, Int] = {
 
+    val multiset : Multiset[String] = HashMultiset.create();
+
+    for(p : Pattern <- pattern ){
+      for(n : Node <- p.nodes){
+        multiset.add(n.group.getOrElse(""),1)
+      }
+    }
 
     return Map()
   }
+
+
 
   def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
     var config = new Configuration()
