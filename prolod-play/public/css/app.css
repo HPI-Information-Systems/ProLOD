@@ -82,6 +82,7 @@ body {
 .table-view .grid {
     height: calc(100% - 3px);
     width: calc(100% - 10px);
+    text-align: left;
 }
 
 .graph-grid {
