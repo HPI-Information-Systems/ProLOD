@@ -82,9 +82,10 @@ define(['angular', './controllers'], function (angular) {
                 var params = angular.extend({}, $route.current.params);
 
                 // on first selection redirect to graph view
-                // on dataset reset view to initial graph view and disable selections
+                // on dataset change reset view to initial graph view and disable selections
+                // when the selected dataset is clicked all groups should be unselected
                 if ($route.current.activetab === 'index' || $route.current.activetab === 'graphs' &&
-                    ($route.current.params.dataset !== selected.dataset)) {
+                    ($route.current.params.dataset !== selected.dataset || !selected.group)) {
                     $scope.model.selectedNodes.length = 0;
                     $scope.model.selectedNodes.push(selected);
                     // expand node and close all other nodes
@@ -97,28 +98,24 @@ define(['angular', './controllers'], function (angular) {
                     return;
                 }
 
-                if($route.current.params.dataset === selected.dataset) {
-                    if(selected.group) {
-                        console.log(params.group);
-                        if(!params.group) {
-                            params.group = [];
-                        }
-                        if(typeof(params.group) == 'string') {
-                            params.group = [params.group];
-                        }
-                        var index = params.group.indexOf(selected.group);
-                        if(index >= 0) {
-                            params.group.splice(index, 1);
-                        } else {
-                            // should multiselection be possible?
-                            // params.group.length = 0;
-                            params.group.push(selected.group);
-                        }
+                if($route.current.params.dataset === selected.dataset && selected.group && selected.group) {
+                    console.log(params.group);
+                    if(!params.group) {
+                        params.group = [];
+                    }
+                    if(typeof(params.group) == 'string') {
+                        params.group = [params.group];
+                    }
+                    var index = params.group.indexOf(selected.group);
+                    if(index >= 0) {
+                        params.group.splice(index, 1);
                     } else {
-                        params.group = undefined;
+                        // should multiselection be possible?
+                        // params.group.length = 0;
+                        params.group.push(selected.group);
                     }
                 } else {
-                    params.dataset = selected.dataset;
+                    console.error("undefined treeview action");
                 }
                 $route.updateParams(params);
             }
