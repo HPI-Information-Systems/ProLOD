@@ -144,14 +144,15 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                             return (d.uri)
                         }
                     );
+
+                    link.on("mouseover", mouseover);
+                    link.on("mouseout", mouseout);
                 }
 
                 if ($scope.clickHandler) {
                     node.on("click", $scope.clickHandler);
                 }
 
-                link.on("mouseover", mouseover);
-                link.on("mouseout", mouseout);
 
                 function mouseover() {
                     var link = d3.select(this);
