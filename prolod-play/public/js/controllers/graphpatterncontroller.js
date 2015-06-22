@@ -28,7 +28,6 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 pattern: {}
             };
 
-
             $scope.colorFunction = function (d) {
                 return colorHash(d.group);
             };
@@ -48,7 +47,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 
-                drawPieChart(stats.classDistribution);
+                drawPieChart(stats.classDistribution, colorHash);
 
                 $scope.loading = false;
                 increaseLimit();
@@ -58,11 +57,8 @@ define(['angular', './controllers', 'dimple'], function (angular) {
     ]);
 
     function drawPieChart(distribution,colorHash) {
-
         var c = "class", v = "value";
-
         var keys = Object.keys(distribution);
-        var max = Math.max.apply(null, keys);
         var data = [];
 
         for(var i in keys) {
@@ -81,12 +77,11 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
         for(var i in keys) {
             var k = keys[i];
-            if (k == "unknown"){
-                k = "";
+            var color = k;
+            if (k == "unknown") {
+                color = null;
             }
-            /*myChart.assignColor(k,function (k) {
-                return colorHash(k);
-            });*/
+            myChart.assignColor(k, colorHash(color));
         }
         myChart.draw();
     }
