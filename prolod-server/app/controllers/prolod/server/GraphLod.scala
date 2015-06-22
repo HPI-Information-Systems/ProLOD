@@ -93,8 +93,13 @@ object GraphLod extends Controller {
 
     if (entities > 0) {
       var classDistribution : Map[String, Double] = Map()
+      var entitiesUnknown = entities
       for ((group, entityCount) <- entitiesPerClass) {
-         classDistribution += (group -> (entityCount/entities).asInstanceOf[Double])
+         classDistribution += (group -> (entityCount.toDouble/entities))
+        entitiesUnknown -= entityCount
+      }
+      if (entitiesUnknown > 0) {
+        classDistribution += ("unknown" -> (entitiesUnknown.toDouble/entities))
       }
       data.classDistribution =  classDistribution
     }
