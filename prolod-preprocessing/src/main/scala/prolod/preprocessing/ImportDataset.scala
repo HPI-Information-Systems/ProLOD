@@ -37,30 +37,33 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
             var predicateId = -1
 
             val nodes: Array[Node] = nxp.next
-            val s: String = nodes(0).toString
-            val p: String = nodes(1).toString
-            val o: String = nodes(2).toString
-            if (!subjectsKnown.contains(s)) {
-                subjectId = db.insertSubject(name, s)
-                subjectsKnown ::= s
-            } else {
-                subjectId = db.getSubjectId(name, s)
+            if (nodes.size >= 3) {
+                val s: String = nodes(0).toString
+                val p: String = nodes(1).toString
+                val o: String = nodes(2).toString
+                if (!subjectsKnown.contains(s)) {
+                    subjectId = db.insertSubject(name, s)
+                    subjectsKnown ::= s
+                } else {
+                    subjectId = db.getSubjectId(name, s)
+                }
+                if (!predicatesKnown.contains(p)) {
+                    predicateId = db.insertPredicate(name, p)
+                    predicatesKnown ::= p
+                } else {
+                    predicateId = db.getPredicateId(name, p)
+                }
+                if (!objectsKnown.contains(o)) {
+                    objectId = db.insertObject(name, o)
+                    objectsKnown ::= o
+                } else {
+                    objectId = db.getObjectId(name, o)
+                }
+                if (subjectId >= 0 && predicateId >= 0 && objectId >= 0) {
+                    db.insertTriples(name, subjectId, predicateId, objectId)
+                }
             }
-            if (!predicatesKnown.contains(p)) {
-                predicateId = db.insertPredicate(name, p)
-                predicatesKnown ::= p
-            } else {
-                predicateId = db.getPredicateId(name, p)
-            }
-            if (!objectsKnown.contains(o)) {
-                objectId = db.insertObject(name, o)
-                objectsKnown ::= o
-            } else {
-                objectId = db.getObjectId(name, o)
-            }
-            if (subjectId >= 0 && predicateId >= 0 && objectId >= 0) {
-                db.insertTriples(name, subjectId, predicateId, objectId)
-            }
+
         }
     }
 
