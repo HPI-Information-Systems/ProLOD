@@ -1,6 +1,6 @@
 'use strict';
 
-define(['angular', './controllers'], function (angular) {
+define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
     angular.module('Prolod2.controllers').controller("GraphPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
         function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
@@ -48,6 +48,8 @@ define(['angular', './controllers'], function (angular) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 
+                drawPieChart(stats.classDistribution);
+
                 $scope.loading = false;
                 increaseLimit();
 
@@ -55,19 +57,39 @@ define(['angular', './controllers'], function (angular) {
         }
     ]);
 
-    function drawPieChart (){
+    function drawPieChart(distribution,colorHash) {
 
-        var svg = dimple.newSvg("#pie-chart", 590, 400);
-        d3.tsv("/data/example_data.tsv", function (data) {
-            var myChart = new dimple.chart(svg, data);
-            myChart.setBounds(20, 20, 460, 360)
-            myChart.addMeasureAxis("p", "Unit Sales");
-            myChart.addSeries("Owner", dimple.plot.pie);
-            myChart.addLegend(500, 20, 90, 300, "left");
-            myChart.draw();
-        });
+        var c = "class", v = "value";
+
+        var keys = Object.keys(distribution);
+        var max = Math.max.apply(null, keys);
+        var data = [];
+
+        for(var i in keys) {
+            var obj = {};
+            obj[c] = keys[i];
+            obj[v] = distribution[keys[i]] || 0;
+            data.push(obj);
+        }
+
+        var svg = dimple.newSvg("#pie-chart", "100%", "100%");
+        var myChart = new dimple.chart(svg, data);
+        myChart.setBounds(20, 20, 230, 180)
+        myChart.addMeasureAxis("p", "value");
+        myChart.addSeries("class", dimple.plot.pie);
+        myChart.addLegend(250, 20, 90, 300, "left");
+
+        for(var i in keys) {
+            var k = keys[i];
+            if (k == "unknown"){
+                k = "";
+            }
+            /*myChart.assignColor(k,function (k) {
+                return colorHash(k);
+            });*/
+        }
+        myChart.draw();
     }
-
 });
 
 
