@@ -34,6 +34,7 @@ object GraphLod extends Controller {
       }
       case None => println()
     }
+
     val json = Json.obj("statistics" -> data)
     Ok(json)
   }
@@ -89,6 +90,33 @@ object GraphLod extends Controller {
       data.patterns = newPatternList
     } else {
       data.patterns = patternList
+      for (pattern : Pattern <- patternList) {
+        var tempEntitiesPerClass: Map[String, Integer] = Map()
+        for (node : Node <- pattern.nodes) {
+          var group = node.group.getOrElse("")
+          if (group.length > 0) {
+            var entityCount = 0
+            if (tempEntitiesPerClass.contains(group)) {
+              tempEntitiesPerClass.get(group) match {
+                case Some(c) => entityCount = c
+              }
+            }
+            entityCount += 1
+            tempEntitiesPerClass += (group -> entityCount)
+          }
+        }
+        entities += pattern.nodes.size
+        for ((group, count) <- tempEntitiesPerClass) {
+          var entityCount = 0
+          if (entitiesPerClass.contains(group)) {
+            entitiesPerClass.get(group) match {
+              case Some(c) => entityCount = c
+            }
+          }
+          entityCount += count
+          entitiesPerClass += (group -> entityCount)
+        }
+      }
     }
 
     if (entities > 0) {
