@@ -14,7 +14,6 @@ import prolod.common.models.PatternFormats.patternDBFormat
 
 object GraphLod extends Controller {
   def getGraphStatistics(datasetId: String, groups: List[String]) = Action {
-    println("groups:" + groups)
     val config = new Configuration()
     val db = new DatabaseConnection(config)
     val patternList: List[Pattern] = db.getPatterns(datasetId)
@@ -22,14 +21,19 @@ object GraphLod extends Controller {
     val statistics = db.getStatistics(datasetId)
 
     data.nodes = db.getDatasetEntities(datasetId)
-    data.edges = statistics.get("edges").get.toInt
-    data.giantComponentEdges = statistics.get("gcnodes").get.toInt
+    data.edges = statistics.get("edges").getOrElse("0").toInt
+    data.giantComponentEdges = statistics.get("gcnodes").getOrElse("0").toInt
     data.patterns = patternList
-    data.connectedComponents = statistics.get("connectedcomponents").get.toInt
-    data.stronglyConnectedComponents = statistics.get("stronglyconnectedcomponents").get.toInt
-    val nodeDegreeDistributionMap = Json.parse(statistics.get("nodedegreedistribution").get).as[Map[Int, Int]]
-    data.nodeDegreeDistribution =  nodeDegreeDistributionMap
+    data.connectedComponents = statistics.get("connectedcomponents").getOrElse("0").toInt
+    data.stronglyConnectedComponents = statistics.get("stronglyconnectedcomponents").getOrElse("0").toInt
 
+    statistics.get("nodedegreedistribution") match {
+      case Some(ndd) => {
+        val nodeDegreeDistributionMap = Json.parse(statistics.get("nodedegreedistribution").get).as[Map[Int, Int]]
+        data.nodeDegreeDistribution =  nodeDegreeDistributionMap
+      }
+      case None => println()
+    }
     val json = Json.obj("statistics" -> data)
     Ok(json)
   }

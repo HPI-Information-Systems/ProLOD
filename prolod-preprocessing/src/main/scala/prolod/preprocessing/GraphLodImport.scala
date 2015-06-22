@@ -17,10 +17,10 @@ class GraphLodImport(var db: DatabaseConnection, name : String, namespace: Strin
 
 	val graphLod : GraphLOD = GraphLOD.loadDataset(name, files.asJava, namespace, ontologyNamespace, excludedNamespaces.asJava)
 	db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount, ontologyNamespace)
-	db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns)
-	var connectedGraphSizes = graphLod.connectedGraphSizes.asScala.toList.max[Integer]
-	db.insertStatistics(name, graphLod.nodeDegreeDistribution.toString, graphLod.averageLinks, graphLod.graphFeatures.getEdgeCount, connectedGraphSizes, graphLod.connectedGraphs.size, graphLod.stronglyConnectedGraphs.size())
 	db.insertClasses(name, graphLod.dataset.ontologyClasses)
+	var connectedGraphSizes = graphLod.connectedGraphSizes.asScala.toList.max[Integer]
+	db.insertStatistics(name, graphLod.nodeDegreeDistribution.toString, graphLod.averageLinks, graphLod.graphFeatures.getEdgeCount, connectedGraphSizes, graphLod.connectedGraphs.size, graphLod.stronglyConnectedGraphs.size)
+	db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns)
 
 
 

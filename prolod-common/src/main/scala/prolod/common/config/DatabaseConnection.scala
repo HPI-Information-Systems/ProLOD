@@ -1,6 +1,6 @@
 package prolod.common.config
 
-import java.io.File
+import java.io.{FileNotFoundException, File}
 import java.sql._
 import java.util
 
@@ -198,6 +198,7 @@ class DatabaseConnection(config : Configuration) {
 				*/
 			} catch {
 				case e : SqlSyntaxErrorException => println(e.getMessage)
+				case e : FileNotFoundException =>  println(e.getMessage)
 			}
 		}
 	}
@@ -411,7 +412,8 @@ class DatabaseConnection(config : Configuration) {
 		val patternsMap = patterns.asScala.toMap
 		patternsMap.foreach {
 			case (id, patternHashMap) => {
-				patternHashMap.asScala.toMap.foreach {
+				val patternHashMapScala = patternHashMap.asScala.toMap
+				patternHashMapScala.foreach {
 					case (pattern, occurences) => {
 						try {
 							val statement = connection.createStatement()
@@ -432,11 +434,11 @@ class DatabaseConnection(config : Configuration) {
 									println(e.getMessage)
 									println(coloredpattern)
 								}
+								case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
 							}
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -486,12 +488,13 @@ class DatabaseConnection(config : Configuration) {
 	def getSubjectId(name: String, s: String): Int = {
 		var result : Int = -1
 		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".subjecttable WHERE subject='" + s + "'")
 		try {
+			val resultSet = statement.executeQuery("SELECT id FROM " + name + ".subjecttable WHERE subject='" + s + "'")
 			resultSet.next()
 			result = resultSet.getInt("id")
 		} catch {
 			case e : SqlException => println(e.getMessage)
+			case e: SqlSyntaxErrorException  => println(e.getMessage)
 		}
 		statement.close
 		result
