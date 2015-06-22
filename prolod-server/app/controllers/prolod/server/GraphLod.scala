@@ -71,7 +71,7 @@ object GraphLod extends Controller {
           }
           newNodes ::= newNode
         }
-        if ((groups.size == 0) || ((groups.size > 0) && !patternNotInGroups)) {
+        if ((groups.size == 0) || ((groups.size > 0) && patternNotInGroups)) {
           newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
           entities += newNodes.size
           for ((group, count) <- tempEntitiesPerClass) {
