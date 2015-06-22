@@ -51,30 +51,67 @@ object GraphLod extends Controller {
     return Map()
   }
 
-
-
   def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
-    var config = new Configuration()
-    var db = new DatabaseConnection(config)
+    val config = new Configuration()
+    val db = new DatabaseConnection(config)
     val data: GraphLodResult = GraphLodResult(datasetId)
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
+    var entitiesPerClass: Map[String, Integer] = Map()
+    var entities = 0
     if (groups.size > 0) {
       var newPatternList: List[Pattern] = Nil
       for (pattern : Pattern <- patternList) {
+        var patternNotInGroups = false
         var newNodes: List[Node] = Nil
+        var tempEntitiesPerClass: Map[String, Integer] = Map()
         for (node : Node <- pattern.nodes) {
           var newNode : Node = node
+          var group = node.group.getOrElse("")
           if (!groups.contains(node.group.getOrElse(""))) {
             newNode = new Node(node.id, node.uri, None)
+          } else {
+            patternNotInGroups = true
+          }
+          if (group.length > 0) {
+            var entityCount = 0
+            if (tempEntitiesPerClass.contains(group)) {
+              tempEntitiesPerClass.get(group) match {
+                case Some(c) => entityCount = c
+              }
+            }
+            entityCount += 1
+            tempEntitiesPerClass += (group -> entityCount)
           }
           newNodes ::= newNode
         }
-        newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
+        if ((groups.size == 0) || ((groups.size > 0) && !patternNotInGroups)) {
+          newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
+          entities += newNodes.size
+          for ((group, count) <- tempEntitiesPerClass) {
+            var entityCount = 0
+            if (entitiesPerClass.contains(group)) {
+              entitiesPerClass.get(group) match {
+                case Some(c) => entityCount = c
+              }
+            }
+            entityCount += count
+            entitiesPerClass += (group -> entityCount)
+          }
+        }
       }
       data.patterns = newPatternList
     } else {
       data.patterns = patternList
     }
+
+    if (entities > 0) {
+      var classDistribution : Map[String, Double] = Map()
+      for ((group, entityCount) <- entitiesPerClass) {
+         classDistribution += (group -> (entityCount/entities).asInstanceOf[Double])
+      }
+      data.classDistribution =  classDistribution
+    }
+
     val json = Json.obj("statistics" -> data)
     Ok(json)
   }
