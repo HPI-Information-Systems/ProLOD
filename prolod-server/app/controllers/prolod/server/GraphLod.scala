@@ -1,6 +1,5 @@
 package controllers.prolod.server
 
-import com.google.common.collect.{HashMultiset, Multiset}
 import prolod.common.config.{DatabaseConnection, Configuration}
 import prolod.common.models._
 import GraphLodResultFormats.graphLodResultFormat
@@ -11,6 +10,7 @@ import play.api.Logger
 import play.api.mvc.{Action, Controller}
 import prolod.common.models.PatternFormats.patternFormat
 import prolod.common.models.PatternFormats.patternDBFormat
+import prolod.common.models.GraphLodResultFormats.mapStringFloatFormat
 
 object GraphLod extends Controller {
   def getGraphStatistics(datasetId: String, groups: List[String]) = Action {
@@ -36,19 +36,6 @@ object GraphLod extends Controller {
     }
     val json = Json.obj("statistics" -> data)
     Ok(json)
-  }
-
-  def getGraphDistribution(pattern: List[Pattern]): Map[String, Int] = {
-
-    val multiset : Multiset[String] = HashMultiset.create();
-
-    for(p : Pattern <- pattern ){
-      for(n : Node <- p.nodes){
-        multiset.add(n.group.getOrElse(""),1)
-      }
-    }
-
-    return Map()
   }
 
   def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
