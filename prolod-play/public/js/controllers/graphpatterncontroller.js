@@ -60,12 +60,17 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         var c = "class", v = "value";
         var keys = Object.keys(distribution);
         var data = [];
-
+        var max = 0;
+        for(var i in keys) {
+            max = Math.max(max, distribution[keys[i]]);
+        }
         for(var i in keys) {
             var obj = {};
             obj[c] = keys[i];
             obj[v] = distribution[keys[i]] || 0;
-            data.push(obj);
+            if(obj[v] > max/100) {
+                data.push(obj);
+            }
         }
 
         var svg = dimple.newSvg("#pie-chart", "100%", "100%");

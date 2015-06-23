@@ -69,6 +69,9 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
     function drawChart(distribution, $scope, $window) {
         var xaxis = "node degree", yaxis = "number of nodes";
+        if(!distribution.length) {
+            return;
+        }
 
         var keys = Object.keys(distribution).map(function(i) { return parseInt(i, 10)});
         var max = Math.max.apply(null, keys);
@@ -78,7 +81,8 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             var obj = {};
             obj[xaxis] = i;
             obj[yaxis] = distribution[i] || 0;
-            data.push(obj);
+            if (obj[yaxis] > 1 && obj[xaxis] < 200) // limit number of charts for readability
+                data.push(obj);
         }
 
         var width = 500, height = 300;

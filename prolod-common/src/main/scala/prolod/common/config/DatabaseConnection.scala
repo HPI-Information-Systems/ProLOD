@@ -77,52 +77,52 @@ class DatabaseConnection(config : Configuration) {
 
 	def createTables(name : String): Unit = {
 		try {
-			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("CREATE SCHEMA " + name)
+			val createStatement = connection.createStatement()
+			val createResultSet = createStatement.execute("CREATE SCHEMA " + name)
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
 		try {
-			var createStatement = connection.createStatement()
+			val createStatement = connection.createStatement()
 			createStatement.execute("DROP TABLE "+name+".patterns")
-			createStatement.close
+			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 		try {
-			var createStatement = connection.createStatement()
+			val createStatement = connection.createStatement()
 			createStatement.execute("CREATE TABLE "+name+".patterns (id INT, pattern CLOB, occurences INT)")
-			createStatement.close
+			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
 		try {
-			var createStatement = connection.createStatement()
+			val createStatement = connection.createStatement()
 			createStatement.execute("DROP TABLE "+name+".coloredpatterns")
-			createStatement.close
+			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 		try {
-			var createStatement = connection.createStatement()
+			val createStatement = connection.createStatement()
 			createStatement.execute("CREATE TABLE "+name+".coloredpatterns (id INT, pattern CLOB)")
-			createStatement.close
+			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
 		try {
-			var createStatement = connection.createStatement()
+			val createStatement = connection.createStatement()
 			createStatement.execute("DROP TABLE "+name+".graphstatistics")
-			createStatement.close
+			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 		try {
-			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT)")
+			val createStatement = connection.createStatement()
+			val createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT)")
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
@@ -153,7 +153,7 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
-		var sqlDir = new File("prolod-preprocessing/sql/")
+		val sqlDir = new File("prolod-preprocessing/sql/")
 		for (file <- sqlDir.listFiles) {
 			try {
 				val queryString = Source.fromFile(file.getPath).mkString
@@ -166,7 +166,7 @@ class DatabaseConnection(config : Configuration) {
 								var tableNamenormalized = tableName
 								if (tableName.equals("")) tableNamenormalized = file.getName.replace(".sql", "")
 								dropStatement.execute("DROP TABLE " + name + "." + tableNamenormalized)
-								dropStatement.close
+								dropStatement.close()
 							} catch {
 								case e : SqlSyntaxErrorException => println(e.getMessage)
 							}
@@ -175,7 +175,7 @@ class DatabaseConnection(config : Configuration) {
 					}
 					val statement = connection.prepareStatement(query)
 					statement.execute
-					statement.close
+					statement.close()
 				} catch {
 					case e : SqlSyntaxErrorException => println(e.getMessage +  System.lineSeparator() + query)
 				}
@@ -224,7 +224,7 @@ class DatabaseConnection(config : Configuration) {
 
 	def getGroups(s: String, ontologyNamespace : String): Seq[Group] = {
 		val table = s
-		var sql = sql"SELECT label, cluster_size FROM #${table}.CLUSTERS WHERE username = 'ontology'".as[(String, Int)]
+		val sql = sql"SELECT label, cluster_size FROM #${table}.CLUSTERS WHERE username = 'ontology'".as[(String, Int)]
 		var id : Int = -1
 		try {
 			val result = execute(sql)
@@ -268,11 +268,11 @@ class DatabaseConnection(config : Configuration) {
 	}
 
 
-	def getStatistics(s: String) : mutable.Map[String, String] = {
-		var statistics = mutable.Map[String, String]()
-		val sql = sql"SELECT nodedegreedistribution, averagelinks, edges, connectedcomponents, stronglyconnectedcomponents FROM #$s.graphstatistics".as[(String, Float, Int, Int, Int)]
+	def getStatistics(dataset: String) : mutable.Map[String, String] = {
+		val statistics = mutable.Map[String, String]()
+		val sql = sql"SELECT nodedegreedistribution, averagelinks, edges, connectedcomponents, stronglyconnectedcomponents FROM #$dataset.graphstatistics".as[(String, Float, Int, Int, Int)]
 		try {
-			val sql2 = sql"SELECT gcnodes FROM #$s.graphstatistics".as[(Int)]
+			val sql2 = sql"SELECT gcnodes FROM #$dataset.graphstatistics".as[(Int)]
 			val result2 = execute(sql2) map ((gcnodes) => {
 				statistics += ("gcnodes" -> gcnodes.toString)
 			})
@@ -290,19 +290,20 @@ class DatabaseConnection(config : Configuration) {
 		statistics
 	}
 
-	def getColoredPatterns(s: String, id : Int): List[Pattern] = {
+	def getColoredPatterns(dataset: String, id: Int): List[Pattern] = {
 		var patterns : List[Pattern] = Nil
+		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}".as[String]
+		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
+				"\"group\":\"" + ontology_namespace.replace("/", "\\/")
+		})
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT pattern FROM "+ s+".COLOREDPATTERNS WHERE id = "+id)
+			val resultSet = statement.executeQuery("SELECT pattern FROM "+ dataset+".COLOREDPATTERNS WHERE id = "+id)
 			while ( resultSet.next() ) {
 				var pattern = resultSet.getString("pattern")
-
-				val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}".as[String]
-				val result = execute(sql)
-				result map (ontology_namespace => {
-					var replace = "\"group\":\"" + ontology_namespace.replace("/", "\\/")
-					pattern = removeOntologyNamespace(pattern, replace)
+				
+				namespaces foreach (ontology_namespace => {
+					 pattern = removeOntologyNamespace(pattern, ontology_namespace)
 				})
 				// val occurences = resultSet.getInt("occurences")
 
@@ -317,7 +318,7 @@ class DatabaseConnection(config : Configuration) {
 				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
 		} catch {
-			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + s)
+			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + dataset)
 		}
 		patterns
 	}
@@ -359,14 +360,14 @@ class DatabaseConnection(config : Configuration) {
 				while ( resultSet1.next() ) {
 					subjectUri = resultSet1.getString("subject")
 				}
-				statement1.close
+				statement1.close()
 
 				val statement2 = connection.createStatement()
 				val resultSet2 = statement2.executeQuery("SELECT predicate FROM "+ dataset+".predicatetable WHERE id = "+predicateId)
 				while ( resultSet2.next() ) {
 					predicateUri = resultSet2.getString("predicate")
 				}
-				statement2.close
+				statement2.close()
 
 				val statement3 = connection.createStatement()
 				val resultSet3 = statement3.executeQuery("SELECT object FROM "+ dataset+".objecttable WHERE tuple_id = "+objectId)
@@ -376,7 +377,7 @@ class DatabaseConnection(config : Configuration) {
 						label = objectUri
 					}
 				}
-				statement3.close
+				statement3.close()
 
 				triples :::= List(new Triple(subjectUri, predicateUri, objectUri))
 			}
@@ -386,7 +387,7 @@ class DatabaseConnection(config : Configuration) {
 		}
 
 		// TODO label
-		var entityDetails = new Entity(entity, label, triples)
+		val entityDetails = new Entity(entity, label, triples)
 		entityDetails
 	}
 
@@ -458,7 +459,7 @@ class DatabaseConnection(config : Configuration) {
 			val statement = connection.prepareStatement(query)
 			statement.execute
 			val key = statement.getGeneratedKeys
-			statement.close
+			statement.close()
 			if(key.next) {
 				key.getInt(1)
 			}
@@ -473,15 +474,13 @@ class DatabaseConnection(config : Configuration) {
 	private def commaize(list: List[_ <: Any]): String = list match {
 		case List()  => ""
 		case List(x) => x.toString
-		case _       => list(0) + ", " + commaize(list.tail)
+		case _       => list.head + ", " + commaize(list.tail)
 	}
 
 	def insertSubject(name: String, s: String): Int = {
 		performInsert(name + ".subjecttable", List("subject"), List(s)) match {
 			case Some(i) => i
-			case None => {
-				getSubjectId(name, s)
-			}
+			case None => getSubjectId(name, s)
 		}
 	}
 
@@ -496,7 +495,7 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlException => println(e.getMessage)
 			case e: SqlSyntaxErrorException  => println(e.getMessage)
 		}
-		statement.close
+		statement.close()
 		result
 	}
 
@@ -522,16 +521,14 @@ class DatabaseConnection(config : Configuration) {
 		val resultSet = statement.executeQuery("SELECT tuple_id FROM " + name + ".objecttable WHERE object='" + s.replace("'", "") + "'")
 		resultSet.next()
 		result = resultSet.getInt("tuple_id")
-		statement.close
+		statement.close()
 		result
 	}
 
 	def insertPredicate(name: String, s: String): Int = {
 		performInsert(name + ".predicatetable", List("predicate"), List(s)) match {
 			case Some(i) => i
-			case None => {
-				getPredicateId(name, s)
-			}
+			case None => getPredicateId(name, s)
 		}
 	}
 
@@ -541,7 +538,7 @@ class DatabaseConnection(config : Configuration) {
 		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".predicatetable WHERE predicate='" + s + "'")
 		resultSet.next()
 		result = resultSet.getInt("id")
-		statement.close
+		statement.close()
 		result
 	}
 
@@ -570,7 +567,7 @@ class DatabaseConnection(config : Configuration) {
 	}
 
 	def insertClasses(name: String, clusters: util.List[String]) = {
-		var clusterUris = clusters.asScala.toList
+		val clusterUris = clusters.asScala.toList
 		clusterUris.foreach {
 			case (cluster) =>
 				try {

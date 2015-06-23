@@ -21,11 +21,11 @@ object GraphLod extends Controller {
     val statistics = db.getStatistics(datasetId)
 
     data.nodes = db.getDatasetEntities(datasetId)
-    data.edges = statistics.get("edges").getOrElse("0").toInt
-    data.giantComponentEdges = statistics.get("gcnodes").getOrElse("0").toInt
+    data.edges = statistics.getOrElse("edges", "0").toInt
+    data.giantComponentEdges = statistics.getOrElse("gcnodes", "0").toInt
     data.patterns = patternList
-    data.connectedComponents = statistics.get("connectedcomponents").getOrElse("0").toInt
-    data.stronglyConnectedComponents = statistics.get("stronglyconnectedcomponents").getOrElse("0").toInt
+    data.connectedComponents = statistics.getOrElse("connectedcomponents", "0").toInt
+    data.stronglyConnectedComponents = statistics.getOrElse("stronglyconnectedcomponents", "0").toInt
 
     statistics.get("nodedegreedistribution") match {
       case Some(ndd) => {
@@ -44,17 +44,17 @@ object GraphLod extends Controller {
     val db = new DatabaseConnection(config)
     val data: GraphLodResult = GraphLodResult(datasetId)
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
-    var entitiesPerClass: Map[String, Integer] = Map()
+    var entitiesPerClass: Map[String, Int] = Map()
     var entities = 0
-    if (groups.size > 0) {
+    if (groups.nonEmpty) {
       var newPatternList: List[Pattern] = Nil
       for (pattern : Pattern <- patternList) {
         var patternNotInGroups = false
         var newNodes: List[Node] = Nil
-        var tempEntitiesPerClass: Map[String, Integer] = Map()
+        var tempEntitiesPerClass: Map[String, Int] = Map()
         for (node : Node <- pattern.nodes) {
           var newNode : Node = node
-          var group = node.group.getOrElse("")
+          val group = node.group.getOrElse("")
           if (!groups.contains(node.group.getOrElse(""))) {
             newNode = new Node(node.id, node.uri, None)
           } else {
@@ -63,24 +63,20 @@ object GraphLod extends Controller {
           if (group.length > 0) {
             var entityCount = 0
             if (tempEntitiesPerClass.contains(group)) {
-              tempEntitiesPerClass.get(group) match {
-                case Some(c) => entityCount = c
-              }
+              entityCount = tempEntitiesPerClass.getOrElse(group, 0)
             }
             entityCount += 1
             tempEntitiesPerClass += (group -> entityCount)
           }
           newNodes ::= newNode
         }
-        if ((groups.size == 0) || ((groups.size > 0) && patternNotInGroups)) {
+        if (groups.isEmpty || (groups.nonEmpty && patternNotInGroups)) {
           newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
           entities += newNodes.size
           for ((group, count) <- tempEntitiesPerClass) {
             var entityCount = 0
             if (entitiesPerClass.contains(group)) {
-              entitiesPerClass.get(group) match {
-                case Some(c) => entityCount = c
-              }
+              entityCount = entitiesPerClass.getOrElse(group, 0)
             }
             entityCount += count
             entitiesPerClass += (group -> entityCount)
@@ -91,15 +87,13 @@ object GraphLod extends Controller {
     } else {
       data.patterns = patternList
       for (pattern : Pattern <- patternList) {
-        var tempEntitiesPerClass: Map[String, Integer] = Map()
+        var tempEntitiesPerClass: Map[String, Int] = Map()
         for (node : Node <- pattern.nodes) {
-          var group = node.group.getOrElse("")
+          val group = node.group.getOrElse("")
           if (group.length > 0) {
             var entityCount = 0
             if (tempEntitiesPerClass.contains(group)) {
-              tempEntitiesPerClass.get(group) match {
-                case Some(c) => entityCount = c
-              }
+              entityCount = tempEntitiesPerClass.getOrElse(group, 0)
             }
             entityCount += 1
             tempEntitiesPerClass += (group -> entityCount)
@@ -109,9 +103,7 @@ object GraphLod extends Controller {
         for ((group, count) <- tempEntitiesPerClass) {
           var entityCount = 0
           if (entitiesPerClass.contains(group)) {
-            entitiesPerClass.get(group) match {
-              case Some(c) => entityCount = c
-            }
+            entityCount = entitiesPerClass.getOrElse(group, 0)
           }
           entityCount += count
           entitiesPerClass += (group -> entityCount)
