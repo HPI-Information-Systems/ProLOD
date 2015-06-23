@@ -8,8 +8,9 @@
 body {
     /*
     padding-top: 50px;
-    height: 100vh;
     */
+    height: 100vh;
+
 }
 
 .heightlimited {
@@ -107,6 +108,10 @@ body {
 
 #distribution-chart {
     height: 300px;
+}
+
+treecontrol li {
+    white-space: nowrap;
 }
 
 .tree-label.tree-selected {
