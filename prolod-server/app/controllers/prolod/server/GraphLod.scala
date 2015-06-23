@@ -29,6 +29,8 @@ object GraphLod extends Controller {
       case None => println()
     }
 
+    // TODO class distribution should go in here
+
     val json = Json.obj("statistics" -> data)
     Ok(json)
   }
@@ -40,6 +42,7 @@ object GraphLod extends Controller {
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern)
     var entitiesPerClass: Map[String, Int] = Map()
     var entities = 0
+    data.connectedComponents = patternList.size
     if (groups.nonEmpty) {
       var newPatternList: List[Pattern] = Nil
       for (pattern : Pattern <- patternList) {
@@ -77,6 +80,7 @@ object GraphLod extends Controller {
           }
         }
       }
+      data.connectedComponents = newPatternList.size
       data.patterns = newPatternList
     } else {
       data.patterns = patternList
@@ -115,6 +119,7 @@ object GraphLod extends Controller {
       if (entitiesUnknown > 0) {
         classDistribution += ("unknown" -> (entitiesUnknown.toDouble/entities))
       }
+      data.nodes = entities
       data.classDistribution =  classDistribution
     }
 

@@ -49,6 +49,8 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
                 drawPieChart(stats.classDistribution, colorHash);
 
+                $scope.stats = stats;
+
                 $scope.loading = false;
                 increaseLimit();
 

@@ -42,6 +42,78 @@
     </bg-pane>
 
     <bg-pane>
-        <div id="pie-chart" class="lowerpanel"></div>
+        <div class="lowerpanel">
+                <div>
+                    <h3>Statistics:</h3>
+                    <table class="table stats">
+                        <thead>
+                        <tr ng-if="stats.nodes">
+                            <td>Nodes:</td>
+                            <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
+                        </tr>
+                        <tr ng-if="stats.edges">
+                            <td>Edges:</td>
+                            <td class="align-right">{{stats.edges | number}}</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-if="stats.connectedComponents">
+                            <td>Connected Components:</td>
+                            <td class="align-right">{{stats.connectedComponents | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.connectedComponentsMinEdges">
+                            <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
+                            <td class="align-right">{{stats.connectedComponentsMinEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.connectedComponentsMaxEdges">
+                            <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
+                            <td class="align-right">{{stats.connectedComponentsMaxEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.connectedComponentsAvgEdges">
+                            <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
+                            <td class="align-right">{{stats.connectedComponentsAvgEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.stronglyConnectedComponents">
+                            <td>Strongly Connected Components:</td>
+                            <td class="align-right">{{stats.stronglyConnectedComponents | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.stronglyConnectedComponentsMinEdges">
+                            <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
+                            <td class="align-right">{{stats.stronglyConnectedComponentsMinEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.stronglyConnectedComponentsMaxEdges">
+                            <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
+                            <td class="align-right">{{stats.stronglyConnectedComponentsMaxEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.stronglyConnectedComponentsAvgEdges">
+                            <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
+                            <td>{{stats.stronglyConnectedComponentsAvgEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.averageDiameter">
+                            <td>Average Diameter:</td>
+                            <td class="align-right">{{stats.averageDiameter | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.giantComponentEdges">
+                            <td>Giant Component - Edges:</td>
+                            <td class="align-right">{{stats.giantComponentEdges | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.giantComponentNodes">
+                            <td>Giant Component - Nodes:</td>
+                            <td class="align-right">{{stats.giantComponentNodes | number}}</td>
+                        </tr>
+                        <tr ng-if="stats.giantComponentDiameter">
+                            <td>Giant Component Diameter:</td>
+                            <td class="align-right">{{stats.giantComponentDiameter | number}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h3>Class distribution:</h3>
+                    <div id="pie-chart"></div>
+                </div>
+            </div>
+
+        </div>
     </bg-pane>
 </bg-splitter>

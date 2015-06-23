@@ -95,6 +95,14 @@ body {
 
 }
 
+.stats {
+    min-width: 60%;
+}
+
+.table {
+    width: 60%;
+}
+
 .graph-grid a:hover{
     text-decoration: none;
 }
@@ -110,6 +118,10 @@ body {
 }
 
 #distribution-chart {
+    height: 300px;
+}
+
+#pie-chart {
     height: 300px;
 }
 
