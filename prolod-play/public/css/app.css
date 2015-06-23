@@ -50,11 +50,14 @@ body {
 }
 
 .view-container {
-    height: calc(100% - 79px);
+    height: 100%;
     overflow-y: hidden;
     position: relative
 }
 
+.view-container.has-tabs {
+    height: calc(100% - 79px);
+}
 
 
 #view {

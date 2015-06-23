@@ -63,7 +63,7 @@
                     </div>
 
 
-                    <div class="row view-container" ng-view>loading...</div>
+                    <div class="row view-container" ng-class="currentRoute.activetab != 'index'? 'has-tabs' : ''" ng-view>loading...</div>
                     <!--<div class="">Scala version: @util.Properties.versionNumberString</div>-->
 
                 </div>
