@@ -211,9 +211,9 @@ class DatabaseConnection(config : Configuration) {
 		result                */
 	}
 
-	def getGroups(s: String, ontologyNamespace : String): Seq[Group] = {
+	def getClusters(s: String, ontologyNamespace : String): Seq[Group] = {
 		val table = s
-		val sql = sql"SELECT label, cluster_size FROM #${table}.CLUSTERS WHERE username = 'ontology'".as[(String, Int)]
+		val sql = sql"SELECT label, cluster_size FROM #${table}.CLUSTERS WHERE username = 'ontology' ORDER BY label".as[(String, Int)]
 		var id : Int = -1
 		try {
 			val result = execute(sql)
@@ -251,7 +251,7 @@ class DatabaseConnection(config : Configuration) {
 		val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA".as[(String, String, Int, String)]
 
 		val result = execute(sql) map tupled((id, schema, entities, ontology_namespace) => {
-			new Dataset(id, schema, entities, getGroups(id, ontology_namespace))
+			new Dataset(id, schema, entities, getClusters(id, ontology_namespace))
 		})
 		result.filter(_.size > 0)
 	}
