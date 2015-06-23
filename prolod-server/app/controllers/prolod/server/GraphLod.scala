@@ -1,16 +1,10 @@
 package controllers.prolod.server
 
-import prolod.common.config.{DatabaseConnection, Configuration}
-import prolod.common.models._
-import GraphLodResultFormats.graphLodResultFormat
-import prolod.common.models.GraphLodResultFormats.mapIntIntFormat
-
 import play.api.libs.json._
-import play.api.Logger
 import play.api.mvc.{Action, Controller}
-import prolod.common.models.PatternFormats.patternFormat
-import prolod.common.models.PatternFormats.patternDBFormat
-import prolod.common.models.GraphLodResultFormats.mapStringFloatFormat
+import prolod.common.config.{Configuration, DatabaseConnection}
+import prolod.common.models.GraphLodResultFormats.{graphLodResultFormat, mapIntIntFormat}
+import prolod.common.models._
 
 object GraphLod extends Controller {
   def getGraphStatistics(datasetId: String, groups: List[String]) = Action {

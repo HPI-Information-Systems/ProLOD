@@ -1,33 +1,22 @@
 package prolod.common.config
 
-import java.io.{FileNotFoundException, File}
+import java.io.{File, FileNotFoundException}
 import java.sql._
 import java.util
 
 import com.ibm.db2.jcc.am.{SqlDataException, SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
 import com.typesafe.slick.driver.db2.DB2Driver.api._
-import prolod.common.models._
-import slick.jdbc.{GetResult, StaticQuery => Q}
-import scala.collection.mutable
-import scala.slick.jdbc.StaticQuery
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.slick.jdbc.JdbcBackend.Session
-import scala.util.control.NonFatal
-import scala.collection.JavaConverters._
 import play.api.libs.json._
 import prolod.common.models.PatternFormats.patternDBFormat
-import prolod.common.models.{Dataset, Group, Pattern, PatternFromDB}
-import prolod.common.models.EntityFormats.entityFormat
-import prolod.common.models.EntityFormats.tripleFormat
+import prolod.common.models.{Dataset, Group, Pattern, PatternFromDB, _}
+import slick.jdbc.{StaticQuery => Q}
 import slick.profile.SqlStreamingAction
 
 import scala.Function.tupled
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.collection.mutable.Map
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.slick.jdbc.JdbcBackend.Session
 import scala.io.Source
 
 /*
