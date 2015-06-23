@@ -69,11 +69,11 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
     function drawChart(distribution, $scope, $window) {
         var xaxis = "node degree", yaxis = "number of nodes";
-        if(!distribution.length) {
-            return;
-        }
 
         var keys = Object.keys(distribution).map(function(i) { return parseInt(i, 10)});
+        if(!keys.length) {
+            return;
+        }
         var max = Math.max.apply(null, keys);
         var data = [];
         //for(var i=1; i<max; i++) {
