@@ -2,8 +2,8 @@
 
 define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
-    angular.module('Prolod2.controllers').controller("GraphCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi',
-        function ($scope, $routeParams, $timeout, routeBuilder, httpApi) {
+    angular.module('Prolod2.controllers').controller("GraphCtrl", ['$scope', '$window', '$routeParams', '$timeout', 'routeBuilder', 'httpApi',
+        function ($scope, $window, $routeParams, $timeout, routeBuilder, httpApi) {
             $scope.updateBreadcrumb([{name: 'Graphs', url: routeBuilder.getGraphUrl()}]);
 
             $scope.data = {
@@ -34,7 +34,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 $scope.loading = false;
                 increaseLimit();
 
-                drawChart(stats.nodeDegreeDistribution);
+                drawChart(stats.nodeDegreeDistribution, $scope, $window);
 
                 $scope.stats = stats;
             });
@@ -67,7 +67,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         }
     };
 
-    function drawChart(distribution) {
+    function drawChart(distribution, $scope, $window) {
         var xaxis = "node degree", yaxis = "number of nodes";
 
         var keys = Object.keys(distribution).map(function(i) { return parseInt(i, 10)});
@@ -98,9 +98,15 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         var maxLabels = 50;
         cleanAxis(x, Math.ceil(data.length / maxLabels));
 
-        window.onresize = function () {
+        var redraw = function () {
             myChart.draw(0, true);
         };
+
+        angular.element($window).on('resize', redraw);
+
+        $scope.$on('$destroy', function() {
+            angular.element($window).off('resize', redraw);
+        })
     }
 
 });

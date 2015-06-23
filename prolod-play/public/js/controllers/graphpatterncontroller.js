@@ -70,7 +70,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
         var svg = dimple.newSvg("#pie-chart", "100%", "100%");
         var myChart = new dimple.chart(svg, data);
-        myChart.setBounds(20, 20, 230, 180)
+        myChart.setBounds(20, 20, 230, 180);
         myChart.addMeasureAxis("p", "value");
         myChart.addSeries("class", dimple.plot.pie);
         myChart.addLegend(250, 20, 90, 300, "left");
