@@ -25,14 +25,11 @@
                                 </tr>
                             </table>
 
-
-                        <div ng-if="label">
                             <div ng-if="triples" align="center" class="table-view">
                                 <div ui-grid="model.gridOptions" class="grid"></div>
                             </div>
 
-                            <div ng-if="!triples" align="center" valign="middle"><i>No triples.</i></div>
-                        </div>
+                            <div ng-if="!triples && downloaded" align="center" valign="middle"><i>No triples.</i></div>
 
                             <div class="modal-footer">
                                 <div align="right">Link: <a ng-href="{{ uri }}" target="_blank"> {{uri}}</a></div>
