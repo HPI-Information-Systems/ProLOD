@@ -52,21 +52,24 @@ define(['angular', './controllers'], function (angular) {
                         name: ds.name,
                         size: ds.size,
                         dataset: ds.id,
-                        children: ds.groups.map(function (group) {
-                            var groupNode = {
-                                name: group.name,
-                                size: group.size,
-                                dataset: ds.id,
-                                group: group.name,
-                                color: colorHash(group.name)
-                            };
-                            if(ds.name === params.dataset && (params.group === group.name
-                                || params.group && params.group.indexOf(group.name) >= 0)) {
-                                $scope.model.selectedNodes.push(groupNode);
-                            }
-                            return groupNode;
-                        })
+                        children: null
                     };
+                    dsNode.children = ds.groups.map(function (group) {
+                        var groupNode = {
+                            name: group.name,
+                            size: group.size,
+                            dataset: ds.id,
+                            dsNode: dsNode,
+                            group: group.name,
+                            color: colorHash(group.name)
+                        };
+                        if(ds.name === params.dataset && (params.group === group.name
+                                                          || params.group && params.group.indexOf(group.name) >= 0)) {
+                            $scope.model.selectedNodes.push(groupNode);
+                        }
+                        return groupNode;
+                    });
+
                     if(dsNode.name === params.dataset) {
                         $scope.model.expandedNodes.push(dsNode);
                     }
@@ -93,12 +96,14 @@ define(['angular', './controllers'], function (angular) {
                         $scope.model.expandedNodes.length = 0;
                         $scope.model.expandedNodes.push(selected);
                     }
+                    // select dataset on group selection
+                    if(selected.group && $scope.model.selectedNodes.indexOf(selected.dsNode) === -1) {
+                        $scope.model.selectedNodes.push(selected.dsNode);
+                    }
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: [selected.group]});
                     $location.url(url);
                     return;
-                }
-
-                if($route.current.params.dataset === selected.dataset && selected.group && selected.group) {
+                } else if($route.current.params.dataset === selected.dataset && selected.group && selected.group) {
                     console.log(params.group);
                     if(!params.group) {
                         params.group = [];
