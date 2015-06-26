@@ -5,10 +5,14 @@ define(['angular', './controllers', 'dimple'], function (angular) {
     angular.module('Prolod2.controllers').controller("GraphPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
         function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
             var pattern = $routeParams.pattern;
-            $scope.updateBreadcrumb([
+            var breadCrumbMenu = [
                 {name: 'Graphs', url: routeBuilder.getGraphUrl()},
                 {name: 'Pattern ' + pattern, url: routeBuilder.getGraphPatternUrl(pattern)}
-            ]);
+            ];
+            if ($routeParams.group) {
+                breadCrumbMenu.push({name: 'Class ' + $routeParams.group, url: routeBuilder.getGraphPatternGroupUrl(pattern)});
+            }
+            $scope.updateBreadcrumb(breadCrumbMenu);
 
             $scope.nodeClick = function (node) {
                 var modalInstance = $modal.open({

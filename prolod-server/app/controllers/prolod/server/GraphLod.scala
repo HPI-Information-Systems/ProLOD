@@ -23,8 +23,25 @@ object GraphLod extends Controller {
 
     statistics.get("nodedegreedistribution") match {
       case Some(ndd) => {
+        println(ndd)
         val nodeDegreeDistributionMap = Json.parse(statistics.get("nodedegreedistribution").get).as[Map[Int, Int]]
         data.nodeDegreeDistribution =  nodeDegreeDistributionMap
+      }
+      case None => println()
+    }
+
+    statistics.get("highestIndegrees") match {
+      case Some(ndd) => {
+        val highestIndegreesMap = Json.parse(statistics.get("highestIndegrees").get).as[Map[String, Int]]
+        data.highestIndegrees =  highestIndegreesMap
+      }
+      case None => println()
+    }
+
+    statistics.get("highestOutdegrees") match {
+      case Some(ndd) => {
+        val highestOutdegreesMap = Json.parse(statistics.get("highestOutdegrees").get).as[Map[String, Int]]
+        data.highestOutdegrees =  highestOutdegreesMap
       }
       case None => println()
     }
@@ -122,6 +139,9 @@ object GraphLod extends Controller {
       data.nodes = entities
       data.classDistribution =  classDistribution
     }
+
+    val patternDiameter = db.getPatternDiameter(datasetId, data.patterns.last.id)
+    data.diameter = patternDiameter
 
     val json = Json.obj("statistics" -> data)
     Ok(json)

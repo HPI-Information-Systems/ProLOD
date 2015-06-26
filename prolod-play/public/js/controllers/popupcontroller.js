@@ -18,7 +18,8 @@ define(['angular', './controllers'], function (angular) {
                     {name: 'Object', field:'o', type: 'string', cellTemplate: cellTemplate}
                 ]
             },
-            data: []
+            data: [],
+            downloaded: false
         };
 
         httpApi.getEntityDetail($routeParams.dataset, node.uri).then(function(data){
@@ -27,6 +28,7 @@ define(['angular', './controllers'], function (angular) {
                 $scope.triples = data.data.entity.triples.length;
                 $scope.uri = data.data.entity.url;
                 $scope.label = data.data.entity.label;
+                $scope.downloaded = true;
             }
         );
 
