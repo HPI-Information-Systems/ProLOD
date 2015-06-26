@@ -325,7 +325,7 @@ class DatabaseConnection(config : Configuration) {
 	}
 
 	def getPatternDiameter(dataset: String, patternId: Int) : Int = {
-		var diameter : Int = -1
+		var diameter : Int = 0
 		try {
 			val sql = sql"SELECT diameter FROM #${dataset}.patterns WHERE id = #${patternId}".as[(Int)]
 			val result = execute(sql)
