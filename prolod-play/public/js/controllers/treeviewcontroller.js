@@ -53,8 +53,12 @@ define(['angular', './controllers'], function (angular) {
                 $scope.model.selectedNodes.length = 0;
 
                 // remove all expansions from other datasets
-                $scope.model.expandedNodes.filter(function(node) {
+                var filtered = $scope.model.expandedNodes.filter(function(node) {
                     return node.dataset === params.dataset;
+                });
+                $scope.model.expandedNodes.length = 0;
+                filtered.forEach(function(node) {
+                    $scope.model.expandedNodes.push(node);
                 });
 
                 $scope.model.treeData.forEach(function(dsNode) {
@@ -104,6 +108,7 @@ define(['angular', './controllers'], function (angular) {
                     return dsNode;
                 });
                 $scope.model.treeData = data;
+                updateSelection();
             });
 
             $scope.onSelection = function (selected) {
