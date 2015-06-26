@@ -8,8 +8,8 @@ commandline
 ---
 
 - install sbt
+- create a database.conf in prolod-play/conf
 - execute ```sbt "project prolod_play" run```
-- use -Dconfig.file=<path>/application.conf
 
 
 idea
