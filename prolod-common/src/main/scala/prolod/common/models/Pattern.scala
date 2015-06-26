@@ -1,10 +1,16 @@
 package prolod.common.models
 
-import play.api.libs.json.{JsValue, JsObject, Json}
+import play.api.libs.json.Json.JsValueWrapper
+import play.api.libs.json._
 
 case class PatternFromDB(val nodes: List[Node], val links: List[Link])
 
-case class Pattern(id: Int, name: String, occurences: Int, nodes: List[Node], links: List[Link])
+case class Pattern(id: Int, name: String,
+                   occurences: Int,
+                   nodes: List[Node],
+                   links: List[Link],
+                   diameter : Double = -1
+                   )
 
 case class Link(source: Int, uri: Option[String] = None, target: Int)
 

@@ -33,7 +33,6 @@
             <div>
                 <h3>Statistics:</h3>
                 <table class="table stats">
-                    <thead>
                     <tr>
                         <td>Nodes:</td>
                         <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
@@ -42,8 +41,6 @@
                         <td>Edges:</td>
                         <td class="align-right">{{stats.edges | number}}</td>
                     </tr>
-                    </thead>
-                    <tbody>
                     <tr ng-if="stats.connectedComponents">
                         <td>Connected Components:</td>
                         <td class="align-right">{{stats.connectedComponents | number}}</td>
@@ -92,7 +89,6 @@
                         <td>Giant Component Diameter:</td>
                         <td class="align-right">{{stats.giantComponentDiameter | number}}</td>
                     </tr>
-                    </tbody>
                 </table>
             </div>
             <div>
