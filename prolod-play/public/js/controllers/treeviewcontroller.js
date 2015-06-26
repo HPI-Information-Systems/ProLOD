@@ -43,6 +43,41 @@ define(['angular', './controllers'], function (angular) {
 
             $scope.loading = true;
 
+
+            function updateSelection() {
+                if(!$scope.model.treeData) {
+                    return;
+                }
+                console.log("update treeview");
+                var params = $route.current.params;
+                $scope.model.selectedNodes.length = 0;
+
+                // remove all expansions from other datasets
+                $scope.model.expandedNodes.filter(function(node) {
+                    return node.dataset === params.dataset;
+                });
+
+                $scope.model.treeData.forEach(function(dsNode) {
+                    if (dsNode.dataset === params.dataset) {
+                        $scope.model.expandedNodes.push(dsNode);
+                        $scope.model.selectedNodes.push(dsNode);
+                        if(!params.group) {
+                            return;
+                        }
+                        dsNode.children.forEach(function(groupNode) {
+                            if((params.group === groupNode.group || params.group.indexOf(groupNode.group) >= 0)) {
+                                $scope.model.selectedNodes.push(groupNode);
+                                // TODO handle child groups!
+                            }
+                        });
+                    }
+                });
+            }
+
+            $scope.$on('$routeChangeSuccess', function (event, current, previous) {
+                updateSelection();
+            });
+
             httpApi.getDatasets().then(function (evt) {
                 $scope.loading = false;
 
@@ -63,19 +98,9 @@ define(['angular', './controllers'], function (angular) {
                             group: group.name,
                             color: colorHash(group.name)
                         };
-                        if(ds.name === params.dataset && (params.group === group.name
-                                                          || params.group && params.group.indexOf(group.name) >= 0)) {
-                            $scope.model.selectedNodes.push(groupNode);
-                        }
                         return groupNode;
                     });
 
-                    if(dsNode.name === params.dataset) {
-                        $scope.model.expandedNodes.push(dsNode);
-                    }
-                    if(dsNode.name === params.dataset) {
-                        $scope.model.selectedNodes.push(dsNode);
-                    }
                     return dsNode;
                 });
                 $scope.model.treeData = data;
@@ -89,27 +114,19 @@ define(['angular', './controllers'], function (angular) {
                 // when the selected dataset is clicked all groups should be unselected
                 if ($route.current.activetab === 'index' || $route.current.activetab === 'graphs' &&
                     ($route.current.params.dataset !== selected.dataset || !selected.group)) {
-                    $scope.model.selectedNodes.length = 0;
-                    $scope.model.selectedNodes.push(selected);
-                    // expand node and close all other nodes
-                    if(!selected.group && $scope.model.expandedNodes.indexOf(selected) === -1){
-                        $scope.model.expandedNodes.length = 0;
-                        $scope.model.expandedNodes.push(selected);
-                    }
-                    // select dataset on group selection
-                    if(selected.group && $scope.model.selectedNodes.indexOf(selected.dsNode) === -1) {
-                        $scope.model.selectedNodes.push(selected.dsNode);
-                    }
                     var url = routeBuilder.getGraphUrl({dataset: selected.dataset, group: [selected.group]});
                     $location.url(url);
                     return;
-                } else if($route.current.params.dataset === selected.dataset && selected.group && selected.group) {
+                } else {
                     console.log(params.group);
                     if(!params.group) {
                         params.group = [];
                     }
                     if(typeof(params.group) == 'string') {
                         params.group = [params.group];
+                    }
+                    if($route.current.params.dataset !== selected.dataset) {
+                        params.group.lenght = 0;
                     }
                     var index = params.group.indexOf(selected.group);
                     if(index >= 0) {
@@ -119,8 +136,6 @@ define(['angular', './controllers'], function (angular) {
                         // params.group.length = 0;
                         params.group.push(selected.group);
                     }
-                } else {
-                    console.error("undefined treeview action");
                 }
                 $route.updateParams(params);
             }
