@@ -139,7 +139,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                                 if (d.label) {
                                     nodeTitle = d.label + " " + nodeTitle;
                                 }
-                                return (nodeTitle)
+                                return nodeTitle
                             }
                         );
 
@@ -150,7 +150,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                             if (d.label) {
                                 linkTitle = d.label;
                             }
-                            return (linkTitle)
+                            return linkTitle
                         }
                     );
 

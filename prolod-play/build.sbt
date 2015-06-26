@@ -15,6 +15,6 @@ libraryDependencies ++= Seq(
 
 scalacOptions ++= Seq("-feature", "-language:reflectiveCalls")
 
-pipelineStages := Seq( rjs,  digest, gzip)
+pipelineStages := Seq( /*rjs, */  digest, gzip)
 
 // fork in run := true
