@@ -12,9 +12,9 @@ case class Pattern(id: Int, name: String,
                    diameter : Double = -1
                    )
 
-case class Link(source: Int, uri: Option[String] = None, target: Int)
+case class Link(source: Int, uri: Option[String] = None, label: Option[String] = None, target: Int)
 
-case class Node(id: Int, uri: Option[String] = None, group: Option[String] = None)
+case class Node(id: Int, uri: Option[String] = None, label: Option[String] = None, group: Option[String] = None)
 
 object PatternFormats {
   implicit val linkFormat = Json.format[Link]

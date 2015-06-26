@@ -46,6 +46,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     .enter().append("circle")
                     .attr("class", "node")
                     .attr("uri", function (d) { return d.uri; })
+                    .attr("label", function (d) { return d.label; })
                     .attr("r", 5)
                     .style("fill", color);
 
@@ -134,14 +135,22 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     node.append("svg:title")
                         .text(
                             function(d){
-                                return (d.uri)
+                                var nodeTitle = d.uri;
+                                if (d.label) {
+                                    nodeTitle = d.label + " " + nodeTitle;
+                                }
+                                return (nodeTitle)
                             }
                         );
 
                     link.append("svg:title")
                         .text(
                         function(d){
-                            return (d.uri)
+                            var linkTitle = d.uri;
+                            if (d.label) {
+                                linkTitle = d.label;
+                            }
+                            return (linkTitle)
                         }
                     );
 
@@ -195,7 +204,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 scopeGraph.nodes.forEach(function (node) {
                     var n = {
                         group: node.group,
-                        uri: node.uri
+                        uri: node.uri,
+                        label: node.label
                     };
                     nodeMap[node.id] = n;
                     graph.nodes.push(n)
@@ -205,7 +215,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     graph.links.push({
                         source: nodeMap[link.source],
                         target: nodeMap[link.target],
-                        uri: link.uri
+                        uri: link.uri,
+                        label: link.label
                     })
                 });
                 return graph;
