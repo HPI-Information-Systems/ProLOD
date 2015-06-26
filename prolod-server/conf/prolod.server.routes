@@ -4,7 +4,7 @@ GET        /index2                                           controllers.prolod.
 
 GET        /datasets                                         controllers.prolod.server.Datasets.datasets()
 
-GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: String)
+GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: Int)
 
 GET        /graphstatistics/:dataset                         controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, groups: List[String])
 

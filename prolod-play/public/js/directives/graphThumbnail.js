@@ -204,6 +204,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 scopeGraph.nodes.forEach(function (node) {
                     var n = {
                         group: node.group,
+                        id: node.id,
                         uri: node.uri,
                         label: node.label
                     };
