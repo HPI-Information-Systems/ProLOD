@@ -338,13 +338,12 @@ class DatabaseConnection(config : Configuration) {
 		diameter
 	}
 
-	def getEntityDetails(dataset: String, entity: String): Entity = {
+	def getEntityDetails(dataset: String, subjectId: Int): Entity = {
 		var triples : List[Triple] = Nil
-		var label : String = entity
+		var label : String = ""
 		var subjectUri = ""
 		var predicateUri = ""
 		var objectUri = ""
-		var subjectId = getSubjectId(dataset, entity)
 		try {
 			val statement = connection.createStatement()
 			val resultSet = statement.executeQuery("SELECT tuple_id, predicate_id FROM "+ dataset+".maintable WHERE subject_id = "+subjectId)
@@ -383,8 +382,7 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 
-		// TODO label
-		val entityDetails = new Entity(entity, label, triples)
+		val entityDetails = new Entity(subjectId, subjectUri, label, triples)
 		entityDetails
 	}
 
@@ -416,7 +414,6 @@ class DatabaseConnection(config : Configuration) {
 					case (pattern, occurences) => {
 						val patternDiameter = diameterMap.get(id).get
 						try {
-							println(patternDiameter)
 							val statement = connection.createStatement()
 							val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (ID, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + pattern + "'," + occurences + "," + patternDiameter + ")")
 						} catch {
@@ -429,7 +426,6 @@ class DatabaseConnection(config : Configuration) {
 							try {
 								val statement = connection.createStatement()
 								val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
-								// println(pattern)
 							} catch {
 								case e: SqlException => {
 									println(e.getMessage)
@@ -580,5 +576,25 @@ class DatabaseConnection(config : Configuration) {
 				}
 		}
 
+	}
+
+	def updateClusterSizes(dataset : String, ontologyNamespace : String) = {
+		for (cluster : Group <- getClusters(dataset, ontologyNamespace)) {
+			try {
+				val sql = sql"""SELECT COUNT(DISTINCT m.subject_id) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = '#${ontologyNamespace}#${cluster.name}'""".as[(Int)]
+				val result = execute(sql)
+				var clusterSize = 0
+				result map ((cluster_size) => {
+					clusterSize = cluster_size
+				})
+
+				val statement = connection.createStatement()
+				val resultSet = statement.execute("UPDATE " + dataset + ".clusters SET cluster_size = " + clusterSize + " WHERE id = " + cluster.id)
+			} catch {
+				case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
+				case e: SqlException => println(e.getMessage + System.lineSeparator())
+				case e: SqlSyntaxErrorException   => println(e.getMessage + System.lineSeparator())
+			}
+		}
 	}
 }

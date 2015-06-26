@@ -130,13 +130,14 @@ define(['angular', './controllers'], function (angular) {
                     if(typeof(params.group) == 'string') {
                         params.group = [params.group];
                     }
-                    if($route.current.params.dataset !== selected.dataset) {
-                        params.group.lenght = 0;
+                    if($route.current.params.dataset !== selected.dataset || !selected.group) {
+                        params.dataset = selected.dataset;
+                        params.group.length = 0;
                     }
                     var index = params.group.indexOf(selected.group);
                     if(index >= 0) {
                         params.group.splice(index, 1);
-                    } else {
+                    } else if (selected.group) {
                         // should multiselection be possible?
                         // params.group.length = 0;
                         params.group.push(selected.group);

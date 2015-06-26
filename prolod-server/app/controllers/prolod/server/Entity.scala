@@ -8,7 +8,7 @@ import prolod.common.models.EntityFormats.entityFormat
 
 object Entity extends Controller {
 
-	def getDetails(dataset: String, entity: String) = Action {
+	def getDetails(dataset: String, entity: Int) = Action {
 		val config = new Configuration()
 		val db = new DatabaseConnection(config)
 		val entityDetails: models.Entity = db.getEntityDetails(dataset, entity)
