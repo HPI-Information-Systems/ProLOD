@@ -149,9 +149,26 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     link.on("mouseout", mouseout);
                 }
 
-                if ($scope.clickHandler) {
-                    node.on("click", $scope.clickHandler);
-                }
+                var flag = 0;
+
+                node.on("mousedown",function(){
+                    flag = 0;
+                }, false);
+
+                node.on("mousemove", function(){
+                    flag = 1;
+                }, false);
+
+                node.on("mouseup", function(node){
+                    if (flag === 0){
+                        console.log("click");
+                        $scope.clickHandler(node);
+                    }
+                    else if(flag === 1){
+                        console.log("drag");
+                    }
+                }, false);
+
 
 
                 function mouseover() {
