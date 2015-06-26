@@ -39,11 +39,11 @@ define(["angular", "./services"], function () {
             },
             getGraphUrl: function (params) {
                 params = params || $route.current.params;
-                return buildUri(['graphstatistics', params.dataset]);
+                return buildUri(['graphstatistics', params.dataset], {group: params.group});
             },
             getGraphPatternUrl: function (pattern, params) {
                 params = params || $route.current.params;
-                return buildUri(['graphstatistics', params.dataset, 'pattern', pattern]);
+                return buildUri(['graphstatistics', params.dataset, 'pattern', pattern], {group: params.group});
             },
             getGraphPatternGroupUrl: function (pattern, params) {
                 params = params || $route.current.params;
