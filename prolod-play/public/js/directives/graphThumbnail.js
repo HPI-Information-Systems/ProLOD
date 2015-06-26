@@ -31,10 +31,9 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     .attr('height', height)
                     .attr('fill', 'white');
 
-
                 var link = g.selectAll(".link")
-                    .data(graph.links)
-                    .enter().append("line")
+                    .data(graph.biLinks)
+                    .enter().append("path")
                     .attr("class", "link")
                     .style("marker-end", "url(#target)")
                     .style("stroke-width", function (d) {
@@ -60,8 +59,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
 
                 node.call(force.drag);
 
-                var forceNodes = force.nodes(graph.nodes)
-                    .links(graph.links)
+                var forceNodes = force.nodes(graph.biNodes)
+                    .links(graph.biNodeLinks)
                     .start();
 
                 // do some initial ticks to decrease jumping
@@ -69,11 +68,19 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
 
                 // set svg update handler after initial ticks improves performance a lot!
                 forceNodes.on("tick", function () {
-                    link.attr("x1", function (d) {return d.source.x;})
+                    /*link.attr("x1", function (d) {return d.source.x;})
                         .attr("y1", function (d) {return d.source.y;})
                         .attr("x2", function (d) {return d.target.x;})
-                        .attr("y2", function (d) {return d.target.y;});
-
+                        .attr("y2", function (d) {return d.target.y;});*/
+                    link.attr("d", function(d) {
+                        return "M" + d[0].x + "," + d[0].y
+                               + "S" + d[1].x + "," + d[1].y
+                               + " " + d[2].x + "," + d[2].y;
+                    });
+                    node.attr("transform", function(d) {
+                        return "translate(" + d.x + "," + d.y + ")";
+                    });
+                    return;
                     var inf = 1000000;
                     var minX = inf, maxX = -inf, minY=inf, maxY=-inf;
                     node.attr("cx", function (d) {
@@ -197,7 +204,10 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
             function buildGraph(scopeGraph) {
                 var graph = {
                     nodes: [],
-                    links: []
+                    links: [],
+                    biNodes: [],
+                    biNodeLinks: [],
+                    biLinks: []
                 };
 
                 var nodeMap = {};
@@ -208,7 +218,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         label: node.label
                     };
                     nodeMap[node.id] = n;
-                    graph.nodes.push(n)
+                    graph.nodes.push(n);
+                    graph.biNodes.push(n);
                 });
 
                 scopeGraph.links.forEach(function (link) {
@@ -219,6 +230,16 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         label: link.label
                     })
                 });
+
+                graph.links.forEach(function(link) {
+                    var s = link.source,
+                        t = link.target,
+                        i = {}; // intermediate node
+                    graph.biNodes.push(i);
+                    graph.biNodeLinks.push({source: s, target: i}, {source: i, target: t});
+                    graph.biLinks.push([s, i, t]);
+                });
+
                 return graph;
             }
 
