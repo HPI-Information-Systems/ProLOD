@@ -38,7 +38,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
             $scope.loading = true;
 
-            $scope.limit = 28;
+            $scope.limit = 34;
 
             $scope.increaseLimit = function() {
                 if ($scope.limit < $scope.data.pattern.length) {
