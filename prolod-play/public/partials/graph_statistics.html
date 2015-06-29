@@ -1,6 +1,6 @@
 <bg-splitter orientation="vertical">
     <bg-pane>
-        <div id="view" class="graph-grid">
+        <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
             <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-if="stats.giantComponentEdges">
                 <div class="graph-cell">
