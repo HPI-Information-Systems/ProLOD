@@ -14,6 +14,7 @@
         <link rel="stylesheet" href=".@routes.Assets.versioned("bg-splitter/css/style.css")">
         <script data-main=".@routes.Assets.versioned("js/main.js")" src=".@routes.Assets.versioned("lib/requirejs/require.js")"></script>
 
+
     </head>
     <body ng-controller="MainCtrl" ng-init="init()">
         <div class="container-fluid heightlimited">
@@ -21,10 +22,11 @@
                 <div class="col-xs-2 sidebar ng-cloak" ng-controller="TreeViewController">
                     <div class="container-fluid">
                         <div class="navbar-header">
-                            <a class="navbar-brand" href="#/">ProLOD++</a>
+                            <a class="navbar-brand" href="#/"><img src="assets/img/prolod_logo.png" style="width:200px;"></a>
                         </div>
                     </div>
 
+                    <div class="tree">
                     <i class="glyphicon glyphicon-refresh" ng-show="loading" style="margin-left: 20px;"></i>
                     <treecontrol class=""
                     tree-model="model.treeData"
@@ -34,6 +36,7 @@
                     expanded-nodes="model.expandedNodes">
                         <span class="glyphicon glyphicon-stop" ng-if="node.color" ng-style="{color: node.color}"></span> {{node.name}} ({{ node.size | number}})
                     </treecontrol>
+                    </div>
                 </div>
                     <!-- main content -->
                 <div class="col-xs-10 col-xs-offset-2 main heightlimited">
