@@ -38,12 +38,12 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
             $scope.loading = true;
 
-            $scope.limit = 10;
-            function increaseLimit() {
-                $scope.limit += 3;
+            $scope.limit = 28;
 
+            $scope.increaseLimit = function() {
                 if ($scope.limit < $scope.data.pattern.length) {
-                    $timeout(increaseLimit, 50);
+                    //console.log("Increasing limit");
+                    $scope.limit += 14;
                 }
             }
 
@@ -56,11 +56,32 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 $scope.stats = stats;
 
                 $scope.loading = false;
-                increaseLimit();
 
             });
         }
-    ]);
+    ])
+        .directive('whenScrollEnds', function() {
+        return {
+            restrict: "A",
+            link: function(scope, element, attrs) {
+                var threshold = 70;
+
+                element.scroll(function() {
+                    var visibleHeight = element.height();
+                    var scrollableHeight = element.prop('scrollHeight');
+                    //console.log("Visibile height element: "+visibleHeight);
+                    //console.log("Scrollable height element: "+scrollableHeight);
+                    var hiddenContentHeight = scrollableHeight - visibleHeight;
+
+                    if (hiddenContentHeight - element.scrollTop() <= threshold) {
+                        // Scroll is almost at the bottom. Loading more rows
+                        //console.log("End of list");
+                        scope.$apply(attrs.whenScrollEnds);
+                    }
+                });
+            }
+        };
+    });;
 
     function drawPieChart(distribution,colorHash) {
         var c = "class", v = "value";

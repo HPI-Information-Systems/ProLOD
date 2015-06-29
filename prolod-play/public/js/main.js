@@ -10,11 +10,14 @@ requirejs.config({
     'treeControl': ['../lib/angular-tree-control/angular-tree-control'],
     'd3': ['../lib/d3js/d3'],
     'dimple': ['../lib/dimple/dimple'],
-    'angular-ui-bootstrap': ['../lib/angular-ui-bootstrap/ui-bootstrap-tpls']
+    'angular-ui-bootstrap': ['../lib/angular-ui-bootstrap/ui-bootstrap-tpls'],
+      'jquery': ['../lib/jquery/jquery']
+
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
   shim: {
     'angular': {
+      deps: ['jquery'],
       exports: 'angular'
     },
     'angular-route': {
@@ -49,7 +52,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
          './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
          './directives/directives', './directives/graphThumbnail',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
-         'angular-route', 'ui-grid', '../bg-splitter/js/splitter', 'treeControl', 'd3', 'dimple', 'angular-ui-bootstrap'],
+         'angular-route', 'ui-grid', '../bg-splitter/js/splitter','treeControl', 'd3', 'dimple', 'angular-ui-bootstrap','jquery'],
   function (angular,  viewcontrollers, tableviewcontrollers, ChartCtrl) {
     // Declare app level module which depends on filters, and services
 

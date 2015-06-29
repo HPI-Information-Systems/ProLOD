@@ -1,13 +1,12 @@
 <bg-splitter orientation="vertical">
     <bg-pane>
-        <div id="view" class="graph-grid">
+        <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
             <a ng-repeat="pattern in data.pattern | limitTo: limit">
                 <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"
                                         show-arrows="true" click-handler="nodeClick"></prolod-graph-thumbnail>
             </a>
-
             <div>
                 <script type="text/ng-template" id="myModalContent.html">
                     <div class="modal-content">
