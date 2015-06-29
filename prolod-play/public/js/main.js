@@ -60,9 +60,9 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
                                          'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'ui.bootstrap'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
-      $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl, activetab: 'index'});
+      $routeProvider.when('/', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
 
-      $routeProvider.when('/view0/:dataset', {templateUrl: 'assets/partials/partial0.html', controller: viewcontrollers.OverviewCtrl, activetab: 'view0'});
+      $routeProvider.when('/view0/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
 
       $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});

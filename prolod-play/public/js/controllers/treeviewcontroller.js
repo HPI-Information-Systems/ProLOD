@@ -25,22 +25,6 @@ define(['angular', './controllers'], function (angular) {
                 expandedNodes: []
             };
 
-            /* [
-             {
-             "name": "Dbpedia", dataset: "dbpedia", "children": [
-             {"name": "Tiere", dataset: "dbpedia", group: "tiere"},
-             {"name": "Autos", dataset: "dbpedia", group: "autos"}
-             ]
-             },
-             {
-             "name": "Drugbank", dataset: "drugbank", "children": [
-             {"name": "Drugs", dataset: "drugbank", group: "drugs"},
-             {"name": "Diseases", dataset: "drugbank", group: "diseases"}
-             ]
-             }
-             ]
-             */
-
             $scope.loading = true;
 
 
@@ -48,12 +32,17 @@ define(['angular', './controllers'], function (angular) {
                 if(!$scope.model.treeData) {
                     return;
                 }
+
                 console.log("update treeview");
                 var params = $route.current.params;
+
                 $scope.model.selectedNodes.length = 0;
 
                 // remove all expansions from other datasets
                 var filtered = $scope.model.expandedNodes.filter(function(node) {
+                    if (!params.dataset) {
+                        return false;
+                    }
                     return node.dataset === params.dataset;
                 });
                 $scope.model.expandedNodes.length = 0;
@@ -76,6 +65,13 @@ define(['angular', './controllers'], function (angular) {
                         });
                     }
                 });
+                if (!params.dataset) {
+                    $scope.model.expandedNodes.push($scope.model.treeData[0]);
+                    $scope.model.selectedNodes.push($scope.model.treeData[0]);
+                    params.dataset = $scope.model.treeData[0].dataset;
+                    $route.updateParams(params);
+                    return;
+                }
             }
 
             $scope.$on('$routeChangeSuccess', function (event, current, previous) {
@@ -113,7 +109,6 @@ define(['angular', './controllers'], function (angular) {
 
             $scope.onSelection = function (selected) {
                 var params = angular.extend({}, $route.current.params);
-
                 // on first selection redirect to graph view
                 // on dataset change reset view to initial graph view and disable selections
                 // when the selected dataset is clicked all groups should be unselected
@@ -123,7 +118,7 @@ define(['angular', './controllers'], function (angular) {
                     $location.url(url);
                     return;
                 } else {
-                    console.log(params.group);
+                    //console.log(params.group);
                     if(!params.group) {
                         params.group = [];
                     }

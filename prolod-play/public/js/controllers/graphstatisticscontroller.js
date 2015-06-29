@@ -3,7 +3,7 @@
 define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
     angular.module('Prolod2.controllers').controller("GraphCtrl", ['$scope', '$window', '$routeParams', '$timeout', 'routeBuilder', 'httpApi',
-        function ($scope, $window, $routeParams, $timeout, routeBuilder, httpApi) {
+        function ($scope, $window, $routeParams, $timeout, routeBuilder, httpApi, $modal) {
             $scope.updateBreadcrumb([{name: 'Graphs', url: routeBuilder.getGraphUrl()}]);
 
             $scope.data = {
@@ -14,7 +14,6 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             $scope.colorFunction = function (d) {
                 return 'white';
             };
-
 
             $scope.loading = true;
 
