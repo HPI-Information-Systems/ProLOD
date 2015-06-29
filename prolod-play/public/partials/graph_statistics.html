@@ -19,11 +19,14 @@
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern"
                                         color-function="colorFunction"></prolod-graph-thumbnail>
             </a>
+
+
+
         </div>
     </bg-pane>
 
     <bg-pane>
-        <div class="lowerpanel">
+        <div class="lowerpanel" click-handler="onClick">
             <div>
                 <h3>Statistics:</h3>
                 <table class="table stats">
@@ -43,17 +46,17 @@
                         <td class="align-right">{{stats.connectedComponents | number}}</td>
                     </tr>
                     <tr ng-if="stats.connectedComponentsMinEdges">
-                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
+                        <td class="align-right">Minimum Edges:</td>
                         <td></td>
                         <td class="align-right">{{stats.connectedComponentsMinEdges | number}}</td>
                     </tr>
                     <tr ng-if="stats.connectedComponentsMaxEdges">
-                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
+                        <td class="align-right">Maximum Edges:</td>
                         <td></td>
                         <td class="align-right">{{stats.connectedComponentsMaxEdges | number}}</td>
                     </tr>
                     <tr ng-if="stats.connectedComponentsAvgEdges">
-                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
+                        <td class="align-right">Average Edges:</td>
                         <td></td>
                         <td class="align-right">{{stats.connectedComponentsAvgEdges | number}}</td>
                     </tr>
@@ -63,17 +66,17 @@
                         <td class="align-right">{{stats.stronglyConnectedComponents | number}}</td>
                     </tr>
                     <tr ng-if="stats.stronglyConnectedComponentsMinEdges">
-                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Minimum Edges:</td>
+                        <td class="align-right">Minimum Edges:</td>
                         <td></td>
                         <td class="align-right">{{stats.stronglyConnectedComponentsMinEdges | number}}</td>
                     </tr>
                     <tr ng-if="stats.stronglyConnectedComponentsMaxEdges">
-                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Maximum Edges:</td>
+                        <td class="align-right">Maximum Edges:</td>
                         <td></td>
                         <td class="align-right">{{stats.stronglyConnectedComponentsMaxEdges | number}}</td>
                     </tr>
                     <tr ng-if="stats.stronglyConnectedComponentsAvgEdges">
-                        <td>&nbsp &nbsp &nbsp &nbsp &nbsp Average Edges:</td>
+                        <td class="align-right">Average Edges:</td>
                         <td></td>
                         <td>{{stats.stronglyConnectedComponentsAvgEdges | number}}</td>
                     </tr>
@@ -109,8 +112,8 @@
                     </tr>
                     <tr ng-repeat="(key, value) in stats.highestOutdegrees" ng-show="$first">
                         <td>Highest outdegree</td>
-                        <td> {{key}} </td>
-                        <td class="align-right"> {{ value }} </td>
+                        <td ng-repeat="(k, v) in value"><a id="{{k}}" ng-click="onClick(this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
                     </tr>
                     <tr ng-repeat="(key, value) in stats.highestOutdegrees" ng-show="!$first">
                         <td>Highest outdegree</td>
@@ -123,7 +126,40 @@
                 <h3>Node degree distribution:</h3>
                 <div id="distribution-chart"></div>
             </div>
+
+
+            <div>
+                <script type="text/ng-template" id="myModalContent.html">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <table width=100% height=100% margin="0" padding="0">
+                                <tr>
+                                    <td>
+                                        <h3 class="modal-title">Node: <b>{{ label ? label : uri }}</b></h3>
+                                    </td>
+                                    <td align="right" valign="top">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                                ng-click="ok()">×
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div ng-if="triples" align="center" class="table-view">
+                                <div ui-grid="model.gridOptions" class="grid"></div>
+                            </div>
+
+                            <div ng-if="!triples && downloaded" align="center" valign="middle"><i>No triples.</i></div>
+
+                            <div class="modal-footer">
+                                <div align="right">Link: <a ng-href="{{ uri }}" target="_blank">{{uri}}</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+            </div>
         </div>
+
     </bg-pane>
 </bg-splitter>
 
