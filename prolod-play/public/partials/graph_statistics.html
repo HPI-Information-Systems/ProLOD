@@ -102,23 +102,23 @@
                     </tr>
                     <tr ng-repeat="(key, value) in stats.highestIndegrees" ng-show="$first">
                         <td>Highest indegree</td>
-                        <td> {{key}} </td>
-                        <td class="align-right"> {{ value }} </td>
+                        <td ng-repeat="(k, v) in value"><a id="hi{{k}}" ng-click="onClick('hi'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
                     </tr>
                     <tr ng-repeat="(key, value) in stats.highestIndegrees" ng-show="!$first">
                         <td></td>
-                        <td> {{key}} </td>
-                        <td class="align-right"> {{ value }} </td>
+                        <td ng-repeat="(k, v) in value"><a id="hi{{k}}" ng-click="onClick('hi'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
                     </tr>
                     <tr ng-repeat="(key, value) in stats.highestOutdegrees" ng-show="$first">
                         <td>Highest outdegree</td>
-                        <td ng-repeat="(k, v) in value"><a id="{{k}}" ng-click="onClick(this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value"><a id="ho{{k}}" ng-click="onClick('ho'+this.id)">{{key}}</a></td>
                         <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
                     </tr>
                     <tr ng-repeat="(key, value) in stats.highestOutdegrees" ng-show="!$first">
                         <td>Highest outdegree</td>
-                        <td> {{key}} </td>
-                        <td class="align-right"> {{ value }} </td>
+                        <td ng-repeat="(k, v) in value"><a id="ho{{k}}" ng-click="onClick('ho'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
                     </tr>
                 </table>
             </div>
