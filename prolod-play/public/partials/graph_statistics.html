@@ -40,6 +40,11 @@
                         <td></td>
                         <td class="align-right">{{stats.edges | number}}</td>
                     </tr>
+                    <tr ng-if="stats.averagelinks">
+                        <td>Average Links:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.averagelinks | number}}</td>
+                    </tr>
                     <tr ng-if="stats.connectedComponents">
                         <td>Connected Components:</td>
                         <td></td>
