@@ -17,9 +17,15 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
     db.dropTables(name)
     db.createTables(name)
 
-    new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
+    val importer = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
+
+    importer.run
 
     importTriples()
+
+    db.updateClusterSizes(name, ontologyNamespace)
+
+    db.createIndices(name)
 
     def importTriples() = {
         for (dataset <- datasetFiles) {

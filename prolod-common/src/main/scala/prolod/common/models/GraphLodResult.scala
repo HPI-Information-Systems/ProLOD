@@ -15,6 +15,7 @@ case class GraphLodResult(datasetId: String,
                           var stronglyConnectedComponentsMaxEdges: Int = 0,
                           var stronglyConnectedComponentsAvgEdges: Int = 0,
                           var averageDiameter: Float = 0,
+                          var averageLinks: Float = 0,
                           var diameter: Int = 0,
                           var giantComponentEdges: Int = 0,
                           var giantComponentNodes: Int = 0,
@@ -22,9 +23,12 @@ case class GraphLodResult(datasetId: String,
                           var patterns: List[Pattern] = Nil,
                           var nodeDegreeDistribution: Map[Int, Int] = Map(0 -> 0),
                           var classDistribution: Map[String, Double] = Map(),
-                          var highestIndegrees: Map[String, Int] = Map(),
-                          var highestOutdegrees: Map[String, Int] = Map()
-	                         ) {}
+                          var highestIndegrees: Map[String, Map[Int, Int]] = Map(),
+                          var highestOutdegrees: Map[String, Map[Int, Int]] = Map()
+                             ) {
+
+
+}
 
 object GraphLodResultLoader {
 	def load(datasetId: String) = {
@@ -34,7 +38,6 @@ object GraphLodResultLoader {
 
 object GraphLodResultFormats {
 	implicit val patternFormat = PatternFormats.patternFormat
-
 
 	implicit val mapReads: Reads[Map[Int, Int]] = new Reads[Map[Int, Int]] {
 		def reads(jv: JsValue): JsResult[Map[Int, Int]] =

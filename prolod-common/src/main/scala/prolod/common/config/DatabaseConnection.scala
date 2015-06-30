@@ -124,7 +124,7 @@ class DatabaseConnection(config : Configuration) {
 		}
 		try {
 			val createStatement = connection.createStatement()
-			createStatement.execute("CREATE TABLE "+name+".patterns (id INT, pattern CLOB, occurences INT, diameter FLOAT, nodedegreedistribution CLOB)")
+			createStatement.execute("CREATE TABLE "+name+".patterns (id INT, name VARCHAR(200), pattern CLOB, occurences INT, diameter FLOAT, nodedegreedistribution CLOB)")
 			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
@@ -138,7 +138,7 @@ class DatabaseConnection(config : Configuration) {
 		}
 		try {
 			val createStatement = connection.createStatement()
-			val createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
+			val createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, gcedges INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
@@ -178,6 +178,31 @@ class DatabaseConnection(config : Configuration) {
 				case e : FileNotFoundException =>  println(e.getMessage)
 			}
 		}
+	}
+
+	def createIndices(name: String) = {
+		val sqlDir = new File("prolod-preprocessing/sql/indices/")
+		for (file <- sqlDir.listFiles) {
+			try {
+				val queryString = Source.fromFile(file.getPath).mkString
+				val r = "/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;"
+				val queries = queryString.split(r)
+				for (queryString <- queries) {
+					val query = String.format(queryString, name)
+					try {
+						val statement = connection.prepareStatement(query)
+						statement.execute
+						statement.close()
+					} catch {
+						case e : SqlSyntaxErrorException => println(e.getMessage +  System.lineSeparator() + query)
+					}
+				}
+			} catch {
+				case e : SqlSyntaxErrorException => println(e.getMessage)
+				case e : FileNotFoundException =>  println(e.getMessage)
+			}
+		}
+
 	}
 
 	def getTableNameFromStatement(s: String) : String = {
@@ -236,7 +261,7 @@ class DatabaseConnection(config : Configuration) {
 	def getDatasets(): Seq[Dataset] = {
 		var datasets: List[Dataset] = Nil
 
-		val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA".as[(String, String, Int, String)]
+		val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA ORDER BY schema_name".as[(String, String, Int, String)]
 
 		val result = execute(sql) map tupled((id, schema, entities, ontology_namespace) => {
 			new Dataset(id, schema, entities, getClusters(id, ontology_namespace))
@@ -261,6 +286,10 @@ class DatabaseConnection(config : Configuration) {
 				statistics += ("gcnodes" -> gcnodes.toString)
 				statistics += ("highestIndegrees" -> highestIndegrees)
 				statistics += ("highestOutdegrees" -> highestOutdegrees)
+			})
+			val sql3 = sql"SELECT gcedges FROM #$dataset.graphstatistics".as[Int]
+			val result3 = execute(sql3) map ((gcedges) => {
+				statistics += ("gcedges" -> gcedges.toString)
 			})
 		} catch {
 			case e: SqlSyntaxErrorException => {
@@ -309,14 +338,15 @@ class DatabaseConnection(config : Configuration) {
 		var patterns : List[Pattern] = Nil
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT id, pattern, occurences FROM "+ s+".PATTERNS ORDER BY occurences ASC")
+			val resultSet = statement.executeQuery("SELECT id, name, pattern, occurences FROM "+ s+".PATTERNS ORDER BY occurences ASC")
 			while ( resultSet.next() ) {
 				val id = resultSet.getInt("id")
 				val pattern = resultSet.getString("pattern")
 				val occurences = resultSet.getInt("occurences")
+				val name = resultSet.getString("name")
 				//val diameter = resultSet.getDouble("diameter")
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
-				patterns :::= List(new Pattern(id, "", occurences, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+				patterns :::= List(new Pattern(id, name, occurences, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
 		} catch {
 			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + s)
@@ -394,10 +424,10 @@ class DatabaseConnection(config : Configuration) {
 		query.replace("##dataset##", name)
 	}
 
-	def insertDataset(name : String, tuples: Int, entities: Int, ontologyNamespace : String) {
+	def insertDataset(name : String, tuples: Int, entities: Int, ontologyNamespace : String, namespace : String) {
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.execute("INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES, ONTOLOGY_NAMESPACE) VALUES ('"+name+"','"+name+"',"+tuples+","+entities+",'"+ontologyNamespace+"')")
+			val resultSet = statement.execute("INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES, ONTOLOGY_NAMESPACE, NAMESPACE) VALUES ('"+name+"','"+name+"',"+tuples+","+entities+",'"+ontologyNamespace+"','"+namespace+"')")
 		} catch {
 			case e : SqlIntegrityConstraintViolationException => println("Dataset already exists")
 		}
@@ -415,7 +445,9 @@ class DatabaseConnection(config : Configuration) {
 						val patternDiameter = diameterMap.get(id).get
 						try {
 							val statement = connection.createStatement()
-							val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (ID, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + pattern + "'," + occurences + "," + patternDiameter + ")")
+							val patternJson : PatternFromDB = Json.parse(pattern).validate[PatternFromDB].get
+							val patternName = patternJson.name.getOrElse("")
+							val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (ID, NAME, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + patternName + "',  '" + pattern + "'," + occurences + "," + patternDiameter + ")")
 						} catch {
 							case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
 							case e: SqlException => println(e.getMessage)
@@ -480,11 +512,11 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
-	def getSubjectId(name: String, s: String): Int = {
+	def getSubjectId(dataset: String, s: String): Int = {
 		var result : Int = -1
 		val statement = connection.createStatement()
 		try {
-			val resultSet = statement.executeQuery("SELECT id FROM " + name + ".subjecttable WHERE subject='" + s + "'")
+			val resultSet = statement.executeQuery("SELECT id FROM " + dataset + ".subjecttable WHERE subject='" + s + "'")
 			resultSet.next()
 			result = resultSet.getInt("id")
 		} catch {
@@ -521,6 +553,36 @@ class DatabaseConnection(config : Configuration) {
 		result
 	}
 
+	def getOntologyNamespace(s: String): String = {
+		var namespace :String = null
+		try {
+			val sql = sql"""SELECT ONTOLOGY_NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE SCHEMA_NAME = '#${s}'""".as[String]
+			val result = execute(sql)
+			result map ((ns) => {
+				namespace = ns
+			})
+		} catch {
+			case e: SqlException => println(e.getMessage + System.lineSeparator())
+			case e: SqlSyntaxErrorException   => println(e.getMessage + System.lineSeparator())
+		}
+		namespace
+	}
+
+	def getNamespace(s: String): String = {
+		var namespace :String = null
+		try {
+			val sql = sql"""SELECT NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE SCHEMA_NAME = '#${s}'""".as[String]
+			val result = execute(sql)
+			result map ((ns) => {
+				namespace = ns
+			})
+		} catch {
+			case e: SqlException => println(e.getMessage + System.lineSeparator())
+			case e: SqlSyntaxErrorException   => println(e.getMessage + System.lineSeparator())
+		}
+		namespace
+	}
+
 	def insertPredicate(name: String, s: String): Int = {
 		performInsert(name + ".predicatetable", List("predicate"), List(s)) match {
 			case Some(i) => i
@@ -552,10 +614,10 @@ class DatabaseConnection(config : Configuration) {
 		*/
 	}
 
-	def insertStatistics(name: String, nodes: String, links: Double, edges: Int, gcNodes : Int, connectedcomponents : Int, stronglyconnectedcomponents : Int, highestIndegrees: String, highestOutdegrees: String) = {
+	def insertStatistics(name: String, nodes: String, links: Double, edges: Int, gcEdges : Int, gcNodes : Int, connectedcomponents : Int, stronglyconnectedcomponents : Int, highestIndegrees: String, highestOutdegrees: String) = {
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, edges, gcnodes, connectedcomponents, stronglyconnectedcomponents, highestIndegrees, highestOutdegrees) VALUES ('" + nodes + "'," + links + ", " + edges + ", " + gcNodes + ", " + connectedcomponents + ", " + stronglyconnectedcomponents + ",'" + highestIndegrees + "','" + highestOutdegrees + "')")
+			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, edges, gcnodes, gcedges, connectedcomponents, stronglyconnectedcomponents, highestIndegrees, highestOutdegrees) VALUES ('" + nodes + "'," + links + ", " + edges + ", " + gcNodes + ", " + gcEdges + ", " + connectedcomponents + ", " + stronglyconnectedcomponents + ",'" + highestIndegrees + "','" + highestOutdegrees + "')")
 		} catch {
 			case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
 			case e: SqlException => println(e.getMessage)
@@ -581,7 +643,7 @@ class DatabaseConnection(config : Configuration) {
 	def updateClusterSizes(dataset : String, ontologyNamespace : String) = {
 		for (cluster : Group <- getClusters(dataset, ontologyNamespace)) {
 			try {
-				val sql = sql"""SELECT COUNT(DISTINCT m.subject_id) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = '#${ontologyNamespace}#${cluster.name}'""".as[(Int)]
+				val sql = sql"""SELECT COUNT(*) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = '#${ontologyNamespace}#${cluster.name}'""".as[(Int)]
 				val result = execute(sql)
 				var clusterSize = 0
 				result map ((cluster_size) => {
@@ -589,7 +651,7 @@ class DatabaseConnection(config : Configuration) {
 				})
 
 				val statement = connection.createStatement()
-				val resultSet = statement.execute("UPDATE " + dataset + ".clusters SET cluster_size = " + clusterSize + " WHERE id = " + cluster.id)
+				val resultSet = statement.execute("UPDATE " + dataset + ".clusters SET cluster_size = " + clusterSize + " WHERE label = '" + ontologyNamespace + cluster.name + "'")
 			} catch {
 				case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
 				case e: SqlException => println(e.getMessage + System.lineSeparator())

@@ -16,14 +16,15 @@ object GraphLod extends Controller {
 
     data.nodes = db.getDatasetEntities(datasetId)
     data.edges = statistics.getOrElse("edges", "0").toInt
-    data.giantComponentEdges = statistics.getOrElse("gcnodes", "0").toInt
+    data.averageLinks = statistics.getOrElse("averagelinks", "0").toFloat
+    data.giantComponentNodes = statistics.getOrElse("gcnodes", "0").toInt
+    data.giantComponentEdges = statistics.getOrElse("gcedges", "0").toInt
     data.patterns = patternList
     data.connectedComponents = statistics.getOrElse("connectedcomponents", "0").toInt
     data.stronglyConnectedComponents = statistics.getOrElse("stronglyconnectedcomponents", "0").toInt
 
     statistics.get("nodedegreedistribution") match {
       case Some(ndd) => {
-        println(ndd)
         val nodeDegreeDistributionMap = Json.parse(statistics.get("nodedegreedistribution").get).as[Map[Int, Int]]
         data.nodeDegreeDistribution =  nodeDegreeDistributionMap
       }
@@ -33,7 +34,13 @@ object GraphLod extends Controller {
     statistics.get("highestIndegrees") match {
       case Some(ndd) => {
         val highestIndegreesMap = Json.parse(statistics.get("highestIndegrees").get).as[Map[String, Int]]
-        data.highestIndegrees =  highestIndegreesMap
+        var highestIndegreesCleanedMap : Map[String, Map[Int, Int]] = Map()
+        for ((key, value) <- highestIndegreesMap) {
+          var highestIndegreesInternalMap : Map[Int, Int] = Map()
+          highestIndegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
+          highestIndegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestIndegreesInternalMap)
+        }
+        data.highestIndegrees = highestIndegreesCleanedMap
       }
       case None => println()
     }
@@ -41,7 +48,13 @@ object GraphLod extends Controller {
     statistics.get("highestOutdegrees") match {
       case Some(ndd) => {
         val highestOutdegreesMap = Json.parse(statistics.get("highestOutdegrees").get).as[Map[String, Int]]
-        data.highestOutdegrees =  highestOutdegreesMap
+        var highestOutdegreesCleanedMap : Map[String, Map[Int, Int]] = Map()
+        for ((key, value) <- highestOutdegreesMap) {
+          var highestOutdegreesInternalMap : Map[Int, Int] = Map()
+          highestOutdegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
+          highestOutdegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestOutdegreesInternalMap)
+        }
+        data.highestOutdegrees =  highestOutdegreesCleanedMap
       }
       case None => println()
     }
