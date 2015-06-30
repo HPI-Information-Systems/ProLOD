@@ -2,7 +2,7 @@
     <bg-pane>
         <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
-            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-if="stats.giantComponentEdges">
+            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-if="stats.giantComponentNodes">
                 <div class="graph-cell">
                     <div>Giant Component</div>
                     <svg width="200px" height="150px">
