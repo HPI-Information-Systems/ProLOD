@@ -261,7 +261,7 @@ class DatabaseConnection(config : Configuration) {
 	def getDatasets(): Seq[Dataset] = {
 		var datasets: List[Dataset] = Nil
 
-		val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA ORDER BY schema_name".as[(String, String, Int, String)]
+		val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA ORDER BY LOWER(schema_name)".as[(String, String, Int, String)]
 
 		val result = execute(sql) map tupled((id, schema, entities, ontology_namespace) => {
 			new Dataset(id, schema, entities, getClusters(id, ontology_namespace))
