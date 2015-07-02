@@ -44,13 +44,13 @@
                         <ul class="nav nav-tabs" ng-if="currentRoute.activetab != 'index'">
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'view0'}"><a ng-href="#{{routeBuilder.getOverviewUrl()}}">Overview</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'graphs'}"><a ng-href="#{{routeBuilder.getGraphUrl()}}">Graph Analysis</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#{{routeBuilder.getPredicateUrl()}}">Predicates</a></li>
-                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#{{routeBuilder.getInversePredicateUrl()}}">Inverse Predicates</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#{{routeBuilder.getPredicateUrl()}}">Properties</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#{{routeBuilder.getInversePredicateUrl()}}">Inverse Properties</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'associationRules'}"><a ng-href="#{{routeBuilder.getAssociationRuleUrl()}}">Association Rules</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">Uniqueness</a></li>
+                            <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li> -->
+                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">Key Discovery</a></li>
                                 <!--
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'view1'}"><a ng-href="#{{routeBuilder.getTableUrl()}}">table with detail</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'charts'}"><a ng-href="#{{routeBuilder.getChartsUrl()}}">charts</a></li>
