@@ -1,7 +1,5 @@
 
 
-GET        /index2                                           controllers.prolod.server.Application.index2()
-
 GET        /datasets                                         controllers.prolod.server.Datasets.datasets()
 
 GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: Int)
