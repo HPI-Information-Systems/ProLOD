@@ -7,64 +7,61 @@
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"
                                         show-arrows="true" click-handler="nodeClick"></prolod-graph-thumbnail>
             </a>
-            <div>
-                <script type="text/ng-template" id="myModalContent.html">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <table width=100% height=100% margin="0" padding="0">
-                                <tr>
-                                    <td>
-                                        <h3 class="modal-title">Node: <b>{{ label ? label : uri }}</b></h3>
-                                    </td>
-                                    <td align="right" valign="top">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-                                                ng-click="ok()">×
-                                        </button>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <div ng-if="triples" align="center" class="table-view">
-                                <div ui-grid="model.gridOptions" class="grid"></div>
-                            </div>
-
-                            <div ng-if="!triples && downloaded" align="center" valign="middle"><i>No triples.</i></div>
-
-                            <div class="modal-footer">
-                                <div align="right">Link: <a ng-href="{{ uri }}" target="_blank">{{uri}}</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </script>
-            </div>
         </div>
     </bg-pane>
 
     <bg-pane>
         <div class="lowerpanel">
-                <div>
-                    <h3>Statistics:</h3>
-                    <table class="table stats">
-                        <tr ng-if="stats.nodes">
-                            <td>Nodes:</td>
-                            <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
-                        </tr>
-                        <tr ng-if="stats.edges">
-                            <td>Edges:</td>
-                            <td class="align-right">{{stats.edges | number}}</td>
-                        </tr>
-                        <tr ng-if="stats.diameter">
-                            <td>Diameter:</td>
-                            <td class="align-right">{{stats.diameter | number}}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div>
-                    <h3>Class distribution:</h3>
-                    <div id="pie-chart"></div>
-                </div>
+            <div>
+                <h3>Statistics:</h3>
+                <table class="table stats">
+                    <tr ng-if="stats.nodes">
+                        <td>Nodes:</td>
+                        <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
+                    </tr>
+                    <tr ng-if="stats.edges">
+                        <td>Edges:</td>
+                        <td class="align-right">{{stats.edges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.diameter">
+                        <td>Diameter:</td>
+                        <td class="align-right">{{stats.diameter | number}}</td>
+                    </tr>
+                </table>
             </div>
-
+            <div>
+                <h3>Class distribution:</h3>
+                <div id="pie-chart"></div>
+            </div>
         </div>
     </bg-pane>
 </bg-splitter>
+
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-content">
+        <div class="modal-header">
+            <table width=100% height=100% margin="0" padding="0">
+                <tr>
+                    <td>
+                        <h3 class="modal-title">Node: <b>{{ label ? label : uri }}</b></h3>
+                    </td>
+                    <td align="right" valign="top">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="ok()">×
+                        </button>
+                    </td>
+                </tr>
+            </table>
+
+            <div ng-if="triples" align="center" class="table-view">
+                <div ui-grid="model.gridOptions" class="grid"></div>
+            </div>
+
+            <div ng-if="!triples && downloaded" align="center" valign="middle"><i>No triples.</i></div>
+
+            <div class="modal-footer">
+                <div align="right">Link: <a ng-href="{{ uri }}" target="_blank">{{uri}}</a></div>
+            </div>
+        </div>
+    </div>
+</script>

@@ -365,7 +365,7 @@ class DatabaseConnection(config : Configuration) {
 		validateDatasetString(dataset)
 		var diameter : Int = 0
 		try {
-			val sql = sql"SELECT diameter FROM #${dataset}.patterns WHERE id = #${patternId}".as[(Int)]
+			val sql = sql"SELECT diameter FROM #${dataset}.patterns WHERE id = ${patternId}".as[(Int)]
 			val result = execute(sql)
 			result map ((diameterSql) => {
 				diameter = diameterSql
