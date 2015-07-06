@@ -34,6 +34,7 @@ def * = (id, schema_name, entities, tuples) <> (Schemata.tupled, Schemata.unappl
 }
 */
 
+//noinspection RedundantBlock
 class DatabaseConnection(config : Configuration) {
 	var driver = com.typesafe.slick.driver.db2.DB2Driver.api
 
@@ -143,8 +144,8 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 		try {
-			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("CREATE TABLE "+name+".CLUSTERS "+
+			val createStatement = connection.createStatement()
+			val createResultSet = createStatement.execute("CREATE TABLE "+name+".CLUSTERS "+
 				"(                                                                   "+
 				"       ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),    "+
 				"USERNAME VARCHAR(50) DEFAULT 'default' NOT NULL,       "+
@@ -367,7 +368,7 @@ class DatabaseConnection(config : Configuration) {
 		try {
 			val sql = sql"SELECT diameter FROM #${dataset}.patterns WHERE id = ${patternId}".as[(Int)]
 			val result = execute(sql)
-			result map ((diameterSql) => {
+			result foreach ((diameterSql) => {
 				diameter = diameterSql
 			})
 		} catch {
@@ -416,7 +417,7 @@ class DatabaseConnection(config : Configuration) {
 
 				triples :::= List(new Triple(subjectUri, predicateUri, objectUri))
 			}
-			statement.close
+			statement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println("error getting entity details" + e.getMessage)
 		}
@@ -571,7 +572,7 @@ class DatabaseConnection(config : Configuration) {
 		try {
 			val sql = sql"""SELECT ONTOLOGY_NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE SCHEMA_NAME = ${s}""".as[String]
 			val result = execute(sql)
-			result map ((ns) => {
+			result foreach ((ns) => {
 				namespace = ns
 			})
 		} catch {
@@ -586,7 +587,7 @@ class DatabaseConnection(config : Configuration) {
 		try {
 			val sql = sql"""SELECT NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE SCHEMA_NAME = ${s}""".as[String]
 			val result = execute(sql)
-			result map ((ns) => {
+			result foreach ((ns) => {
 				namespace = ns
 			})
 		} catch {
@@ -661,7 +662,7 @@ class DatabaseConnection(config : Configuration) {
 				val sql = sql"""SELECT COUNT(*) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = ${ontologyNamespace + cluster.name}""".as[(Int)]
 				val result = execute(sql)
 				var clusterSize = 0
-				result map ((cluster_size) => {
+				result. foreach ((cluster_size) => {
 					clusterSize = cluster_size
 				})
 
