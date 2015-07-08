@@ -43,9 +43,16 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             $scope.increaseLimit = function() {
                 if ($scope.limit < $scope.data.pattern.length) {
                     //console.log("Increasing limit");
-                    $scope.limit += 14;
+                    var increase =  function(times, amount) {
+                        $scope.limit += amount;
+                        times--;
+                        if(times > 0) {
+                            setTimeout(increase, 100, times, amount);
+                        }
+                    };
+                    increase(3, 5);
                 }
-            }
+            };
 
             httpApi.getGraphPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
                 var stats = data.data.statistics;
@@ -59,29 +66,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
             });
         }
-    ])
-        .directive('whenScrollEnds', function() {
-        return {
-            restrict: "A",
-            link: function(scope, element, attrs) {
-                var threshold = 70;
-
-                element.scroll(function() {
-                    var visibleHeight = element.height();
-                    var scrollableHeight = element.prop('scrollHeight');
-                    //console.log("Visibile height element: "+visibleHeight);
-                    //console.log("Scrollable height element: "+scrollableHeight);
-                    var hiddenContentHeight = scrollableHeight - visibleHeight;
-
-                    if (hiddenContentHeight - element.scrollTop() <= threshold) {
-                        // Scroll is almost at the bottom. Loading more rows
-                        //console.log("End of list");
-                        scope.$apply(attrs.whenScrollEnds);
-                    }
-                });
-            }
-        };
-    });;
+    ]);
 
     function drawPieChart(distribution,colorHash) {
         var c = "class", v = "value";

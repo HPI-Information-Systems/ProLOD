@@ -153,8 +153,10 @@ object GraphLod extends Controller {
       data.classDistribution =  classDistribution
     }
 
-    val patternDiameter = db.getPatternDiameter(datasetId, data.patterns.last.id)
-    data.diameter = patternDiameter
+    if(data.patterns.nonEmpty) {
+      val patternDiameter = db.getPatternDiameter(datasetId, data.patterns.last.id)
+      data.diameter = patternDiameter
+    }
 
     val json = Json.obj("statistics" -> data)
     Ok(json)
