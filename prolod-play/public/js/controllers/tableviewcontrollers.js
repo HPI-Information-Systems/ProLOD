@@ -45,8 +45,6 @@ define(['angular', 'ui-grid'], function () {
 
   controllers.SuggestionViewCtrl = createGenericTableView('suggestions',"getSuggestions");
 
-  controllers.UniquenessViewCtrl = createGenericTableView('Key Discovery', "getUniqueness");
-
   return controllers;
 
 });
