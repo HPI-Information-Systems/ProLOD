@@ -328,15 +328,15 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
-	def getKeyness(dataset: String) : List[KeynessResult] = {
+	def getKeyness(dataset: String) : Seq[KeynessResult] = {
 		validateDatasetString(dataset)
-		var keynessList: List[KeynessResult] = Nil
 
 		// TODO change to cluster!
 
 		val sqlProperties = sql"select property_id, keyness, uniqueness, density FROM #$dataset.keyness".as[(Int, Double, Double, Double)]
-		execute(sqlProperties) map tupled((property_id, keyness, uniqueness, density) => {
-			keynessList :::= List(new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0))
+		val result = execute(sqlProperties)
+		val keynessList: Seq[KeynessResult] = result map tupled((property_id, keyness, uniqueness, density) => {
+			new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0)
 		})
 		keynessList
 	}

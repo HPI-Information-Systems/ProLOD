@@ -10,7 +10,7 @@ object Keyness extends Controller {
   def getKeyness(datasetId: String, groups: List[String]) = Action {
     val config = new Configuration()
     val db = new DatabaseConnection(config)
-    var keyness : List[KeynessResult] = db.getKeyness(datasetId)
+    var keyness : Seq[KeynessResult] = db.getKeyness(datasetId)
     //val data: KeynessResult = KeynessResult(datasetId, keyness)
     /*
     val keyness = db.getKeyness(datasetId)
