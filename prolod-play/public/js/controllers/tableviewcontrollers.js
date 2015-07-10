@@ -2,7 +2,7 @@
 
 'use strict';
 
-define(['angular'], function () {
+define(['angular', 'ui-grid'], function () {
 
   /* Controllers */
 
@@ -30,9 +30,9 @@ define(['angular'], function () {
   };
 
   controllers.PredicateViewCtrl = createGenericTableView("predicates", "getPredicates", [
-    {name: "Predicate", field: "predicate"},
-    {name: "Occurences", field: "count"},
-    {name: "Percentage", field: "percentage"}
+    {name: "Predicate", field: "predicate", type: "string"},
+    {name: "Occurences", field: "count", type: "int"},
+    {name: "Percentage", field: "percentage", type: "float"}
   ]);
 
   controllers.InversePredicateViewCtrl = createGenericTableView("inversePredicates", "getInversePredicates");

@@ -48,23 +48,23 @@ define(["angular", "./services"], function () {
             getTable1Detail: function (id) {
                 return $http.get(uri(['persons', id]));
             },
-            getPredicates: function (dataset, group) {
-                return $http.get(uri(['predicates', dataset, group]));
+            getPredicates: function (dataset, groups) {
+                return $http.get(uri(['predicates', dataset]), {params: {groups: groups}});
             },
-            getInversePredicates: function (dataset, group) {
-                return $http.get(uri(['inversePredicates', dataset, group]));
+            getInversePredicates: function (dataset, groups) {
+                return $http.get(uri(['inversePredicates', dataset]), {params: {groups: groups}});
             },
-            getAssociationRules: function (dataset, group) {
-                return $http.get(uri(['associationRules', dataset, group]));
+            getAssociationRules: function (dataset, groups) {
+                return $http.get(uri(['associationRules', dataset]), {params: {groups: groups}});
             },
-            getSynonyms: function (dataset, group) {
-                return $http.get(uri(['synonyms', dataset, group]));
+            getSynonyms: function (dataset, groups) {
+                return $http.get(uri(['synonyms', dataset]), {params: {groups: groups}});
             },
-            getFactGeneration: function (dataset, group) {
-                return $http.get(uri(['factGeneration', dataset, group]));
+            getFactGeneration: function (dataset, groups) {
+                return $http.get(uri(['factGeneration', dataset]), {params: {groups: groups}});
             },
-            getSuggestions: function (dataset, group) {
-                return $http.get(uri(['suggestions', dataset, group]));
+            getSuggestions: function (dataset, groups) {
+                return $http.get(uri(['suggestions', dataset]), {params: {groups: groups}});
             }
         }
     }]);

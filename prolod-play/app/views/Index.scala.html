@@ -22,7 +22,7 @@
                 <div class="col-xs-2 sidebar ng-cloak" ng-controller="TreeViewController">
                     <div class="container-fluid">
                         <div class="navbar-header">
-                            <a class="navbar-brand" href="#/"><img src="assets/img/prolod_logo.png" style="width:200px;"></a>
+                            <a class="navbar-brand"  ng-href="#{{routeBuilder.getGraphUrl()}}"><img src="assets/img/prolod_logo.png" style="width:200px;"></a>
                         </div>
                     </div>
 
@@ -47,7 +47,7 @@
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'predicates'}"><a ng-href="#{{routeBuilder.getPredicateUrl()}}">Properties</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'inversePredicates'}"><a ng-href="#{{routeBuilder.getInversePredicateUrl()}}">Inverse Properties</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'associationRules'}"><a ng-href="#{{routeBuilder.getAssociationRuleUrl()}}">Association Rules</a></li>
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'synonyms'}"><a ng-href="#{{routeBuilder.getSynonymsUrl()}}">Synonyms</a></li>
                             <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li> -->
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'uniqueness'}"><a ng-href="#{{routeBuilder.getUniquenessUrl()}}">Key Discovery</a></li>

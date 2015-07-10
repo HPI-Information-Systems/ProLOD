@@ -11,7 +11,7 @@ requirejs.config({
     'd3': ['../lib/d3js/d3'],
     'dimple': ['../lib/dimple/dimple'],
     'angular-ui-bootstrap': ['../lib/angular-ui-bootstrap/ui-bootstrap-tpls'],
-      'jquery': ['../lib/jquery/jquery']
+    'jquery': ['../lib/jquery/jquery']
 
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
@@ -75,7 +75,9 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/predicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
       $routeProvider.when('/inversePredicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});
       $routeProvider.when('/associationRules/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
-      /*$routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
+      $routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
+
+      /*
       $routeProvider.when('/factGeneration/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
       $routeProvider.when('/suggestions/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
       */
