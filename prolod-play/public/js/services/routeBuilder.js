@@ -81,6 +81,10 @@ define(["angular", "./services"], function () {
                 params = params || $route.current.params;
                 return buildUri(['associationRules', params.dataset], {group: params.group});
             },
+            getUniquenessUrl: function (params) {
+                params = params || $route.current.params;
+                return buildUri(['uniqueness', params.dataset], {group: params.group});
+            },
             getGenericUrl: function (view, params) {
                 params = params || $route.current.params;
                 return buildUri([view, params.dataset], {group: params.group});

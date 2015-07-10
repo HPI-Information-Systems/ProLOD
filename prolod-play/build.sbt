@@ -1,5 +1,6 @@
 name := """prolod-play"""
 
+resolvers += Resolver.mavenLocal
 
 libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "1.4.0",

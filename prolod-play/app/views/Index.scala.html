@@ -50,7 +50,7 @@
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/synonyms">Synonyms</a></li>
                             <!--<li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/factGeneration">FactGeneration</a></li>
                             <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/suggestions">Suggestions</a></li> -->
-                            <li><a ng-href="#/{{nav.dataset}}/{{nav.group}}/uniqueness">Key Discovery</a></li>
+                            <li role="presentation" ng-class="{active: currentRoute.activetab == 'uniqueness'}"><a ng-href="#{{routeBuilder.getUniquenessUrl()}}">Key Discovery</a></li>
                                 <!--
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'view1'}"><a ng-href="#{{routeBuilder.getTableUrl()}}">table with detail</a></li>
                             <li role="presentation" ng-class="{active: currentRoute.activetab == 'charts'}"><a ng-href="#{{routeBuilder.getChartsUrl()}}">charts</a></li>
