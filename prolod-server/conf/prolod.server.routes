@@ -13,7 +13,5 @@ GET        /graphstatistics/bigcomponent/:dataset            controllers.prolod.
 
 GET        /uniqueness/:dataset                              controllers.prolod.server.Keyness.getKeyness(dataset: String, groups: List[String])
 
-GET        /uniqueness/:dataset/undefined                    controllers.prolod.server.Keyness.getKeyness(dataset: String, groups: List[String])
-
 GET        /assets/*file                                     controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
 

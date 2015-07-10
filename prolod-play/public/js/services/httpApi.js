@@ -36,7 +36,12 @@ define(["angular", "./services"], function () {
             getEntityDetail: function (dataset, entity){
                 return $http.get(uri(['server', 'entitydetails', dataset, entity]));
             },
+            getUniqueness: function (dataset, groups) {
+                return $http.get(uri(['server', 'uniqueness', dataset]), {params: {groups: groups}});
+            },
 
+
+            // JUST DUMMIES:
             getTable1: function () {
                 return $http.get('persons');
             },
@@ -60,9 +65,6 @@ define(["angular", "./services"], function () {
             },
             getSuggestions: function (dataset, group) {
                 return $http.get(uri(['suggestions', dataset, group]));
-            },
-            getUniqueness: function (dataset, group) {
-                return $http.get(uri(['server', 'uniqueness', dataset, group]));
             }
         }
     }]);
