@@ -62,7 +62,7 @@ define(["angular", "./services"], function () {
                 return $http.get(uri(['suggestions', dataset, group]));
             },
             getUniqueness: function (dataset, group) {
-                return $http.get(uri(['uniqueness', dataset, group]));
+                return $http.get(uri(['server', 'uniqueness', dataset, group]));
             }
         }
     }]);

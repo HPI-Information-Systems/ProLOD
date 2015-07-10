@@ -20,7 +20,7 @@ GET        /factGeneration/:dataset/:group           controllers.FactGeneration.
 
 GET        /suggestions/:dataset/:group              controllers.Suggestions.getSuggestions(dataset: String, group:String)
 
-GET        /uniqueness/:dataset/:group               controllers.UniquenessResults.getUniqueness(dataset: String, group:String)
+#GET        /uniqueness/:dataset/:group               controllers.UniquenessResults.getUniqueness(dataset: String, group:String)
 
 GET        /persons                                  controllers.Persons.getPersons()
 GET        /persons/:id                              controllers.Persons.getPerson(id : Int)

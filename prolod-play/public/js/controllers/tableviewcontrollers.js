@@ -40,7 +40,7 @@ define(['angular'], function () {
 
   controllers.SuggestionViewCtrl = createGenericTableView('suggestions',"getSuggestions");
 
-  controllers.UniquenessViewCtrl = createGenericTableView('uniqueness', "getUniqueness");
+  controllers.UniquenessViewCtrl = createGenericTableView('Key Discovery', "getUniqueness");
 
   return controllers;
 

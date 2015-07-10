@@ -80,7 +80,8 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       /*$routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
       $routeProvider.when('/factGeneration/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
       $routeProvider.when('/suggestions/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
-      $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});*/
+      */
+          $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});
 
       // other
       $routeProvider.otherwise({redirectTo: '/'});
