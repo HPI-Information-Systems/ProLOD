@@ -9,13 +9,14 @@ define(['angular'], function () {
   var controllers = {};
 
   // this creates a controller for simple tables
-  var createGenericTableView = function (name, httpCall) {
+  var createGenericTableView = function (name, httpCall, columnDefs) {
     var ctrl = function ($scope, $routeParams, httpApi, routeBuilder) {
       $scope.updateBreadcrumb([{name: name, url: routeBuilder.getGenericUrl(name)}]);
 
       $scope.model = {
         gridOptions: {
-          data: 'model.data'
+          data: 'model.data',
+          columnDefs: columnDefs
         },
         data: []
       };
@@ -28,7 +29,11 @@ define(['angular'], function () {
     return ctrl
   };
 
-  controllers.PredicateViewCtrl = createGenericTableView("predicates", "getPredicates");
+  controllers.PredicateViewCtrl = createGenericTableView("predicates", "getPredicates", [
+    {name: "Predicate", field: "predicate"},
+    {name: "Occurences", field: "count"},
+    {name: "Percentage", field: "percentage"}
+  ]);
 
   controllers.InversePredicateViewCtrl = createGenericTableView("inversePredicates", "getInversePredicates");
 

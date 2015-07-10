@@ -29,7 +29,7 @@ define(['angular', './controllers'], function (angular) {
 
 
             function updateSelection() {
-                if(!$scope.model.treeData) {
+                if(!$scope.model.treeData.length) {
                     return;
                 }
 
@@ -65,13 +65,6 @@ define(['angular', './controllers'], function (angular) {
                         });
                     }
                 });
-                if (!params.dataset) {
-                    $scope.model.expandedNodes.push($scope.model.treeData[0]);
-                    $scope.model.selectedNodes.push($scope.model.treeData[0]);
-                    params.dataset = $scope.model.treeData[0].dataset;
-                    $route.updateParams(params);
-                    return;
-                }
             }
 
             $scope.$on('$routeChangeSuccess', function (event, current, previous) {
@@ -80,9 +73,10 @@ define(['angular', './controllers'], function (angular) {
 
             httpApi.getDatasets().then(function (evt) {
                 $scope.loading = false;
+                var datasets = evt.data.datasets;
+                var params = $route.current.params;
 
-                var data = evt.data.datasets.map(function (ds) {
-                    var params = $route.current.params;
+                var data = datasets.map(function (ds) {
                     var dsNode = {
                         name: ds.name,
                         size: ds.size,
@@ -104,6 +98,15 @@ define(['angular', './controllers'], function (angular) {
                     return dsNode;
                 });
                 $scope.model.treeData = data;
+
+                if (!params.dataset) { // redirect to first available dataset
+                    var dataset = datasets[0].id;
+                    console.log("redirect to: " + dataset);
+                    var url = routeBuilder.getGraphUrl({dataset: dataset});
+                    $location.url(url);
+                    return;
+                }
+
                 updateSelection();
             });
 
