@@ -17,9 +17,10 @@ class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: S
 	//val excludedNamespaces : List[String] = Nil
 	val datasetFilesJava: util.List[String] = files.asJava
 
+	val graphLod : GraphLOD = GraphLOD.loadDataset(name, files.asJava, namespace, ontologyNamespace, excludedNamespaces.asJava)
 
 	def run: Unit = {
-		val graphLod : GraphLOD = GraphLOD.loadDataset(name, files.asJava, namespace, ontologyNamespace, excludedNamespaces.asJava)
+
 		db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount, ontologyNamespace, namespace)
 		db.insertClasses(name, graphLod.dataset.ontologyClasses)
 		var connectedGraphSizes = graphLod.connectedGraphSizes.asScala.toList.max[Integer]

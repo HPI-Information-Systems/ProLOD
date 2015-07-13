@@ -328,16 +328,26 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
-	def getKeyness(dataset: String) : List[KeynessResult] = {
+	def getKeyness(dataset: String, groups: List[String]) : List[KeynessResult] = {
 		validateDatasetString(dataset)
 		var keynessList: List[KeynessResult] = Nil
 
-		// TODO change to cluster!
+		if (groups.isEmpty) {
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density FROM #$dataset.keyness".as[(Int, Double, Double, Double)]
+			execute(sqlProperties) map tupled((property_id, keyness, uniqueness, density) => {
+				keynessList :::= List(new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0))
+			})
+		} else {
+			//iterate clusters
+			val clusterUri = getOntologyNamespace(dataset) + groups.head
+			val sql = sql"""SELECT ID FROM #${dataset}.CLUSTERS WHERE username = 'ontology' AND label = '#${clusterUri}'""".as[(Int)]
+			val clusterId = execute(sql).head
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density FROM #$dataset.keyness WHERE cluster_id = #${clusterId}".as[(Int, Double, Double, Double)]
+			execute(sqlProperties) map tupled((property_id, keyness, uniqueness, density) => {
+				keynessList :::= List(new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0))
+			})
+		}
 
-		val sqlProperties = sql"select property_id, keyness, uniqueness, density FROM #$dataset.keyness".as[(Int, Double, Double, Double)]
-		execute(sqlProperties) map tupled((property_id, keyness, uniqueness, density) => {
-			keynessList :::= List(new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0))
-		})
 		keynessList
 	}
 
