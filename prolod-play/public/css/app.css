@@ -130,6 +130,7 @@ body {
 
 #distribution-chart {
     height: 300px;
+    margin-bottom: 75px;
 }
 
 #pie-chart {

@@ -11,7 +11,7 @@ requirejs.config({
     'd3': ['../lib/d3js/d3'],
     'dimple': ['../lib/dimple/dimple'],
     'angular-ui-bootstrap': ['../lib/angular-ui-bootstrap/ui-bootstrap-tpls'],
-      'jquery': ['../lib/jquery/jquery']
+    'jquery': ['../lib/jquery/jquery']
 
     //'d3v3': ['../lib/nvd3js/d3.v3.min']
   },
@@ -50,6 +50,7 @@ requirejs.config({
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
          './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
+         './controllers/uniqueness',
          './directives/directives', './directives/graphThumbnail', './directives/whenScrollEnds',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
          'angular-route', 'ui-grid', '../bg-splitter/js/splitter','treeControl', 'd3', 'dimple', 'angular-ui-bootstrap','jquery'],
@@ -60,9 +61,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
                                          'ngRoute', 'ui.grid', 'ui.grid.autoResize', 'bgDirectives', 'treeControl', 'ui.bootstrap'])
       .config(['$routeProvider', function ($routeProvider) {
       // routes
-      $routeProvider.when('/', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
-
-      $routeProvider.when('/view0/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
+      $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});
 
       $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
@@ -77,10 +76,14 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/predicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
       $routeProvider.when('/inversePredicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});
       $routeProvider.when('/associationRules/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
-      /*$routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
+      $routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
+
+      $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/uniqueness.html', controller: 'UniquenessCtrl', activetab: 'uniqueness'});
+
+      /*
       $routeProvider.when('/factGeneration/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
       $routeProvider.when('/suggestions/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
-      $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.UniquenessViewCtrl, activetab: 'uniqueness'});*/
+      */
 
       // other
       $routeProvider.otherwise({redirectTo: '/'});

@@ -19,6 +19,9 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.io.Source
 
+import de.hpi.fgis.loducc.Keyness
+import graphlod.dataset._
+
 /*
 case class Schemata(id : String, schema_name : String, entities : Int, tuples : Int)
 
@@ -58,31 +61,19 @@ class DatabaseConnection(config : Configuration) {
 		value.get
 	}
 
-	def dropTables(name : String): Unit = {
+	def dropTables(dataset : String): Unit = {
+		dropTable(dataset + ".patterns")
+		dropTable(dataset + ".coloredpatterns")
 		try {
 			val createStatement = connection.createStatement()
-			createStatement.execute("DROP TABLE "+name+".patterns")
-			createStatement.close()
-		} catch {
-			case e : SqlSyntaxErrorException => println(e.getMessage)
-		}
-		try {
-			val createStatement = connection.createStatement()
-			createStatement.execute("DROP TABLE "+name+".coloredpatterns")
-			createStatement.close()
-		} catch {
-			case e : SqlSyntaxErrorException => println(e.getMessage)
-		}
-		try {
-			val createStatement = connection.createStatement()
-			createStatement.execute("DROP TABLE "+name+".graphstatistics")
+			createStatement.execute("DROP TABLE "+dataset+".graphstatistics")
 			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
 		try {
 			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("DROP TABLE "+name+".CLUSTERS")
+			var createResultSet = createStatement.execute("DROP TABLE "+dataset+".CLUSTERS")
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
@@ -91,7 +82,7 @@ class DatabaseConnection(config : Configuration) {
 		for (file <- sqlDir.listFiles) {
 			try {
 				val queryString = Source.fromFile(file.getPath).mkString
-				val query = String.format(queryString, name)
+				val query = String.format(queryString, dataset)
 				try {
 					getTableNameFromStatement(queryString) match {
 						case tableName => {
@@ -99,7 +90,7 @@ class DatabaseConnection(config : Configuration) {
 								var dropStatement = connection.createStatement()
 								var tableNamenormalized = tableName
 								if (tableName.equals("")) tableNamenormalized = file.getName.replace(".sql", "")
-								dropStatement.execute("DROP TABLE " + name + "." + tableNamenormalized)
+								dropStatement.execute("DROP TABLE " + dataset + "." + tableNamenormalized)
 								dropStatement.close()
 							} catch {
 								case e : SqlSyntaxErrorException => println(e.getMessage)
@@ -113,6 +104,16 @@ class DatabaseConnection(config : Configuration) {
 				case e : SqlSyntaxErrorException => println(e.getMessage)
 				case e : FileNotFoundException =>  println(e.getMessage)
 			}
+		}
+	}
+
+	private def dropTable(name: String): Unit = {
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("DROP TABLE " + name)
+			createStatement.close()
+		} catch {
+			case e: SqlSyntaxErrorException => println(e.getMessage)
 		}
 	}
 
@@ -227,22 +228,25 @@ class DatabaseConnection(config : Configuration) {
 
 	def validateDatasetString(table: String) = {
 		if(!table.matches("[A-Za-z]+")) {
-			throw new RuntimeException("illegal table name: " + table)
+			//throw new RuntimeException("illegal table name: " + table)
 		}
 	}
 
-	def getClusters(table: String, ontologyNamespace : String): Seq[Group] = {
-		validateDatasetString(table)
-		val sql = sql"SELECT label, cluster_size FROM #${table}.CLUSTERS WHERE username = 'ontology' ORDER BY label".as[(String, Int)]
-		var id : Int = -1
+	def getClusters(dataset: String, ontologyNamespace : String): Seq[Group] = {
+		validateDatasetString(dataset)
+		val sql = sql"SELECT id, label, cluster_size FROM #${dataset}.CLUSTERS WHERE username = 'ontology' ORDER BY label".as[(Int, String, Int)]
 		try {
 			val result = execute(sql)
-			result map tupled((label, cluster_size) => {
-				id += 1
-				new Group(id, removeOntologyNamespace(label, ontologyNamespace), cluster_size)
+			result map tupled((id, label, cluster_size) => {
+				if (!ontologyNamespace.equals("")) {
+					new Group(id, removeOntologyNamespace(label, ontologyNamespace), cluster_size)
+				} else {
+					new Group(id, label, cluster_size)
+				}
+
 			})
 		} catch {
-			case e : SqlSyntaxErrorException => println("This dataset has no clusters: " + table)
+			case e : SqlSyntaxErrorException => println("This dataset has no clusters: " + dataset + e.getMessage + e.getLocalizedMessage)
 			Nil
 		}
 	}
@@ -268,14 +272,92 @@ class DatabaseConnection(config : Configuration) {
 	def getDatasets(): Seq[Dataset] = {
 		var datasets: List[Dataset] = Nil
 
-		val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA ORDER BY LOWER(schema_name)".as[(String, String, Int, String)]
+		try {
+			val sql = sql"SELECT id, schema_name, entities, ontology_namespace FROM PROLOD_MAIN.SCHEMATA ORDER BY LOWER(schema_name)".as[(String, String, Int, String)]
 
-		val result = execute(sql) map tupled((id, schema, entities, ontology_namespace) => {
-			new Dataset(id, schema, entities, getClusters(id, ontology_namespace))
-		})
-		result.filter(_.size > 0)
+			val result = execute(sql) map tupled((id, schema, entities, ontology_namespace) => {
+				new Dataset(id, schema, entities, getClusters(id, ontology_namespace))
+			})
+			result.filter(_.size > 0)
+		} catch {
+			case e: SqlSyntaxErrorException => {
+				val sql = sql"SELECT id, schema_name, entities FROM PROLOD_MAIN.SCHEMATA ORDER BY LOWER(schema_name)".as[(String, String, Int)]
+				val result = execute(sql) map tupled((id, schema, entities) => {
+					new Dataset(id, schema, entities, getClusters(id, ""))
+				})
+				result.filter(_.size > 0)
+			}
+		}
 	}
 
+	def insertKeyness(dataset: String, keyness: Keyness) = {
+		dropTable(dataset + ".keyness")
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE " + dataset + ".keyness (cluster_id INT, property_id INT, keyness FLOAT, uniqueness FLOAT, density FLOAT, values INT)")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		val clusters : Seq[Group] = getClusters(dataset, "")
+		for (cluster : Group <- clusters) {
+			val triples: util.HashMap[Integer, util.HashMap[Integer, Integer]] = new util.HashMap()
+			val clusterId = cluster.id
+			val sql = sql"SELECT subject_id FROM #$dataset.Cluster_subjects WHERE cluster_id = #$clusterId".as[(Int)]
+			val result = execute(sql) map ((subject_id) => {
+				var propertyValuePairs : util.HashMap[Integer, Integer] = new util.HashMap()
+				val sql2 = sql"SELECT predicate_id, tuple_id FROM #$dataset.maintable WHERE subject_id = #$subject_id".as[(Int, Int)]
+				val result = execute(sql2) map tupled((predicate_id, tuple_id) => {
+					propertyValuePairs.put(predicate_id.asInstanceOf[Integer], tuple_id.asInstanceOf[Integer])
+				})
+				triples.put(subject_id.asInstanceOf[Integer], propertyValuePairs)
+			})
+			val keynessStats : util.HashMap[Integer, util.HashMap[String, lang.Double]] = keyness.getKeyness("", triples)
+			keynessStats.asScala.toMap.foreach {
+				case (property, udk) => {
+					try {
+						val statement = connection.createStatement()
+						val resultSet = statement.execute("INSERT INTO "+dataset+".keyness (cluster_id, property_id, keyness, uniqueness, density, values) VALUES ("+clusterId+","+property+","+udk.get("keyness")+","+udk.get("uniqueness")+","+udk.get("density")+","+udk.get("properties").toInt+")")
+					} catch {
+						case e : SqlIntegrityConstraintViolationException => println("Dataset already exists")
+					}
+				}
+			}
+		}
+	}
+
+	def getClusterName(dataset: String, i: Int): String = {
+		val sql = sql"""SELECT label FROM #${dataset}.CLUSTERS WHERE username = 'ontology' AND id = '#${i}'""".as[(String)]
+		val clusterUri = execute(sql).head
+		val ontNs = getOntologyNamespace(dataset)
+		clusterUri.replace(ontNs, "")
+	}
+
+	def getKeyness(dataset: String, groups: List[String]) : Seq[KeynessResult] = {
+		validateDatasetString(dataset)
+		var keynessList: Seq[KeynessResult] = Nil
+
+		if (groups.isEmpty) {
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density, values FROM #$dataset.keyness".as[(Int, Double, Double, Double, Int)]
+			val result = execute(sqlProperties)
+			keynessList = result map tupled((property_id, keyness, uniqueness, density, values) => {
+				new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, values, dataset)
+			})
+		} else {
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density, cluster_id FROM #$dataset.keyness".as[(Int, Double, Double, Double, Int)]
+			val result = execute(sqlProperties)
+			// TODO filter groups
+			keynessList = result map tupled((property_id, keyness, uniqueness, density, cluster_id) => {
+				new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, getKeynessValues(dataset, property_id, cluster_id), getClusterName(dataset, cluster_id))
+			}) filter(e => groups.contains(e.cluster))
+		}
+		keynessList
+	}
+
+	def getKeynessValues(dataset: String, i: Int, i1: Int): Int = {
+		val sqlProperties = sql"select values FROM #$dataset.keyness WHERE property_id = #$i AND cluster_id = #$i1".as[(Int)]
+		execute(sqlProperties).head
+	}
 
 	def getStatistics(dataset: String) : mutable.Map[String, String] = {
 		validateDatasetString(dataset)
@@ -375,6 +457,30 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlSyntaxErrorException => println("error getting diameter" + e.getMessage)
 		}
 		diameter
+	}
+
+	/*
+	def getProperties(dataset: String, clusters: Seq[Group]) : String = {
+
+		val sql = sql"""SELECT PREDICATE FROM #${dataset}.PREDICATETABLE WHERE id = #${propertyId}""".as[(String)]
+		execute(sql).head
+	}
+	*/
+
+	def getProperty(dataset: String, propertyId: Int) : String = {
+		val sql = sql"""SELECT PREDICATE FROM #${dataset}.PREDICATETABLE WHERE id = #${propertyId}""".as[(String)]
+		execute(sql).head
+	}
+
+	def getPropertyId(name: String, s: String): Int = {
+		validateDatasetString(name)
+		var result : Int = -1
+		val statement = connection.createStatement()
+		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".predicatetable WHERE predicate='" + s + "'")
+		resultSet.next()
+		result = resultSet.getInt("id")
+		statement.close()
+		result
 	}
 
 	def getEntityDetails(dataset: String, subjectId: Int): Entity = {
@@ -540,6 +646,12 @@ class DatabaseConnection(config : Configuration) {
 		result
 	}
 
+	def getSubjectIds(dataset: String) : Vector[String] = {
+		validateDatasetString(dataset)
+		val sql = sql"""SELECT ID FROM #${dataset}.subjecttable""".as[String]
+		execute(sql)
+	}
+
 	def insertObject(name: String, s: String): Int = {
 		performInsert(name + ".objecttable", List("object"), List(s)) match {
 			case Some(i) => i
@@ -600,19 +712,8 @@ class DatabaseConnection(config : Configuration) {
 	def insertPredicate(name: String, s: String): Int = {
 		performInsert(name + ".predicatetable", List("predicate"), List(s)) match {
 			case Some(i) => i
-			case None => getPredicateId(name, s)
+			case None => getPropertyId(name, s)
 		}
-	}
-
-	def getPredicateId(name: String, s: String): Int = {
-		validateDatasetString(name)
-		var result : Int = -1
-		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".predicatetable WHERE predicate='" + s + "'")
-		resultSet.next()
-		result = resultSet.getInt("id")
-		statement.close()
-		result
 	}
 
 	def insertTriples(name: String, s: Int, p: Int, o: Int): Unit = {
@@ -642,27 +743,58 @@ class DatabaseConnection(config : Configuration) {
 	def insertClasses(name: String, clusters: util.List[String]) = {
 		val clusterUris = clusters.asScala.toList
 		clusterUris.foreach {
-			case (cluster) =>
+			case (cluster) => {
+				val query: String = "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')"
 				try {
 					val statement = connection.createStatement()
-					val resultSet = statement.execute("INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
+					val resultSet = statement.execute(query)
 				} catch {
-					case e: SqlIntegrityConstraintViolationException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
-					case e: SqlException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
-					case e: SqlSyntaxErrorException   => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')")
+					case e: SqlIntegrityConstraintViolationException => println(e.getMessage + System.lineSeparator() + query)
+					case e: SqlException => println(e.getMessage + System.lineSeparator() + query)
+					case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
 				}
+			}
 		}
+	}
 
+	def insertClusterSubjectTable(dataset: String, graphlodDataset: graphlod.dataset.Dataset) = {
+		dropTable(dataset + ".CLUSTER_SUBJECTS")
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE " + dataset + ".CLUSTER_SUBJECTS (CLUSTER_ID INT NOT NULL, SUBJECT_ID INT NOT NULL, PRIMARY KEY (CLUSTER_ID, SUBJECT_ID))")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		val subjectIds = getSubjectIds(dataset)
+		for (subjectId <- subjectIds) {
+			try {
+				val sqlSubjectUri = sql"""SELECT SUBJECT FROM #${dataset}.SUBJECTTABLE WHERE id = '#${subjectId}'""".as[(String)]
+				val subjectUri = execute(sqlSubjectUri).headOption
+				val classUri = graphlodDataset.getClassForSubject(subjectUri.getOrElse(""))
+				val sql = sql"""SELECT ID FROM #${dataset}.CLUSTERS WHERE username = 'ontology' AND label = '#${classUri}'""".as[(Int)]
+				val result = execute(sql).headOption
+				var clusterId = result.getOrElse(-1)
+				val query: String = "INSERT INTO " + dataset + ".CLUSTER_SUBJECTS (CLUSTER_ID, SUBJECT_ID) VALUES (" + clusterId + ", " + subjectId + ")"
+				val statement = connection.createStatement()
+				val resultSet = statement.execute(query)
+			} catch {
+				case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
+				case e: SqlException => println(e.getMessage)
+				case e: SqlSyntaxErrorException   => println(e.getMessage)
+			}
+		}
 	}
 
 	def updateClusterSizes(dataset : String, ontologyNamespace : String) = {
 		validateDatasetString(dataset)
 		for (cluster : Group <- getClusters(dataset, ontologyNamespace)) {
 			try {
-				val sql = sql"""SELECT COUNT(*) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = ${ontologyNamespace + cluster.name}""".as[(Int)]
+				var objectName = ontologyNamespace + cluster.name
+				val sql = sql"""SELECT COUNT(*) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = '#${objectName}'""".as[(Int)]
 				val result = execute(sql)
 				var clusterSize = 0
-				result foreach ((cluster_size) => {
+				result.foreach ((cluster_size) => {
 					clusterSize = cluster_size
 				})
 

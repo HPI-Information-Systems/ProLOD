@@ -73,22 +73,45 @@ define(['angular', './controllers', 'dimple'], function (angular) {
     };
 
     function drawChart(distribution, $scope, $window) {
-        var xaxis = "node degree", yaxis = "number of nodes";
+        var xaxis = "node degree", yaxis = "number of nodes", order = "order";
 
         var keys = Object.keys(distribution).map(function(i) { return parseInt(i, 10)});
         if(!keys.length) {
             return;
         }
-        var max = Math.max.apply(null, keys);
+        //var max = Math.max.apply(null, keys);
         var data = [];
         //for(var i=1; i<max; i++) {
+        var MAX_BAR_CHARTS = 200;
+        var MIN_BAR_CHARTS = 4;
+
+        var additional = 0;
         for(var i in keys) {
             var obj = {};
             obj[xaxis] = i;
             obj[yaxis] = distribution[i] || 0;
-            if (obj[yaxis] > 1 && obj[xaxis] < 200) // limit number of charts for readability
+            obj[order] = i;
+            if (obj[yaxis] > 0 && obj[xaxis] < MAX_BAR_CHARTS) { // limit number of charts for readability
                 data.push(obj);
+            } else {
+                additional += obj[yaxis];
+            }
         }
+        for(i=keys.length; i<=MIN_BAR_CHARTS; i++) {
+            obj = {};
+            obj[xaxis] = new Array(i+1).join(" "); // repeat spaces to create unique labels for x-axis
+            obj[yaxis] = 0;
+            obj[order] = i;
+            data.push(obj);
+        }
+        if(additional > 0) {
+            obj = {};
+            obj[xaxis] = ">=" + MAX_BAR_CHARTS;
+            obj[yaxis] = additional;
+            obj[order] = MAX_BAR_CHARTS;
+            data.push(obj);
+        }
+
 
         var width = 500, height = 300;
         var svg = dimple.newSvg("#distribution-chart", "100%", "100%");
@@ -98,7 +121,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         var border = 70;
         myChart.setMargins(border, 5, 5, border);
         var x = myChart.addCategoryAxis("x", xaxis);
-        x.addOrderRule(xaxis);
+        x.addOrderRule(order);
         var y = myChart.addMeasureAxis("y", yaxis);
         y.tickFormat = "d";
         myChart.addSeries(null, dimple.plot.bar);

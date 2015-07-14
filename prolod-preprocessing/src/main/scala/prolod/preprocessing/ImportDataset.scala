@@ -2,10 +2,12 @@ package prolod.preprocessing
 
 import java.io.FileInputStream
 import java.sql.SQLSyntaxErrorException
+import graphlod.GraphLOD
 import org.semanticweb.yars.nx.parser.NxParser
 import org.semanticweb.yars.nx.Node
 import prolod.common.config.{DatabaseConnection, Configuration}
 import scala.io.Source
+import scala.collection.JavaConverters._
 
 class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) {
     var config = new Configuration()
@@ -21,11 +23,20 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
     importer.run
 
+
     importTriples()
 
     db.updateClusterSizes(name, ontologyNamespace)
 
     db.createIndices(name)
+
+    val graphLod : GraphLOD = GraphLOD.loadDataset(name, datasetFiles.asJava, namespace, ontologyNamespace, excludeNamespaces.asJava)
+    db.insertClusterSubjectTable(name, graphLod.dataset)
+
+    db.updateClusterSizes(name, ontologyNamespace)
+
+    val keynessImporter = new KeynessImport(db, name)
+    keynessImporter.run
 
     def importTriples() = {
         for (dataset <- datasetFiles) {
