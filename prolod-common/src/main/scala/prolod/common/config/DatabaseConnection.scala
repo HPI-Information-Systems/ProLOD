@@ -234,12 +234,10 @@ class DatabaseConnection(config : Configuration) {
 
 	def getClusters(dataset: String, ontologyNamespace : String): Seq[Group] = {
 		validateDatasetString(dataset)
-		val sql = sql"SELECT label, cluster_size FROM #${dataset}.CLUSTERS WHERE username = 'ontology' ORDER BY label".as[(String, Int)]
-		var id : Int = -1
+		val sql = sql"SELECT id, label, cluster_size FROM #${dataset}.CLUSTERS WHERE username = 'ontology' ORDER BY label".as[(Int, String, Int)]
 		try {
 			val result = execute(sql)
-			result map tupled((label, cluster_size) => {
-				id += 1
+			result map tupled((id, label, cluster_size) => {
 				if (!ontologyNamespace.equals("")) {
 					new Group(id, removeOntologyNamespace(label, ontologyNamespace), cluster_size)
 				} else {
@@ -296,7 +294,7 @@ class DatabaseConnection(config : Configuration) {
 		dropTable(dataset + ".keyness")
 		try {
 			val createStatement = connection.createStatement()
-			createStatement.execute("CREATE TABLE " + dataset + ".keyness (cluster_id INT, property_id INT, keyness FLOAT, uniqueness FLOAT, density FLOAT)")
+			createStatement.execute("CREATE TABLE " + dataset + ".keyness (cluster_id INT, property_id INT, keyness FLOAT, uniqueness FLOAT, density FLOAT, values INT)")
 			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
@@ -314,12 +312,12 @@ class DatabaseConnection(config : Configuration) {
 				})
 				triples.put(subject_id.asInstanceOf[Integer], propertyValuePairs)
 			})
-			var keynessStats : util.HashMap[Integer, util.HashMap[String, lang.Double]] = keyness.getKeyness("", triples)
+			val keynessStats : util.HashMap[Integer, util.HashMap[String, lang.Double]] = keyness.getKeyness("", triples)
 			keynessStats.asScala.toMap.foreach {
 				case (property, udk) => {
 					try {
 						val statement = connection.createStatement()
-						val resultSet = statement.execute("INSERT INTO "+dataset+".keyness (cluster_id, property_id, keyness, uniqueness, density) VALUES ("+clusterId+","+property+","+udk.get("keyness")+","+udk.get("uniqueness")+","+udk.get("density")+")")
+						val resultSet = statement.execute("INSERT INTO "+dataset+".keyness (cluster_id, property_id, keyness, uniqueness, density, values) VALUES ("+clusterId+","+property+","+udk.get("keyness")+","+udk.get("uniqueness")+","+udk.get("density")+","+udk.get("properties").toInt+")")
 					} catch {
 						case e : SqlIntegrityConstraintViolationException => println("Dataset already exists")
 					}
@@ -328,27 +326,37 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
-	def getKeyness(dataset: String, groups: List[String]) : List[KeynessResult] = {
+	def getClusterName(dataset: String, i: Int): String = {
+		val sql = sql"""SELECT label FROM #${dataset}.CLUSTERS WHERE username = 'ontology' AND id = '#${i}'""".as[(String)]
+		val clusterUri = execute(sql).head
+		val ontNs = getOntologyNamespace(dataset)
+		clusterUri.replace(ontNs, "")
+	}
+
+	def getKeyness(dataset: String, groups: List[String]) : Seq[KeynessResult] = {
 		validateDatasetString(dataset)
-		var keynessList: List[KeynessResult] = Nil
+		var keynessList: Seq[KeynessResult] = Nil
 
 		if (groups.isEmpty) {
-			val sqlProperties = sql"select property_id, keyness, uniqueness, density FROM #$dataset.keyness".as[(Int, Double, Double, Double)]
-			execute(sqlProperties) map tupled((property_id, keyness, uniqueness, density) => {
-				keynessList :::= List(new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0))
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density, values FROM #$dataset.keyness".as[(Int, Double, Double, Double, Int)]
+			val result = execute(sqlProperties)
+			keynessList = result map tupled((property_id, keyness, uniqueness, density, values) => {
+				new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, values, dataset)
 			})
 		} else {
-			//iterate clusters
-			val clusterUri = getOntologyNamespace(dataset) + groups.head
-			val sql = sql"""SELECT ID FROM #${dataset}.CLUSTERS WHERE username = 'ontology' AND label = '#${clusterUri}'""".as[(Int)]
-			val clusterId = execute(sql).head
-			val sqlProperties = sql"select property_id, keyness, uniqueness, density FROM #$dataset.keyness WHERE cluster_id = #${clusterId}".as[(Int, Double, Double, Double)]
-			execute(sqlProperties) map tupled((property_id, keyness, uniqueness, density) => {
-				keynessList :::= List(new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, 0))
-			})
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density, cluster_id FROM #$dataset.keyness".as[(Int, Double, Double, Double, Int)]
+			val result = execute(sqlProperties)
+			// TODO filter groups
+			keynessList = result map tupled((property_id, keyness, uniqueness, density, cluster_id) => {
+				new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, getKeynessValues(dataset, property_id, cluster_id), getClusterName(dataset, cluster_id))
+			}) filter(e => groups.contains(e.cluster))
 		}
-
 		keynessList
+	}
+
+	def getKeynessValues(dataset: String, i: Int, i1: Int): Int = {
+		val sqlProperties = sql"select values FROM #$dataset.keyness WHERE property_id = #$i AND cluster_id = #$i1".as[(Int)]
+		execute(sqlProperties).head
 	}
 
 	def getStatistics(dataset: String) : mutable.Map[String, String] = {
@@ -449,6 +457,30 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlSyntaxErrorException => println("error getting diameter" + e.getMessage)
 		}
 		diameter
+	}
+
+	/*
+	def getProperties(dataset: String, clusters: Seq[Group]) : String = {
+
+		val sql = sql"""SELECT PREDICATE FROM #${dataset}.PREDICATETABLE WHERE id = #${propertyId}""".as[(String)]
+		execute(sql).head
+	}
+	*/
+
+	def getProperty(dataset: String, propertyId: Int) : String = {
+		val sql = sql"""SELECT PREDICATE FROM #${dataset}.PREDICATETABLE WHERE id = #${propertyId}""".as[(String)]
+		execute(sql).head
+	}
+
+	def getPropertyId(name: String, s: String): Int = {
+		validateDatasetString(name)
+		var result : Int = -1
+		val statement = connection.createStatement()
+		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".predicatetable WHERE predicate='" + s + "'")
+		resultSet.next()
+		result = resultSet.getInt("id")
+		statement.close()
+		result
 	}
 
 	def getEntityDetails(dataset: String, subjectId: Int): Entity = {
@@ -680,24 +712,8 @@ class DatabaseConnection(config : Configuration) {
 	def insertPredicate(name: String, s: String): Int = {
 		performInsert(name + ".predicatetable", List("predicate"), List(s)) match {
 			case Some(i) => i
-			case None => getPredicateId(name, s)
+			case None => getPropertyId(name, s)
 		}
-	}
-
-	def getProperty(dataset: String, propertyId: Int) : String = {
-		val sql = sql"""SELECT PREDICATE FROM #${dataset}.PREDICATETABLE WHERE id = #${propertyId}""".as[(String)]
-		execute(sql).head
-	}
-
-	def getPredicateId(name: String, s: String): Int = {
-		validateDatasetString(name)
-		var result : Int = -1
-		val statement = connection.createStatement()
-		val resultSet = statement.executeQuery("SELECT id FROM " + name + ".predicatetable WHERE predicate='" + s + "'")
-		resultSet.next()
-		result = resultSet.getInt("id")
-		statement.close()
-		result
 	}
 
 	def insertTriples(name: String, s: Int, p: Int, o: Int): Unit = {
@@ -742,6 +758,7 @@ class DatabaseConnection(config : Configuration) {
 	}
 
 	def insertClusterSubjectTable(dataset: String, graphlodDataset: graphlod.dataset.Dataset) = {
+		dropTable(dataset + ".CLUSTER_SUBJECTS")
 		try {
 			val createStatement = connection.createStatement()
 			createStatement.execute("CREATE TABLE " + dataset + ".CLUSTER_SUBJECTS (CLUSTER_ID INT NOT NULL, SUBJECT_ID INT NOT NULL, PRIMARY KEY (CLUSTER_ID, SUBJECT_ID))")

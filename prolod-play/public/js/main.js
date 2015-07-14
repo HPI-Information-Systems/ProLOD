@@ -78,11 +78,12 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/associationRules/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
       $routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
 
+      $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/uniqueness.html', controller: 'UniquenessCtrl', activetab: 'uniqueness'});
+
       /*
       $routeProvider.when('/factGeneration/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});
       $routeProvider.when('/suggestions/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SuggestionViewCtrl, activetab: 'suggestions'});
       */
-          $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/uniqueness.html', controller: 'UniquenessCtrl', activetab: 'uniqueness'});
 
       // other
       $routeProvider.otherwise({redirectTo: '/'});

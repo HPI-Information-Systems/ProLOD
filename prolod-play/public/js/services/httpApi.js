@@ -24,7 +24,7 @@ define(["angular", "./services"], function () {
                 return getCached(uri(['server', 'graphstatistics', dataset]), {params: {groups: groups}});
             },
             getGraphPatternStatistics: function (dataset, groups, pattern) {
-                return getCached(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {params: {groups: groups}});
+                return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {params: {groups: groups}});
             },
             getGraphDetail: function (dataset, groups, pattern, detail) {
                 return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern, detail]),
@@ -42,6 +42,7 @@ define(["angular", "./services"], function () {
 
 
             // JUST DUMMIES:
+            /*
             getTable1: function () {
                 return $http.get('persons');
             },
@@ -59,13 +60,15 @@ define(["angular", "./services"], function () {
             },
             getSynonyms: function (dataset, groups) {
                 return $http.get(uri(['synonyms', dataset]), {params: {groups: groups}});
-            },
+            }
+            ,
             getFactGeneration: function (dataset, groups) {
                 return $http.get(uri(['factGeneration', dataset]), {params: {groups: groups}});
             },
             getSuggestions: function (dataset, groups) {
                 return $http.get(uri(['suggestions', dataset]), {params: {groups: groups}});
             }
+            */
         }
     }]);
 

@@ -4,11 +4,9 @@
 
 define(['angular', 'ui-grid'], function () {
 
-  /* Controllers */
-
   var controllers = {};
 
-  // this creates a controller for simple tables
+  // This creates a controller for simple tables
   var createGenericTableView = function (name, httpCall, columnDefs) {
     var ctrl = function ($scope, $routeParams, httpApi, routeBuilder) {
       $scope.updateBreadcrumb([{name: name, url: routeBuilder.getGenericUrl(name)}]);
@@ -29,22 +27,22 @@ define(['angular', 'ui-grid'], function () {
     return ctrl
   };
 
-  controllers.PredicateViewCtrl = createGenericTableView("predicates", "getPredicates", [
-    {name: "Predicate", field: "predicate", type: "string"},
-    {name: "Occurences", field: "count", type: "int"},
+  controllers.PredicateViewCtrl = createGenericTableView("Properties", "getPredicates", [
+    {name: "Property", field: "predicate", type: "string"},
+    {name: "Occurrences", field: "count", type: "int"},
     {name: "Percentage", field: "percentage", type: "float"}
   ]);
 
-  controllers.InversePredicateViewCtrl = createGenericTableView("inversePredicates", "getInversePredicates");
+  controllers.InversePredicateViewCtrl = createGenericTableView("Inverse Properties", "getInversePredicates");
 
-  controllers.AssociationRuleViewCtrl = createGenericTableView('associationRules', "getAssociationRules");
+  controllers.AssociationRuleViewCtrl = createGenericTableView('Association Rules', "getAssociationRules");
 
-  controllers.SynonymViewCtrl = createGenericTableView('synonyms', "getSynonyms");
-
+  controllers.SynonymViewCtrl = createGenericTableView('Synonyms', "getSynonyms");
+/*
   controllers.FactGenerationViewCtrl = createGenericTableView('factGeneration', "getFactGeneration");
 
   controllers.SuggestionViewCtrl = createGenericTableView('suggestions',"getSuggestions");
-
+*/
   return controllers;
 
 });
