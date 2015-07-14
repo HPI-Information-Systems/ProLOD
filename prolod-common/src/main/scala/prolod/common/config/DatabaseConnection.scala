@@ -662,7 +662,7 @@ class DatabaseConnection(config : Configuration) {
 				val sql = sql"""SELECT COUNT(*) FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' AND o.object = ${ontologyNamespace + cluster.name}""".as[(Int)]
 				val result = execute(sql)
 				var clusterSize = 0
-				result. foreach ((cluster_size) => {
+				result foreach ((cluster_size) => {
 					clusterSize = cluster_size
 				})
 

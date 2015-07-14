@@ -22,7 +22,7 @@ idea
 - remove 'Make' from before launch settings
 - run or debug with this config
 
-Packaging
+packaging
 ---------
 
 - execute ```sbt "project prolod_play" dist```
