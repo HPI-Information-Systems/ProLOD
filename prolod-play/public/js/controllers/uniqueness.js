@@ -4,15 +4,29 @@ define(['angular', './controllers'], function (angular) {
 
     angular.module('Prolod2.controllers')
         .controller("UniquenessCtrl", ['$scope', '$routeParams', 'routeBuilder', 'httpApi', 'colorHash', function ($scope, $routeParams, routeBuilder, httpApi, colorHash) {
+
             $scope.updateBreadcrumb([
                 {name:'Key Discovery', url: routeBuilder.getUniquenessUrl()},
             ]);
+
+            var propertyTemplate = [
+                '<div class="ui-grid-cell-contents" tooltip="{{ row.entity.property }}"  tooltip-append-to-body="true" tooltip-placement="top" popupDelay="300">',
+                '       {{ COL_FIELD }}',
+                '</div>'
+            ].join('\n');
 
             // table data
             $scope.model = {
                 gridOptions: {
                     data: 'model.data',
-                    //columnDefs: [...]
+                    columnDefs: [
+                        {field: "property", type: "string", width: "**", cellTemplate: propertyTemplate},
+                        {field: "keyness", type: "number", cellFilter: 'number: 2'},
+                        {field: "uniqueness", type: "number", cellFilter: 'number: 2'},
+                        {field: "density", type: "number", cellFilter: 'number: 2'},
+                        {field: "values", type: "number" },
+                        {field: "cluster", type: "string", width: "**"}
+                    ]
                 },
                 data: []
             };
