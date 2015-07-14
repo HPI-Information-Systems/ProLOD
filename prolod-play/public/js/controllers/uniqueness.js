@@ -49,8 +49,8 @@ define(['angular', './controllers'], function (angular) {
 
                 var myChart = new dimple.chart(svg, data);
                 myChart.setBounds(60, 30, 500, 330);
-                myChart.addMeasureAxis("x", "density");
-                myChart.addMeasureAxis("y", "uniqueness");
+                var x = myChart.addMeasureAxis("x", "density");
+                var y = myChart.addMeasureAxis("y", "uniqueness");
                 // first parameters should be unique as dimple only shows unique values
                 // they are shown in the tooltip
                 // the last one is for the legend
@@ -67,6 +67,10 @@ define(['angular', './controllers'], function (angular) {
                 }
 
                 myChart.draw();
+                // this only affects the tooltip!
+                x.tickFormat = ",.2f";
+                y.tickFormat = ",.2f";
+
             });
 
 
