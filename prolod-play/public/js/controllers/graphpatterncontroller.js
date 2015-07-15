@@ -90,7 +90,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
         myChart.setBounds(5, 5, 150, 150);
         myChart.addMeasureAxis("p", "value");
         myChart.addSeries("class", dimple.plot.pie);
-        myChart.addLegend(180, 0, 100, 150, "left");
+        myChart.addLegend(180, 5, 100, 150, "left");
 
         for(var i in keys) {
             var k = keys[i];
