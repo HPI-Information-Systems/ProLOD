@@ -50,7 +50,7 @@ requirejs.config({
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
          './controllers/graphpatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
-         './controllers/uniqueness',
+         './controllers/uniqueness','./controllers/properties',
          './directives/directives', './directives/graphThumbnail', './directives/whenScrollEnds',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
          'angular-route', 'ui-grid', '../bg-splitter/js/splitter','treeControl', 'd3', 'dimple', 'angular-ui-bootstrap','jquery'],
@@ -73,7 +73,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/view1/:dataset', {templateUrl: 'assets/partials/table.html', controller: viewcontrollers.TableViewCtrl, activetab: 'view1'});
       $routeProvider.when('/view1/:dataset/:detail', {templateUrl: 'assets/partials/tabledetail.html', controller: viewcontrollers.TableDetailViewCtrl, activetab: 'view1'});
 
-      $routeProvider.when('/predicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.PredicateViewCtrl, activetab: 'predicates'});
+      $routeProvider.when('/properties/:dataset', {templateUrl: 'assets/partials/properties.html', controller: 'PropertiesCtrl', activetab: 'properties'});
       $routeProvider.when('/inversePredicates/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.InversePredicateViewCtrl, activetab: 'inversePredicates'});
       $routeProvider.when('/associationRules/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.AssociationRuleViewCtrl, activetab: 'associationRules'});
       $routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});

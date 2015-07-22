@@ -162,7 +162,100 @@ object GraphLod extends Controller {
     Ok(json)
   }
 
-  def getBigComponent(dataset: String, groups: List[String], pattern: Int) = Action {
-    Ok("this is big!")
-  }
+  def getBigComponent(datasetId: String, groups: List[String]) = Action {
+      val config = new Configuration()
+      val db = new DatabaseConnection(config)
+      val data: GraphLodResult = GraphLodResult(datasetId)
+      val patternList: List[Pattern] = db.getBCPatterns(datasetId)
+      var entitiesPerClass: Map[String, Int] = Map()
+      var entities = 0
+      data.connectedComponents = patternList.size
+      if (groups.nonEmpty) {
+        var newPatternList: List[Pattern] = Nil
+        for (pattern : Pattern <- patternList) {
+          var patternNotInGroups = false
+          var newNodes: List[Node] = Nil
+          var tempEntitiesPerClass: Map[String, Int] = Map()
+          for (node : Node <- pattern.nodes) {
+            var newNode : Node = node
+            val group = node.group.getOrElse("")
+            if (!groups.contains(node.group.getOrElse(""))) {
+              newNode = new Node(node.id, node.uri, None)
+            } else {
+              patternNotInGroups = true
+            }
+            if (group.length > 0) {
+              var entityCount = 0
+              if (tempEntitiesPerClass.contains(group)) {
+                entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+              }
+              entityCount += 1
+              tempEntitiesPerClass += (group -> entityCount)
+            }
+            newNodes ::= newNode
+          }
+          if (groups.isEmpty || (groups.nonEmpty && patternNotInGroups)) {
+            newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
+            entities += newNodes.size
+            for ((group, count) <- tempEntitiesPerClass) {
+              var entityCount = 0
+              if (entitiesPerClass.contains(group)) {
+                entityCount = entitiesPerClass.getOrElse(group, 0)
+              }
+              entityCount += count
+              entitiesPerClass += (group -> entityCount)
+            }
+          }
+        }
+        data.connectedComponents = newPatternList.size
+        data.patterns = newPatternList
+      } else {
+        data.patterns = patternList
+        for (pattern : Pattern <- patternList) {
+          var tempEntitiesPerClass: Map[String, Int] = Map()
+          for (node : Node <- pattern.nodes) {
+            val group = node.group.getOrElse("")
+            if (group.length > 0) {
+              var entityCount = 0
+              if (tempEntitiesPerClass.contains(group)) {
+                entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+              }
+              entityCount += 1
+              tempEntitiesPerClass += (group -> entityCount)
+            }
+          }
+          entities += pattern.nodes.size
+          for ((group, count) <- tempEntitiesPerClass) {
+            var entityCount = 0
+            if (entitiesPerClass.contains(group)) {
+              entityCount = entitiesPerClass.getOrElse(group, 0)
+            }
+            entityCount += count
+            entitiesPerClass += (group -> entityCount)
+          }
+        }
+      }
+
+      if (entities > 0) {
+        var classDistribution : Map[String, Double] = Map()
+        var entitiesUnknown = entities
+        for ((group, entityCount) <- entitiesPerClass) {
+          classDistribution += (group -> (entityCount.toDouble/entities))
+          entitiesUnknown -= entityCount
+        }
+        if (entitiesUnknown > 0) {
+          classDistribution += ("unknown" -> (entitiesUnknown.toDouble/entities))
+        }
+        //data.nodes = entities
+        data.classDistribution =  classDistribution
+      }
+
+      if(data.patterns.nonEmpty) {
+        val patternDiameter = db.getPatternDiameter(datasetId, data.patterns.last.id)
+        //data.diameter = patternDiameter
+      }
+
+      val json = Json.obj("statistics" -> data)
+      Ok(json)
+    }
 }

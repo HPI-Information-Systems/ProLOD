@@ -8,7 +8,7 @@ GET        /                                  controllers.Application.index()
 
 GET        /personslink                       controllers.Persons.getPersonLinks
 
-GET        /predicates/:dataset               controllers.Predicates.getPredicates(dataset: String, group:List[String])
+#GET        /predicates/:dataset               controllers.Predicates.getPredicates(dataset: String, group:List[String])
 
 GET        /inversePredicates/:dataset        controllers.InversePredicates.getInversePredicates(dataset: String, group:List[String])
 

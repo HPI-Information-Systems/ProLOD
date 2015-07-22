@@ -27,12 +27,6 @@ define(['angular', 'ui-grid'], function () {
     return ctrl
   };
 
-  controllers.PredicateViewCtrl = createGenericTableView("Properties", "getPredicates", [
-    {name: "Property", field: "predicate", type: "string"},
-    {name: "Occurrences", field: "count", type: "int"},
-    {name: "Percentage", field: "percentage", type: "float"}
-  ]);
-
   controllers.InversePredicateViewCtrl = createGenericTableView("Inverse Properties", "getInversePredicates");
 
   controllers.AssociationRuleViewCtrl = createGenericTableView('Association Rules', "getAssociationRules");

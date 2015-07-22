@@ -71,7 +71,7 @@ define(["angular", "./services"], function () {
             },
             getPredicateUrl: function (params) {
                 params = params || $route.current.params;
-                return buildUri(['predicates', params.dataset], {group: params.group});
+                return buildUri(['properties', params.dataset], {group: params.group});
             },
             getInversePredicateUrl: function (params) {
                 params = params || $route.current.params;

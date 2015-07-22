@@ -1,6 +1,6 @@
-
-
 GET        /datasets                                         controllers.prolod.server.Datasets.datasets()
+
+GET        /properties/:dataset                              controllers.prolod.server.Properties.getPropertyStatistics(dataset: String, groups: List[String])
 
 GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: Int)
 
@@ -9,7 +9,7 @@ GET        /graphstatistics/:dataset                         controllers.prolod.
 # example: http://localhost:9000/server/graphstatistics/0/pattern/0?group=1&group=2
 GET        /graphstatistics/:dataset/pattern/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /graphstatistics/bigcomponent/:dataset            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String], pattern: Int)
+GET        /bigcomponent/:dataset                            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String])
 
 GET        /uniqueness/:dataset                              controllers.prolod.server.Keyness.getKeyness(dataset: String, groups: List[String])
 

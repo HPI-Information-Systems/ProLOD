@@ -155,9 +155,22 @@ treecontrol li {
     cursor: pointer;
 }
 
+.surrounding_node {
+    stroke: #CFCFCF;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+
 .link {
     fill: none;
-    stroke: #bbb;
+    stroke: #BBBBBB;
+    cursor: pointer;
+    stroke-width: 1.5px;
+}
+
+.surrounding_link {
+    fill: none;
+    stroke: #E8E8E8;
     cursor: pointer;
     stroke-width: 1.5px;
 }

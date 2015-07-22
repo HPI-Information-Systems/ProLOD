@@ -35,8 +35,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 var link = g.selectAll(".link")
                     .data(graph.links)
                     .enter().append("line")
-                    .attr("class", "link")
-                    .style("marker-end", "url(#target)")
+                    .attr("class", function(d) {if (d.surrounding) return "surrounding_link"; return "link";} )
+                    .style("marker-end", function(d) {if (d.surrounding) return "url(#surrounding_target)"; return "url(#target)";})
                     .style("stroke-width", function (d) {
                                return Math.sqrt(d.value);
                            });
@@ -44,7 +44,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 var node = g.selectAll(".node")
                     .data(graph.nodes)
                     .enter().append("circle")
-                    .attr("class", "node")
+                    .attr("class", function(d) {if (d.surrounding) return "surrounding_node"; return "node";})
                     .attr("uri", function (d) { return d.uri; })
                     .attr("label", function (d) { return d.label; })
                     .attr("r", 5)
@@ -119,6 +119,21 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         //.attr("id", "arrowHead");
 
                     svg.append("defs").selectAll("marker")
+                        .data(["surrounding_target"])
+                        .enter().append("svg:marker")
+                        .attr("id", function (d) { return d; })
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 15)
+                        .attr("refY", -1.5)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                        .style("fill", "#E8E8E8")
+                        .append("svg:path")
+                        .attr("d", "M0,-5L10,0L0,5");
+                    //.attr("id", "arrowHead");
+
+                    svg.append("defs").selectAll("marker")
                         .data(["target_red"])
                         .enter().append("svg:marker")
                         .attr("id", function (d) { return d; })
@@ -131,6 +146,21 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         .style("fill", "red")
                         .append("svg:path")
                         .attr("d", "M0,-5L10,0L0,5");
+
+                    svg.append("defs").selectAll("marker")
+                        .data(["target_lightred"])
+                        .enter().append("svg:marker")
+                        .attr("id", function (d) { return d; })
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 15)
+                        .attr("refY", -1.5)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                        .style("fill", "#FFAD99")
+                        .append("svg:path")
+                        .attr("d", "M0,-5L10,0L0,5");
+
 
                     node.append("svg:title")
                         .text(
@@ -154,8 +184,14 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         }
                     );
 
-                    link.on("mouseover", mouseover);
+
+                    link.on("mouseover",mouseover);
                     link.on("mouseout", mouseout);
+
+                    var link_s = g.selectAll(".surrounding_link")
+                    link_s.on("mouseover",mouseover_surrounding);
+                    link_s.on("mouseout",mouseout_surrounding);
+
                 }
 
                 var flag = 0;
@@ -186,10 +222,22 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     link.style("marker-end", "url(#target_red)");
                 }
 
+                function mouseover_surrounding() {
+                    var link = d3.select(this);
+                    link.style("stroke", "#FFAD99");
+                    link.style("marker-end", "url(#target_lightred)");
+                }
+
                 function mouseout() {
                     var link = d3.select(this);
                     link.style("stroke", "#bbb");
                     link.style("marker-end", "url(#target)");
+                }
+
+                function mouseout_surrounding() {
+                    var link = d3.select(this);
+                    link.style("stroke", "#E8E8E8");
+                    link.style("marker-end", "url(#surrounding_target)");
                 }
 
             }
@@ -206,7 +254,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         group: node.group,
                         id: node.id,
                         uri: node.uri,
-                        label: node.label
+                        label: node.label,
+                        surrounding: node.surrounding
                     };
                     nodeMap[node.id] = n;
                     graph.nodes.push(n)
@@ -217,7 +266,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         source: nodeMap[link.source],
                         target: nodeMap[link.target],
                         uri: link.uri,
-                        label: link.label
+                        label: link.label,
+                        surrounding: link.surrounding
                     })
                 });
                 return graph;
