@@ -15,6 +15,10 @@
             <div>
                 <h3>Statistics:</h3>
                 <table class="table stats">
+                    <tr ng-if="stats.connectedComponents">
+                        <td>Patterns:</td>
+                        <td class="align-right">{{stats.connectedComponents | number}}</td>
+                    </tr>
                     <tr ng-if="stats.nodes">
                         <td>Nodes:</td>
                         <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
