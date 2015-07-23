@@ -757,7 +757,7 @@ class DatabaseConnection(config : Configuration) {
 	def getOntologyNamespace(s: String): String = {
 		var namespace :String = null
 		try {
-			val sql = sql"""SELECT ONTOLOGY_NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE SCHEMA_NAME = ${s}""".as[String]
+			val sql = sql"""SELECT ONTOLOGY_NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}""".as[String]
 			val result = execute(sql)
 			result foreach ((ns) => {
 				namespace = ns
@@ -772,7 +772,7 @@ class DatabaseConnection(config : Configuration) {
 	def getNamespace(s: String): String = {
 		var namespace :String = null
 		try {
-			val sql = sql"""SELECT NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE SCHEMA_NAME = ${s}""".as[String]
+			val sql = sql"""SELECT NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}""".as[String]
 			val result = execute(sql)
 			result foreach ((ns) => {
 				namespace = ns

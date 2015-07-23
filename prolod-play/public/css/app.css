@@ -135,10 +135,12 @@ body {
 #distribution-chart {
     height: 300px;
     margin-bottom: 75px;
+    width:  505px;
 }
 
 #pie-chart {
     height: 300px;
+    width: 505px;
 }
 
 treecontrol li {
@@ -265,6 +267,9 @@ treecontrol li {
     text-align: right;
 }
 
+.float-left {
+    float: left;
+}
 
 .modal-dialog {
     position: relative;
