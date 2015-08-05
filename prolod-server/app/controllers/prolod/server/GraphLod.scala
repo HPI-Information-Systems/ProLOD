@@ -177,22 +177,24 @@ object GraphLod extends Controller {
           var newNodes: List[Node] = Nil
           var tempEntitiesPerClass: Map[String, Int] = Map()
           for (node : Node <- pattern.nodes) {
-            var newNode : Node = node
-            val group = node.group.getOrElse("")
-            if (!groups.contains(node.group.getOrElse(""))) {
-              newNode = new Node(node.id, node.uri, None)
-            } else {
-              patternNotInGroups = true
-            }
-            if (group.length > 0) {
-              var entityCount = 0
-              if (tempEntitiesPerClass.contains(group)) {
-                entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+            if (!node.surrounding.getOrElse(false)) {
+              var newNode : Node = node
+              val group = node.group.getOrElse("")
+              if (!groups.contains(node.group.getOrElse(""))) {
+                newNode = new Node(node.id, node.uri, None)
+              } else {
+                patternNotInGroups = true
               }
-              entityCount += 1
-              tempEntitiesPerClass += (group -> entityCount)
+              if (group.length > 0) {
+                var entityCount = 0
+                if (tempEntitiesPerClass.contains(group)) {
+                  entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+                }
+                entityCount += 1
+                tempEntitiesPerClass += (group -> entityCount)
+              }
+              newNodes ::= newNode
             }
-            newNodes ::= newNode
           }
           if (groups.isEmpty || (groups.nonEmpty && patternNotInGroups)) {
             newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
@@ -213,18 +215,22 @@ object GraphLod extends Controller {
         data.patterns = patternList
         for (pattern : Pattern <- patternList) {
           var tempEntitiesPerClass: Map[String, Int] = Map()
+          var entityCount : Int = 0
           for (node : Node <- pattern.nodes) {
-            val group = node.group.getOrElse("")
-            if (group.length > 0) {
-              var entityCount = 0
-              if (tempEntitiesPerClass.contains(group)) {
-                entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+            if (!node.surrounding.getOrElse(false)) {
+              val group = node.group.getOrElse("")
+              if (group.length > 0) {
+                var entityCount = 0
+                if (tempEntitiesPerClass.contains(group)) {
+                  entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+                }
+                entityCount += 1
+                tempEntitiesPerClass += (group -> entityCount)
               }
               entityCount += 1
-              tempEntitiesPerClass += (group -> entityCount)
             }
           }
-          entities += pattern.nodes.size
+          entities += entityCount
           for ((group, count) <- tempEntitiesPerClass) {
             var entityCount = 0
             if (entitiesPerClass.contains(group)) {
