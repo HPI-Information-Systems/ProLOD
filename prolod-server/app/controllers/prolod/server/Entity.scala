@@ -15,4 +15,12 @@ object Entity extends Controller {
 		val json = Json.obj("entity" -> entityDetails)
 		Ok(json)
 	}
+
+	def getDetails(dataset: String, entity: String) = Action {
+		val config = new Configuration()
+		val db = new DatabaseConnection(config)
+		val entityDetails: models.Entity = db.getEntityDetails(dataset, entity)
+		val json = Json.obj("entity" -> entityDetails)
+		Ok(json)
+	}
 }

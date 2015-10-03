@@ -1,11 +1,14 @@
 package prolod.preprocessing
 
 import java.io.FileInputStream
+import java.net.{MalformedURLException, URL}
 import java.sql.SQLSyntaxErrorException
 import graphlod.GraphLOD
 import org.semanticweb.yars.nx.parser.NxParser
 import org.semanticweb.yars.nx.Node
 import prolod.common.config.{DatabaseConnection, Configuration}
+import prolod.common.models.MaintableObject
+import scala.collection.immutable.HashSet
 import scala.io.Source
 import scala.collection.JavaConverters._
 
@@ -16,27 +19,29 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
     val datasetFiles: List[String] = if (files.isEmpty) Nil else List(files.get)
     val excludeNamespaces: List[String] = if (excludeNS.isEmpty) Nil else List(excludeNS.get)
 
+    var subjectsKnown : Map[String, Int] = Map()
+
     db.dropTables(name)
     db.createTables(name)
 
-    val importer = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
-
-    importer.run
-
-
     importTriples()
+
+    val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles, subjectsKnown)
+
+    graphlod.run
 
     db.updateClusterSizes(name, ontologyNamespace)
 
     db.createIndices(name)
 
-    val graphLod : GraphLOD = GraphLOD.loadDataset(name, datasetFiles.asJava, namespace, ontologyNamespace, excludeNamespaces.asJava)
-    db.insertClusterSubjectTable(name, graphLod.dataset)
+    db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
 
     db.updateClusterSizes(name, ontologyNamespace)
 
     val keynessImporter = new KeynessImport(db, name)
     keynessImporter.run
+
+    db.insertPatternsBC(name, graphlod.graphLod)
 
     def importTriples() = {
         for (dataset <- datasetFiles) {
@@ -46,9 +51,16 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
     }
 
     def importTriplesByLine(nxp : NxParser): Unit = {
-        var subjectsKnown : List[String] = Nil
-        var predicatesKnown : List[String] = Nil
-        var objectsKnown : List[String] = Nil
+        var mtObjects : List[MaintableObject] = Nil
+
+        var predicatesKnown : Map[String, Int] = Map()
+        var objectsKnown : Map[String, Int] = Map()
+
+        var subjectCount : Map[Int, Int] = Map()
+        var predicateCount : Map[Int, Int] = Map()
+
+        var externalLinks : List[Int] = Nil
+        var internalLinks : Map[Int, Map[Int, String]] = Map()
 
         while (nxp.hasNext) {
             var subjectId = -1
@@ -62,33 +74,77 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
                 val o: String = nodes(2).toString
                 if (!subjectsKnown.contains(s)) {
                     subjectId = db.insertSubject(name, s)
-                    subjectsKnown ::= s
+                    subjectsKnown += (s -> subjectId)
                 } else {
-                    subjectId = db.getSubjectId(name, s)
+                    subjectId = subjectsKnown.get(s).get
                 }
                 if (!predicatesKnown.contains(p)) {
                     predicateId = db.insertPredicate(name, p)
-                    predicatesKnown ::= p
+                    predicatesKnown += (p -> predicateId)
                 } else {
-                    predicateId = db.getPredicateId(name, p)
+                    predicateId = predicatesKnown.get(p).get
                 }
                 if (!objectsKnown.contains(o)) {
                     objectId = db.insertObject(name, o)
-                    objectsKnown ::= o
+                    objectsKnown += (o -> objectId)
                 } else {
-                    objectId = db.getObjectId(name, o)
+                    objectId = objectsKnown.get(o).get
                 }
                 if (subjectId >= 0 && predicateId >= 0 && objectId >= 0) {
-                    db.insertTriples(name, subjectId, predicateId, objectId)
+                    val sCount : Int = subjectCount.get(subjectId).getOrElse(0) + 1
+                    subjectCount += (subjectId -> sCount)
+                    val pCount : Int = predicateCount.get(predicateId).getOrElse(0) + 1
+                    predicateCount += (predicateId -> pCount)
+
+                    if (isValid(o)) {
+                        if (o.startsWith(namespace) || o.startsWith(ontologyNamespace)) {
+                            var internalLink : Map[Int, String] = Map(predicateId -> o)
+                            if (internalLinks.contains(subjectId)) {
+                                internalLink.get(subjectId)
+                            }
+                            internalLinks += (subjectId -> internalLink)
+                        } else {
+                            externalLinks ::= objectId
+                        }
+                    }
+
+                    // TODO datatype
+                    // TODO pattern_id
+                    // TODO normalizedpattern_id
+                    // TODO parsed_value
+
+                    // TODO load prefix.cc and count external links to external datasets!
+                    // exclude vocabulary prefixes by excluding properties that define schemata
+
+                    // TODO save first, add later when internal links can we looked up
+
+                    mtObjects ::= new MaintableObject(subjectId, predicateId, objectId)
                 }
             }
         }
+
+        for (mtObject <- mtObjects) {
+            if (internalLinks.contains(mtObject.subjectId)) {
+                if (internalLinks.get(mtObject.subjectId).contains(mtObject.propertyId)) {
+                    mtObject.internalLink = subjectsKnown.get(internalLinks.get(mtObject.subjectId).get(mtObject.propertyId))
+                }
+            }
+            db.insertTriples(name, mtObject)
+        }
+        db.updateSubjectCounts(name, subjectCount)
+        db.updatePropertyCounts(name, predicateCount)
     }
 
-
-
-
-
+    private def isValid(url: String): Boolean = {
+        try {
+            val checked: URL = new URL(url)
+            return true
+        } catch {
+            case e: MalformedURLException => {
+                return false
+            }
+        }
+    }
 }
 
 object ImportDataset {

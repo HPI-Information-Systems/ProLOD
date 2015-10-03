@@ -6,9 +6,7 @@ import graphlod.GraphLOD
 import prolod.common.config.DatabaseConnection
 import scala.collection.JavaConverters._
 
-class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: String, var ontologyNamespace : String, excludedNamespaces : List[String], files : List[String]) {
-
-
+class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: String, var ontologyNamespace : String, excludedNamespaces : List[String], files: List[String], subjects: Map[String, Int]) {
 	val skipChromatic: Boolean = true
 	val skipGraphviz: Boolean = true
 	val minImportantSubgraphSize: Int = 3
@@ -27,7 +25,7 @@ class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: S
 		db.insertStatistics(name, graphLod.nodeDegreeDistribution.toString, graphLod.averageLinks,
 			graphLod.graphFeatures.getEdgeCount, graphLod.graphFeatures.getVertexCount, connectedGraphSizes.toInt, graphLod.connectedGraphs.size,
 			graphLod.stronglyConnectedGraphs.size, graphLod.highestIndegrees.toString, graphLod.highestOutdegrees.toString)
-		db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns, graphLod.patternDiameter)
+		db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns, graphLod.colorIsomorphicPatterns, graphLod.patternDiameter, subjects)
 	}
 
 

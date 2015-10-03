@@ -26,6 +26,9 @@ define(["angular", "./services"], function () {
             getGraphPatternStatistics: function (dataset, groups, pattern) {
                 return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {params: {groups: groups}});
             },
+            getGraphIsoPatternStatistics: function (dataset, groups, pattern) {
+                return $http.get(uri(['server', 'graphstatisticsiso', dataset, 'pattern', pattern]), {params: {groups: groups}});
+            },
             getGraphDetail: function (dataset, groups, pattern, detail) {
                 return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern, detail]),
                     {groups: groups});

@@ -7,7 +7,7 @@ import java.{lang, util}
 import com.ibm.db2.jcc.am.{SqlDataException, SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
 import com.typesafe.slick.driver.db2.DB2Driver.api._
 import play.api.libs.json._
-import prolod.common.models.PatternFormats.patternDBFormat
+import prolod.common.models.PatternFormats.{patternDBFormat, patternFormat, nodeFormat, linkFormat}
 import prolod.common.models.{Dataset, Group, Pattern, PatternFromDB, _}
 import slick.jdbc.{StaticQuery => Q}
 import slick.profile.SqlStreamingAction
@@ -20,7 +20,8 @@ import scala.concurrent.duration.Duration
 import scala.io.Source
 
 import de.hpi.fgis.loducc.Keyness
-import graphlod.dataset._
+import graphlod.GraphLOD
+//import graphlod.dataset._
 
 /*
 case class Schemata(id : String, schema_name : String, entities : Int, tuples : Int)
@@ -64,6 +65,7 @@ class DatabaseConnection(config : Configuration) {
 	def dropTables(dataset : String): Unit = {
 		dropTable(dataset + ".patterns")
 		dropTable(dataset + ".coloredpatterns")
+		dropTable(dataset + ".coloredisopatterns")
 		try {
 			val createStatement = connection.createStatement()
 			createStatement.execute("DROP TABLE "+dataset+".graphstatistics")
@@ -134,6 +136,13 @@ class DatabaseConnection(config : Configuration) {
 		try {
 			val createStatement = connection.createStatement()
 			createStatement.execute("CREATE TABLE "+name+".coloredpatterns (id INT, pattern CLOB)")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE "+name+".coloredisopatterns (id INT, pattern_id INT, pattern CLOB)")
 			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
@@ -365,18 +374,60 @@ class DatabaseConnection(config : Configuration) {
 		clusterUri.replace(ontNs, "")
 	}
 
+	def getClusterSize(dataset: String, i: Int): Int = {
+		val sql = sql"""SELECT cluster_size FROM #${dataset}.CLUSTERS WHERE username = 'ontology' AND id = '#${i}'""".as[(Int)]
+		execute(sql).head
+	}
+
 	def getKeyness(dataset: String, groups: List[String]) : Seq[KeynessResult] = {
 		validateDatasetString(dataset)
 		var keynessList: Seq[KeynessResult] = Nil
 
 		if (groups.isEmpty) {
+			/*
 			val sqlProperties = sql"select property_id, keyness, uniqueness, density, values FROM #$dataset.keyness".as[(Int, Double, Double, Double, Int)]
 			val result = execute(sqlProperties)
 			keynessList = result map tupled((property_id, keyness, uniqueness, density, values) => {
 				new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, values, dataset)
 			})
+              */
+
+
+
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density, values, cluster_id FROM #$dataset.keyness ORDER BY property_id".as[(Int, Double, Double, Double, Int, Int)]
+			val result = execute(sqlProperties)
+			// TODO filter groups
+			var propertyId : Int = -1
+			var tempKeynessList : Seq[Double] = Nil
+			var tempUniquenessList : Seq[Double] = Nil
+			var tempDensityList : Seq[Double] = Nil
+			var clusterSizes : Seq[Int] = Nil
+			result foreach (k => {
+				var clusterId : Int = k._6
+				if ((propertyId > -1) && (k._1 != propertyId)) {
+					keynessList = keynessList :+ getKeynessResultsForClusters(dataset, propertyId, clusterSizes, tempKeynessList, tempUniquenessList, tempDensityList)
+					tempKeynessList = Nil
+					tempUniquenessList = Nil
+					tempDensityList = Nil
+					clusterSizes = Nil
+				}
+				tempKeynessList = tempKeynessList :+ k._2
+				tempUniquenessList = tempUniquenessList :+ k._3
+				tempDensityList = tempDensityList :+ k._4
+				clusterSizes = clusterSizes :+ k._5
+				propertyId = k._1
+			})
+			keynessList = keynessList :+ getKeynessResultsForClusters(dataset, propertyId, clusterSizes, tempKeynessList, tempUniquenessList, tempDensityList)
+			/*
+						keynessList = result map tupled((property_id, keyness, uniqueness, density, cluster_id) => {
+							if ((propertyId > -1) && (property_id != propertyId)) {
+
+								new KeynessResult(getProperty(dataset, property_id), keyness, uniqueness, density, getKeynessValues(dataset, property_id, cluster_id), getClusterName(dataset, cluster_id))
+							}
+							propertyId = property_id
+						})*/
 		} else {
-			val sqlProperties = sql"select property_id, keyness, uniqueness, density, cluster_id FROM #$dataset.keyness".as[(Int, Double, Double, Double, Int)]
+			val sqlProperties = sql"select property_id, keyness, uniqueness, density, cluster_id FROM #$dataset.keyness ORDER BY keyness".as[(Int, Double, Double, Double, Int)]
 			val result = execute(sqlProperties)
 			// TODO filter groups
 			keynessList = result map tupled((property_id, keyness, uniqueness, density, cluster_id) => {
@@ -384,6 +435,22 @@ class DatabaseConnection(config : Configuration) {
 			}) filter(e => groups.contains(e.cluster))
 		}
 		keynessList
+	}
+
+	def getKeynessResultsForClusters(dataset: String, propertyId: Int, clusterSizes: Seq[Int], tempKeynessList : Seq[Double], tempUniquenessList : Seq[Double], tempDensityList : Seq[Double]): KeynessResult = {
+		val clusterEntitySum : Int = clusterSizes.sum
+		var keyness : Double = 0
+		var uniqueness : Double = 0
+		var density : Double = 0
+		var i : Int = 0
+		clusterSizes foreach (clusterSize => {
+			keyness = keyness + clusterSize.toFloat/clusterEntitySum * tempKeynessList(i)
+			uniqueness = uniqueness + clusterSize.toFloat/clusterEntitySum * tempUniquenessList(i)
+			density = density + (clusterSize.toFloat/clusterEntitySum * tempDensityList(i))
+			println(clusterSize + " " +clusterEntitySum)
+			i += 1
+		})
+		new KeynessResult(getProperty(dataset, propertyId), keyness, uniqueness, density, clusterEntitySum, dataset)
 	}
 
 	def getKeynessValues(dataset: String, i: Int, i1: Int): Int = {
@@ -448,7 +515,55 @@ class DatabaseConnection(config : Configuration) {
 					println("Could not validate " + errors)
 				}
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
-				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+				var isoGroup = -1
+				try {
+					val sqlIso = sql"""SELECT pattern_id FROM #${dataset}.COLOREDISOPATTERNS WHERE ID = #${id}""".as[Int]
+					val resultIso = execute(sqlIso)
+					resultIso.foreach ((isoId) => {
+						isoGroup = isoId
+					})
+				} catch {
+					case e : SqlSyntaxErrorException => println(e.getMessage)
+				}
+				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links, -1, Some(isoGroup))) // new Pattern(id, "", occurences, Nil, Nil)
+			}
+		} catch {
+			case e : SqlSyntaxErrorException => println("This dataset has no colored patterns: " + dataset)
+		}
+		patterns
+	}
+
+	def getColoredIsoPatterns(dataset: String, id: Int): List[Pattern] = {
+		var patterns : List[Pattern] = Nil
+		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}".as[String]
+		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
+			"\"group\":\"" + ontology_namespace.replace("/", "\\/")
+		})
+		try {
+			val statement = connection.createStatement()
+			val resultSet = statement.executeQuery("SELECT id, pattern FROM "+ dataset+".COLOREDISOPATTERNS WHERE pattern_id = "+id)
+			while ( resultSet.next() ) {
+				var pattern = resultSet.getString("pattern")
+				var isoId = resultSet.getInt("id")
+				namespaces foreach (ontology_namespace => {
+					pattern = removeOntologyNamespace(pattern, ontology_namespace)
+				})
+				var occurences: Int = 0
+				val sqlOcc = sql"""SELECT COUNT(*) FROM #${dataset}.COLOREDPATTERNS WHERE id = #${isoId}""".as[(Int)]
+				val resultOcc = execute(sqlOcc)
+				resultOcc.foreach ((occurencesP) => {
+					occurences = occurencesP
+				})
+				// val occurences = resultSet.getInt("occurences")
+
+				val patternJsonT = Json.parse(pattern).validate[PatternFromDB]
+				val patternsV = List(patternJsonT).filter(p => p.isSuccess).map(p => p.get)
+				val errors = List(patternJsonT).filter(p => p.isError)
+				if (errors.nonEmpty) {
+					println("Could not validate " + errors)
+				}
+				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
+				patterns :::= List(new Pattern(isoId, "", occurences, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
 			}
 		} catch {
 			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + dataset)
@@ -534,6 +649,57 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
+	def getEntityDetails(dataset: String, subjectUri: String): Entity = {
+		validateDatasetString(dataset)
+		println(subjectUri)
+		var triples : List[Triple] = Nil
+		var label : String = ""
+		var subjectId : Int = -1
+		var predicateUri = ""
+		var objectUri = ""
+		try {
+			val statement1 = connection.createStatement()
+			val resultSet1 = statement1.executeQuery("SELECT id FROM "+ dataset+".subjecttable WHERE subject = '" + subjectUri + "'")
+			while ( resultSet1.next() ) {
+				subjectId = resultSet1.getInt("id")
+			}
+			statement1.close()
+
+			val statement = connection.createStatement()
+			val resultSet = statement.executeQuery("SELECT tuple_id, predicate_id FROM "+ dataset+".maintable WHERE subject_id = " + subjectId)
+			while ( resultSet.next() ) {
+				val objectId = resultSet.getString("tuple_id")
+				val predicateId = resultSet.getString("predicate_id")
+
+
+				val statement2 = connection.createStatement()
+				val resultSet2 = statement2.executeQuery("SELECT predicate FROM "+ dataset+".predicatetable WHERE id = " + predicateId)
+				while ( resultSet2.next() ) {
+					predicateUri = resultSet2.getString("predicate")
+				}
+				statement2.close()
+
+				val statement3 = connection.createStatement()
+				val resultSet3 = statement3.executeQuery("SELECT object FROM "+ dataset+".objecttable WHERE tuple_id = " + objectId)
+				while ( resultSet3.next() ) {
+					objectUri = resultSet3.getString("object")
+					if (predicateUri.equals("http://www.w3.org/2000/01/rdf-schema#label")) {
+						label = objectUri
+					}
+				}
+				statement3.close()
+
+				triples :::= List(new Triple(subjectUri, predicateUri, objectUri))
+			}
+			statement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println("error getting entity details" + e.getMessage)
+		}
+
+		val entityDetails = new Entity(subjectId, subjectUri, label, triples)
+		entityDetails
+	}
+
 	def getEntityDetails(dataset: String, subjectId: Int): Entity = {
 		validateDatasetString(dataset)
 		var triples : List[Triple] = Nil
@@ -600,11 +766,13 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
-	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double]) {
+	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int]) {
 		validateDatasetString(name)
 		val coloredPatternsMap = coloredPatterns.asScala.toMap
+		val coloredIsoPatternsMap = coloredIsoPatterns.asScala.toMap
 		val diameterMap = diameter.asScala.toMap
 		val patternsMap = patterns.asScala.toMap
+		var isoCounter: Int = 0
 		patternsMap.foreach {
 			case (id, patternHashMap) => {
 				val patternHashMapScala = patternHashMap.asScala.toMap
@@ -621,50 +789,142 @@ class DatabaseConnection(config : Configuration) {
 							case e: SqlException => println("error inserting pattern: " + e.getMessage)
 							case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".PATTERNS (ID, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + pattern + "'," + occurences + ", " + patternDiameter + ")")
 						}
+						val cIsoPattern = coloredIsoPatternsMap.get(id).get.asScala.toList
+						cIsoPattern.foreach { case (coloredisopattern) =>
+							try {
+								val statement = connection.createStatement()
+								val resultSet = statement.execute("INSERT INTO " + name + ".coloredisopatterns (ID, pattern_id, PATTERN) VALUES (" + isoCounter + ", " + id + ", '" + coloredisopattern + "')")
+
+								val cPattern = coloredPatternsMap.get(isoCounter).get.asScala.toList
+								cPattern.foreach { case (coloredpattern) =>
+									try {
+										// get corresponding mapping
+										//coloredPatternMappings.get(id).get(isoCounter)
+										val statement = connection.createStatement()
+										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + isoCounter + ", '" + coloredpattern + "')")
+
+										/*
+										val patternJson = Json.parse(coloredpattern).validate[PatternFromDB].get
+										var nodeList : List[Node] = Nil
+										var linkList : List[Link] = Nil
+										var nodeMap : Map[Int, Int] = Map()
+										for (node <- patternJson.nodes) {
+											val newNode = node.copy(id = subjects.get(node.uri.get).get)
+											nodeMap += (node.id -> newNode.id)
+											nodeList :::= List(newNode)
+										}
+										for (link <- patternJson.links) {
+											val newLink = link.copy(source = nodeMap.get(link.source).get, target = nodeMap.get(link.target).get)
+											linkList :::= List(newLink)
+										}
+										val pattern2insert = new PatternFromDB(Some(patternJson.name), nodeList, linkList)
+										val statement = connection.createStatement()
+										val json = Json.obj("nodes" -> nodeList, "links" -> linkList, name -> patternJson.name)
+										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + json + "')")
+										*/
+									} catch {
+										case e: SqlException => {
+											println("error inserting pattern (2)" + e.getMessage)
+											println(coloredpattern)
+										}
+										case e: SqlSyntaxErrorException => println(e.getMessage)
+									}
+								}
+
+								isoCounter += 1
+							} catch {
+								case e: SqlException => {
+									println("error inserting pattern (2)" + e.getMessage)
+									println(coloredisopattern)
+								}
+								case e: SqlSyntaxErrorException => println(e.getMessage)
+							}
+						}
+						/*
 						val cPattern = coloredPatternsMap.get(id).get.asScala.toList
 						cPattern.foreach { case (coloredpattern) =>
 							try {
+								// get corresponding mapping
+								//coloredPatternMappings.get(id).get(isoCounter)
 								val statement = connection.createStatement()
 								val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
+
+								/*
+								val patternJson = Json.parse(coloredpattern).validate[PatternFromDB].get
+								var nodeList : List[Node] = Nil
+								var linkList : List[Link] = Nil
+								var nodeMap : Map[Int, Int] = Map()
+								for (node <- patternJson.nodes) {
+									val newNode = node.copy(id = subjects.get(node.uri.get).get)
+									nodeMap += (node.id -> newNode.id)
+									nodeList :::= List(newNode)
+								}
+								for (link <- patternJson.links) {
+									val newLink = link.copy(source = nodeMap.get(link.source).get, target = nodeMap.get(link.target).get)
+									linkList :::= List(newLink)
+								}
+								val pattern2insert = new PatternFromDB(Some(patternJson.name), nodeList, linkList)
+								val statement = connection.createStatement()
+								val json = Json.obj("nodes" -> nodeList, "links" -> linkList, name -> patternJson.name)
+								val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + json + "')")
+								*/
 							} catch {
 								case e: SqlException => {
 									println("error inserting pattern (2)" + e.getMessage)
 									println(coloredpattern)
 								}
-								case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + id + ", '" + coloredpattern + "')")
+								case e: SqlSyntaxErrorException => println(e.getMessage)
 							}
 						}
+						*/
 					}
 				}
 			}
 		}
 	}
 
-	def insertPatternsBC(dataset: String, patternMap: Map[String, java.util.List[String]]) = {
+	def insertPatternsBC(dataset: String, graphlod: GraphLOD) = {
+		// Map("Outbound star" -> graphlod.graphLod.outboundStars, "Inbound star" -> graphlod.graphLod.inboundStars, "Mixed star" -> graphlod.graphLod.mixedStars)
 		validateDatasetString(dataset)
 		dropTable(dataset + ".PATTERNS_BC")
 		try {
 			val createStatement = connection.createStatement()
-			createStatement.execute("CREATE TABLE " + dataset + ".PATTERNS_BC (NAME VARCHAR(250), PATTERN CLOB)")
+			createStatement.execute("CREATE TABLE " + dataset + ".PATTERNS_BC (ID INT, NAME VARCHAR(250), PATTERN CLOB)")
 			createStatement.close()
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
-		patternMap.foreach {
-			case (name, patternList: java.util.List[String]) => {
-				val patterns = patternList.asScala.toList
-				patterns.foreach { case (pattern) =>
-					try {
-						val statement = connection.createStatement()
-						val patternJson : PatternFromDB = Json.parse(pattern).validate[PatternFromDB].get
-						val patternName = patternJson.name.getOrElse("")
-						val resultSet = statement.execute("INSERT INTO " + dataset + ".PATTERNS_BC (NAME, PATTERN) VALUES ('" + name + "',  '" + pattern + "')")
-					} catch {
-						case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
-						case e: SqlException => println("error inserting pattern: " + e.getMessage)
-						case e: SqlSyntaxErrorException => println(e.getMessage)
-					}
-				}
+		dropTable(dataset + ".COLORED_PATTERNS_BC")
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE " + dataset + ".COLORED_PATTERNS_BC (ID INT, NAME VARCHAR(250), PATTERN CLOB)")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+
+		// util.HashMap[Integer, util.HashMap[String, Integer]]
+		var outboundStars: util.List[String] = graphlod.outboundStars
+		var inboundStars: util.List[String] = graphlod.inboundStars
+		var mixedStars: util.List[String] = graphlod.mixedStars
+
+		insertPatternsBigComponentDB(dataset, "Outbound star", outboundStars)
+		insertPatternsBigComponentDB(dataset, "Inbound star", inboundStars)
+		insertPatternsBigComponentDB(dataset, "Mixed star", mixedStars)
+	}
+
+	private def insertPatternsBigComponentDB(dataset: String, name: String, patternList: util.List[String]): Unit = {
+		val patterns = patternList.asScala.toList
+		patterns.foreach { case (pattern) =>
+			try {
+				val statement = connection.createStatement()
+				val patternJson: PatternFromDB = Json.parse(pattern).validate[PatternFromDB].get
+				val patternName = patternJson.name.getOrElse("")
+				val resultSet = statement.execute("INSERT INTO " + dataset + ".PATTERNS_BC (NAME, PATTERN) VALUES ('" + name + "',  '" + pattern + "')")
+			} catch {
+				case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
+				case e: SqlException => println("Error inserting pattern: " + e.getMessage)
+				case e: SqlSyntaxErrorException => println(e.getMessage)
 			}
 		}
 	}

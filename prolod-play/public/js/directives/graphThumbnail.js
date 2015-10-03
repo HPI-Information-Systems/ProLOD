@@ -189,12 +189,12 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     );
 
 
-                    link.on("mouseover",mouseover);
+                    link.on("mouseover", mouseover);
                     link.on("mouseout", mouseout);
 
                     var link_s = g.selectAll(".surrounding_link")
-                    link_s.on("mouseover",mouseover_surrounding);
-                    link_s.on("mouseout",mouseout_surrounding);
+                    link_s.on("mouseover", mouseover_surrounding);
+                    link_s.on("mouseout", mouseout_surrounding);
 
                 }
 
@@ -210,15 +210,13 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
 
                 node.on("mouseup", function(node){
                     if (flag === 0){
-                        console.log("click");
+                        var link = d3.select(this);
+                        console.log("Node");
                         $scope.clickHandler(node);
-                    }
-                    else if(flag === 1){
+                    } else if(flag === 1) {
                         console.log("drag");
                     }
                 }, false);
-
-
 
                 function mouseover() {
                     var link = d3.select(this);

@@ -2,11 +2,17 @@
 
 define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
-    angular.module('Prolod2.controllers').controller("GraphPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
+    angular.module('Prolod2.controllers').controller("GraphIsoPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
         function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
             var pattern = $routeParams.pattern;
-
-
+            var breadCrumbMenu = [
+                {name: 'Graphs', url: routeBuilder.getGraphUrl()},
+                {name: 'Pattern ' + pattern, url: routeBuilder.getGraphPatternIsoUrl(pattern)}
+            ];
+            if ($routeParams.group) {
+                breadCrumbMenu.push({name: 'Class ' + $routeParams.group, url: routeBuilder.getGraphPatternGroupUrl(pattern)});
+            }
+            $scope.updateBreadcrumb(breadCrumbMenu);
 
             $scope.nodeClick = function (node) {
                 var modalInstance = $modal.open({
@@ -48,7 +54,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 }
             };
 
-            httpApi.getGraphPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
+            httpApi.getGraphIsoPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 
@@ -58,19 +64,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
 
                 $scope.loading = false;
 
-                $scope.isoGroup = stats.patterns[0].isoGroup
-                var isoGroup = $scope.isoGroup
-                var breadCrumbMenu = [
-                    {name: 'Graphs', url: routeBuilder.getGraphUrl()},
-                    {name: 'Pattern ' + isoGroup, url: routeBuilder.getGraphPatternIsoUrl(isoGroup)}
-                ];
-                if ($routeParams.group) {
-                    breadCrumbMenu.push({name: 'Class ' + $routeParams.group, url: routeBuilder.getGraphPatternGroupUrl(pattern)});
-                }
-                $scope.updateBreadcrumb(breadCrumbMenu);
-
             });
-
         }
     ]);
 
