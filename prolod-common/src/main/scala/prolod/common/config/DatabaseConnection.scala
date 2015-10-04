@@ -568,7 +568,7 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlSyntaxErrorException => println("This dataset has no patterns: " + dataset)
 		}
-		patterns
+		patterns.sortWith(_.occurences > _.occurences)
 	}
 
 	def getPatterns(s: String): List[Pattern] = {
