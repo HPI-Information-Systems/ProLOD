@@ -34,7 +34,13 @@ define(["angular", "./services"], function () {
                     {groups: groups});
             },
             getGiantComponent: function (dataset, groups){
-                return $http.get(uri(['server', 'bigcomponent', dataset]), {params: {groups: groups}});
+                return $http.get(uri(['server', 'giantcomponent', dataset]), {params: {groups: groups}});
+            },
+            getGCIsoPatternStatistics: function (dataset, groups, pattern) {
+                return $http.get(uri(['server', 'giantcomponentiso', dataset, 'pattern', pattern]), {params: {groups: groups}});
+            },
+            getGCPatternStatistics: function (dataset, groups, pattern) {
+                return $http.get(uri(['server', 'giantcomponent', dataset, 'pattern', pattern]), {params: {groups: groups}});
             },
             getEntityDetail: function (dataset, entity){
                 return $http.get(uri(['server', 'entitydetails', dataset, entity]));

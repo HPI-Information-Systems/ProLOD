@@ -61,6 +61,14 @@ define(["angular", "./services"], function () {
                 params = params || $route.current.params;
                 return buildUri(['graphstatistics', params.dataset, 'giantComponent'], {group: params.group});
             },
+            getGCPatternIsoUrl: function (pattern, params) {
+                params = params || $route.current.params;
+                return buildUri(['giantcomponentiso', params.dataset, 'pattern', pattern]);
+            },
+            getGCPatternUrl: function (pattern, params) {
+                params = params || $route.current.params;
+                return buildUri(['giantcomponent', params.dataset, 'pattern', pattern]);
+            },
             getChartsUrl: function (params) {
                 params = params || $route.current.params;
                 return buildUri(['charts', params.dataset], {group: params.group});

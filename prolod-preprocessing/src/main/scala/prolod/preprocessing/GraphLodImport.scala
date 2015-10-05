@@ -25,7 +25,8 @@ class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: S
 		db.insertStatistics(name, graphLod.nodeDegreeDistribution.toString, graphLod.averageLinks,
 			graphLod.graphFeatures.getEdgeCount, graphLod.graphFeatures.getVertexCount, connectedGraphSizes.toInt, graphLod.connectedGraphs.size,
 			graphLod.stronglyConnectedGraphs.size, graphLod.highestIndegrees.toString, graphLod.highestOutdegrees.toString)
-		db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns, graphLod.colorIsomorphicPatterns, graphLod.patternDiameter, subjects)
+		db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns, graphLod.colorIsomorphicPatterns, graphLod.patternDiameter, subjects, None)
+		db.insertPatternsGC(name, graphLod.patternsGC, graphLod.coloredPatternsGC, graphLod.colorIsomorphicPatternsGC, graphLod.patternDiameterGC, subjects)
 	}
 
 

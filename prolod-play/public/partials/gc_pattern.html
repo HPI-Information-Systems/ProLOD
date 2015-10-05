@@ -2,16 +2,16 @@
     <bg-pane>
         <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
-            <a ng-repeat="pattern in data.pattern | limitTo: limit"
-               href="#{{::routeBuilder.getGCPatternIsoUrl(pattern.id)}}">
+            <a ng-repeat="pattern in data.pattern | limitTo: limit">
+                <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"
-                                        click-handler="nodeClick"></prolod-graph-thumbnail>
+                                        show-arrows="true" click-handler="nodeClick"></prolod-graph-thumbnail>
             </a>
         </div>
     </bg-pane>
 
     <bg-pane>
-        <div>
+        <div class="lowerpanel">
             <div class="float-left" style="margin-left: 15px;">
                 <h3>Statistics:</h3>
                 <table class="table stats">

@@ -10,7 +10,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 // do d3 stuff
                 var width = 200,
                     height = 150;
-                if(window.location.href.indexOf("giantComponent") > -1) {
+                if((window.location.href.indexOf("giantcomponent/") > -1) && (window.location.href.indexOf("pattern") > -1)) {
                     width = 300;
                     height = 250;
                 }

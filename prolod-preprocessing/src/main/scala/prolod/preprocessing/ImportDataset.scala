@@ -12,7 +12,7 @@ import scala.collection.immutable.HashSet
 import scala.io.Source
 import scala.collection.JavaConverters._
 
-class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) {
+class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriples: Boolean, keyness: Boolean) {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
 
@@ -21,27 +21,34 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
     var subjectsKnown : Map[String, Int] = Map()
 
-    db.dropTables(name)
-    db.createTables(name)
+	if (!keyness) {
+		if (importTriples) {
+			db.dropMainTables(name)
+		}
 
-    importTriples()
+		db.dropTables(name)
+		db.createTables(name)
 
-    val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles, subjectsKnown)
+		if (importTriples) {
+			importTriples()
+		}
 
-    graphlod.run
+		val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles, subjectsKnown)
 
-    db.updateClusterSizes(name, ontologyNamespace)
+		graphlod.run
 
-    db.createIndices(name)
+		// db.updateClusterSizes(name, ontologyNamespace)
 
-    db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
+		// db.createIndices(name)
 
-    db.updateClusterSizes(name, ontologyNamespace)
+		db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
 
-    val keynessImporter = new KeynessImport(db, name)
-    keynessImporter.run
+		db.updateClusterSizes(name, ontologyNamespace)
+	}  else {
+		val keynessImporter = new KeynessImport(db, name)
+		keynessImporter.run
+	}
 
-    db.insertPatternsBC(name, graphlod.graphLod)
 
     def importTriples() = {
         for (dataset <- datasetFiles) {
@@ -149,16 +156,30 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
 object ImportDataset {
     def main(args: Array[String]) {
-        args match {
-            case Array(name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files))
-            case Array(name, namespace, ontologyNamespace, excludeNS, files)
-                                                                    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files))
-            case Array(name, namespace, ontologyNamespace, "-excludeNS", excludeNS, "-files", files)
-                                                                    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files))
-            case _                                                  => printUsage()
-        }
-
-
+	    if (args(0).equals("importTriples")) {
+		    args match {
+			    case Array(importFlag, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), true, false)
+			    case Array(importFlag, name, namespace, ontologyNamespace, excludeNS, files)
+			                                                            => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), true, false)
+			    case _                                                  => printUsage()
+		    }
+	    } else if (args(0).equals("keyness")) {
+		    args match {
+			    case Array(updateKeyness, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, true)
+			    case Array(updateKeyness, name, namespace, ontologyNamespace, excludeNS, files)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, true)
+			    case _                                                  => printUsage()
+		    }
+	    } else {
+		    args match {
+			    case Array(name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, false)
+			    case Array(name, namespace, ontologyNamespace, excludeNS, files)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, false)
+			    case Array(name, namespace, ontologyNamespace, "-excludeNS", excludeNS, "-files", files)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, false)
+			    case _                                                  => printUsage()
+		    }
+	    }
     }
 
     private def printUsage() {

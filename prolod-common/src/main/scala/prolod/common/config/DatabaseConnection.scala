@@ -62,24 +62,7 @@ class DatabaseConnection(config : Configuration) {
 		value.get
 	}
 
-	def dropTables(dataset : String): Unit = {
-		dropTable(dataset + ".patterns")
-		dropTable(dataset + ".coloredpatterns")
-		dropTable(dataset + ".coloredisopatterns")
-		try {
-			val createStatement = connection.createStatement()
-			createStatement.execute("DROP TABLE "+dataset+".graphstatistics")
-			createStatement.close()
-		} catch {
-			case e : SqlSyntaxErrorException => println(e.getMessage)
-		}
-		try {
-			var createStatement = connection.createStatement()
-			var createResultSet = createStatement.execute("DROP TABLE "+dataset+".CLUSTERS")
-		} catch {
-			case e : SqlSyntaxErrorException => println(e.getMessage)
-		}
-
+	def dropMainTables(dataset : String): Unit = {
 		val sqlDir = new File("prolod-preprocessing/sql/")
 		for (file <- sqlDir.listFiles) {
 			try {
@@ -107,6 +90,33 @@ class DatabaseConnection(config : Configuration) {
 				case e : FileNotFoundException =>  println(e.getMessage)
 			}
 		}
+	}
+
+	def dropTables(dataset : String): Unit = {
+		dropTable(dataset + ".patterns")
+		dropTable(dataset + ".coloredpatterns")
+		dropTable(dataset + ".coloredisopatterns")
+		dropTable(dataset + ".patterns_gc")
+		dropTable(dataset + ".coloredpatterns_gc")
+		dropTable(dataset + ".coloredisopatterns_gc")
+		dropTable(dataset + ".patterns_bc")
+		dropTable(dataset + ".coloredpatterns_bc")
+		dropTable(dataset + ".coloredisopatterns_bc")
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("DROP TABLE "+dataset+".graphstatistics")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			var createStatement = connection.createStatement()
+			var createResultSet = createStatement.execute("DROP TABLE "+dataset+".CLUSTERS")
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+
+
 	}
 
 	private def dropTable(name: String): Unit = {
@@ -147,6 +157,30 @@ class DatabaseConnection(config : Configuration) {
 		} catch {
 			case e : SqlSyntaxErrorException => println(e.getMessage)
 		}
+
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE " + name + ".PATTERNS_GC (id INT, name VARCHAR(200), pattern CLOB, occurences INT, diameter FLOAT, nodedegreedistribution CLOB)")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE " + name + ".COLOREDPATTERNS_GC (id INT, pattern CLOB)")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE "+name+".coloredisopatterns_GC (id INT, pattern_id INT, pattern CLOB)")
+			createStatement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+
+
 		try {
 			val createStatement = connection.createStatement()
 			val createResultSet = createStatement.execute("CREATE TABLE "+name+".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, gcedges INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
@@ -193,27 +227,30 @@ class DatabaseConnection(config : Configuration) {
 
 	def createIndices(name: String) = {
 		val sqlDir = new File("prolod-preprocessing/sql/indices/")
-		for (file <- sqlDir.listFiles) {
-			try {
-				val queryString = Source.fromFile(file.getPath).mkString
-				val r = "/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;"
-				val queries = queryString.split(r)
-				for (queryString <- queries) {
-					val query = String.format(queryString, name)
-					try {
-						val statement = connection.prepareStatement(query)
-						statement.execute
-						statement.close()
-					} catch {
-						case e : SqlSyntaxErrorException => println(e.getMessage +  System.lineSeparator() + query)
+		try {
+			for (file <- sqlDir.listFiles) {
+				try {
+					val queryString = Source.fromFile(file.getPath).mkString
+					val r = "/\\*[\\s\\S]*?\\*/|--[^\\r\\n]*|;"
+					val queries = queryString.split(r)
+					for (queryString <- queries) {
+						val query = String.format(queryString, name)
+						try {
+							val statement = connection.prepareStatement(query)
+							statement.execute
+							statement.close()
+						} catch {
+							case e : SqlSyntaxErrorException => println(e.getMessage +  System.lineSeparator() + query)
+						}
 					}
+				} catch {
+					case e : SqlSyntaxErrorException => println(e.getMessage)
+					case e : FileNotFoundException =>  println(e.getMessage)
 				}
-			} catch {
-				case e : SqlSyntaxErrorException => println(e.getMessage)
-				case e : FileNotFoundException =>  println(e.getMessage)
 			}
+		} catch {
+			case e : NullPointerException =>  println(e.getMessage)
 		}
-
 	}
 
 	def getTableNameFromStatement(s: String) : String = {
@@ -342,7 +379,7 @@ class DatabaseConnection(config : Configuration) {
 		var id: Int = 0
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT name, pattern FROM "+ dataset+".PATTERNS_BC")
+			val resultSet = statement.executeQuery("SELECT name, pattern FROM "+ dataset+".PATTERNS_GC")
 			while ( resultSet.next() ) {
 				var pattern = resultSet.getString("pattern")
 				var name = resultSet.getString("name")
@@ -492,7 +529,8 @@ class DatabaseConnection(config : Configuration) {
 		statistics
 	}
 
-	def getColoredPatterns(dataset: String, id: Int): List[Pattern] = {
+	def getColoredPatterns(dataset: String, id: Int, gc: Option[String]): List[Pattern] = {
+		val dbExt = gc.getOrElse("")
 		var patterns : List[Pattern] = Nil
 		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}".as[String]
 		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
@@ -500,7 +538,7 @@ class DatabaseConnection(config : Configuration) {
 		})
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT pattern FROM "+ dataset+".COLOREDPATTERNS WHERE id = "+id)
+			val resultSet = statement.executeQuery("SELECT pattern FROM "+ dataset+".COLOREDPATTERNS"+dbExt+" WHERE id = "+id)
 			while ( resultSet.next() ) {
 				var pattern = resultSet.getString("pattern")
 				namespaces foreach (ontology_namespace => {
@@ -517,7 +555,7 @@ class DatabaseConnection(config : Configuration) {
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
 				var isoGroup = -1
 				try {
-					val sqlIso = sql"""SELECT pattern_id FROM #${dataset}.COLOREDISOPATTERNS WHERE ID = #${id}""".as[Int]
+					val sqlIso = sql"""SELECT pattern_id FROM #${dataset}.COLOREDISOPATTERNS#${dbExt} WHERE ID = #${id}""".as[Int]
 					val resultIso = execute(sqlIso)
 					resultIso.foreach ((isoId) => {
 						isoGroup = isoId
@@ -533,7 +571,8 @@ class DatabaseConnection(config : Configuration) {
 		patterns
 	}
 
-	def getColoredIsoPatterns(dataset: String, id: Int): List[Pattern] = {
+	def getColoredIsoPatterns(dataset: String, id: Int, gc: Option[String]): List[Pattern] = {
+		val dbExt = gc.getOrElse("")
 		var patterns : List[Pattern] = Nil
 		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}".as[String]
 		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
@@ -541,7 +580,7 @@ class DatabaseConnection(config : Configuration) {
 		})
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT id, pattern FROM "+ dataset+".COLOREDISOPATTERNS WHERE pattern_id = "+id)
+			val resultSet = statement.executeQuery("SELECT id, pattern FROM "+ dataset+".COLOREDISOPATTERNS"+dbExt+" WHERE pattern_id = "+id)
 			while ( resultSet.next() ) {
 				var pattern = resultSet.getString("pattern")
 				var isoId = resultSet.getInt("id")
@@ -549,7 +588,7 @@ class DatabaseConnection(config : Configuration) {
 					pattern = removeOntologyNamespace(pattern, ontology_namespace)
 				})
 				var occurences: Int = 0
-				val sqlOcc = sql"""SELECT COUNT(*) FROM #${dataset}.COLOREDPATTERNS WHERE id = #${isoId}""".as[(Int)]
+				val sqlOcc = sql"""SELECT COUNT(*) FROM #${dataset}.COLOREDPATTERNS#${dbExt} WHERE id = #${isoId}""".as[(Int)]
 				val resultOcc = execute(sqlOcc)
 				resultOcc.foreach ((occurencesP) => {
 					occurences = occurencesP
@@ -571,11 +610,12 @@ class DatabaseConnection(config : Configuration) {
 		patterns.sortWith(_.occurences > _.occurences)
 	}
 
-	def getPatterns(s: String): List[Pattern] = {
+	def getPatterns(s: String, gc: Option[String]): List[Pattern] = {
+		val dbExt = gc.getOrElse("")
 		var patterns : List[Pattern] = Nil
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT id, name, pattern, occurences FROM "+ s+".PATTERNS ORDER BY occurences ASC")
+			val resultSet = statement.executeQuery("SELECT id, name, pattern, occurences FROM "+ s+".PATTERNS"+dbExt+" ORDER BY occurences ASC")
 			while ( resultSet.next() ) {
 				val id = resultSet.getInt("id")
 				val pattern = resultSet.getString("pattern")
@@ -758,16 +798,27 @@ class DatabaseConnection(config : Configuration) {
 	}
 
 	def insertDataset(name : String, tuples: Int, entities: Int, ontologyNamespace : String, namespace : String) {
+		var entityCount = entities
 		try {
+			val sql = sql"""SELECT COUNT(*) FROM #${name}.subjecttable""".as[(Int)]
+			val result = execute(sql)
+			result.foreach ((datasetSize) => {
+				entityCount = datasetSize
+			})
 			val statement = connection.createStatement()
-			val resultSet = statement.execute("INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES, ONTOLOGY_NAMESPACE, NAMESPACE) VALUES ('"+name+"','"+name+"',"+tuples+","+entities+",'"+ontologyNamespace+"','"+namespace+"')")
+			val resultSet = statement.execute("INSERT INTO PROLOD_MAIN.SCHEMATA (ID, SCHEMA_NAME, TUPLES, ENTITIES, ONTOLOGY_NAMESPACE, NAMESPACE) VALUES ('"+name+"','"+name+"',"+tuples+","+entityCount+",'"+ontologyNamespace+"','"+namespace+"')")
 		} catch {
-			case e : SqlIntegrityConstraintViolationException => println("Dataset already exists")
+			case e : SqlIntegrityConstraintViolationException => {
+				println("Dataset already exists")
+				val statement = connection.createStatement()
+				val resultSet = statement.execute("UPDATE PROLOD_MAIN.SCHEMATA SET ENTITIES = " + entityCount + " WHERE SCHEMA_NAME = '" + name + "'")
+			}
 		}
 	}
 
-	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int]) {
+	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int], gc: Option[String]) {
 		validateDatasetString(name)
+		val dbExt = gc.getOrElse("")
 		val coloredPatternsMap = coloredPatterns.asScala.toMap
 		val coloredIsoPatternsMap = coloredIsoPatterns.asScala.toMap
 		val diameterMap = diameter.asScala.toMap
@@ -778,22 +829,23 @@ class DatabaseConnection(config : Configuration) {
 				val patternHashMapScala = patternHashMap.asScala.toMap
 				patternHashMapScala.foreach {
 					case (pattern, occurences) => {
-						val patternDiameter = diameterMap.get(id).get
+						val patternDiameter = diameterMap.get(id).getOrElse(-1)
 						try {
 							val statement = connection.createStatement()
 							val patternJson : PatternFromDB = Json.parse(pattern).validate[PatternFromDB].get
 							val patternName = patternJson.name.getOrElse("")
-							val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS (ID, NAME, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + patternName + "',  '" + pattern + "'," + occurences + "," + patternDiameter + ")")
+
+							val resultSet = statement.execute("INSERT INTO " + name + ".PATTERNS"+dbExt+" (ID, NAME, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + patternName + "',  '" + pattern + "'," + occurences + "," + patternDiameter + ")")
 						} catch {
 							case e: SqlIntegrityConstraintViolationException => println("Pattern already exists")
 							case e: SqlException => println("error inserting pattern: " + e.getMessage)
-							case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".PATTERNS (ID, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + pattern + "'," + occurences + ", " + patternDiameter + ")")
+							case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".PATTERNS"+dbExt+" (ID, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + pattern + "'," + occurences + ", " + patternDiameter + ")")
 						}
 						val cIsoPattern = coloredIsoPatternsMap.get(id).get.asScala.toList
 						cIsoPattern.foreach { case (coloredisopattern) =>
 							try {
 								val statement = connection.createStatement()
-								val resultSet = statement.execute("INSERT INTO " + name + ".coloredisopatterns (ID, pattern_id, PATTERN) VALUES (" + isoCounter + ", " + id + ", '" + coloredisopattern + "')")
+								val resultSet = statement.execute("INSERT INTO " + name + ".coloredisopatterns"+dbExt+" (ID, pattern_id, PATTERN) VALUES (" + isoCounter + ", " + id + ", '" + coloredisopattern + "')")
 
 								val cPattern = coloredPatternsMap.get(isoCounter).get.asScala.toList
 								cPattern.foreach { case (coloredpattern) =>
@@ -801,7 +853,7 @@ class DatabaseConnection(config : Configuration) {
 										// get corresponding mapping
 										//coloredPatternMappings.get(id).get(isoCounter)
 										val statement = connection.createStatement()
-										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns (ID, PATTERN) VALUES (" + isoCounter + ", '" + coloredpattern + "')")
+										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns"+dbExt+" (ID, PATTERN) VALUES (" + isoCounter + ", '" + coloredpattern + "')")
 
 										/*
 										val patternJson = Json.parse(coloredpattern).validate[PatternFromDB].get
@@ -883,26 +935,13 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
+	def insertPatternsGC(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int]): Unit = {
+	   insertPatterns(name, patterns, coloredPatterns, coloredIsoPatterns, diameter, subjects, Some("_gc"))
+	}
+
 	def insertPatternsBC(dataset: String, graphlod: GraphLOD) = {
 		// Map("Outbound star" -> graphlod.graphLod.outboundStars, "Inbound star" -> graphlod.graphLod.inboundStars, "Mixed star" -> graphlod.graphLod.mixedStars)
 		validateDatasetString(dataset)
-		dropTable(dataset + ".PATTERNS_BC")
-		try {
-			val createStatement = connection.createStatement()
-			createStatement.execute("CREATE TABLE " + dataset + ".PATTERNS_BC (ID INT, NAME VARCHAR(250), PATTERN CLOB)")
-			createStatement.close()
-		} catch {
-			case e : SqlSyntaxErrorException => println(e.getMessage)
-		}
-		dropTable(dataset + ".COLORED_PATTERNS_BC")
-		try {
-			val createStatement = connection.createStatement()
-			createStatement.execute("CREATE TABLE " + dataset + ".COLORED_PATTERNS_BC (ID INT, NAME VARCHAR(250), PATTERN CLOB)")
-			createStatement.close()
-		} catch {
-			case e : SqlSyntaxErrorException => println(e.getMessage)
-		}
-
 		// util.HashMap[Integer, util.HashMap[String, Integer]]
 		var outboundStars: util.List[String] = graphlod.outboundStars
 		var inboundStars: util.List[String] = graphlod.inboundStars

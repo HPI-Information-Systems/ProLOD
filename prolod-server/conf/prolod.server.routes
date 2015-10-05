@@ -11,7 +11,11 @@ GET        /graphstatistics/:dataset/pattern/:pattern        controllers.prolod.
 
 GET        /graphstatisticsiso/:dataset/pattern/:pattern    controllers.prolod.server.GraphLod.getGraphIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /bigcomponent/:dataset                            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String])
+GET        /giantcomponent/:dataset                            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String])
+
+GET        /giantcomponent/:dataset/pattern/:pattern          controllers.prolod.server.GraphLod.getGCPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+
+GET        /giantcomponentiso/:dataset/pattern/:pattern       controllers.prolod.server.GraphLod.getGCIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
 GET        /uniqueness/:dataset                              controllers.prolod.server.Keyness.getKeyness(dataset: String, groups: List[String])
 
