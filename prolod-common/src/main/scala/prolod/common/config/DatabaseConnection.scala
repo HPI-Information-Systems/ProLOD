@@ -987,6 +987,7 @@ class DatabaseConnection(config : Configuration) {
 			case e : SqlIntegrityConstraintViolationException => println(e.getMessage +  System.lineSeparator() + query)
 			case e : SqlSyntaxErrorException => println(e.getMessage +  System.lineSeparator() + query)
 			case e : SqlDataException =>  println(e.getMessage +  System.lineSeparator() + query)
+			case e : SqlException => println(e.getMessage +  System.lineSeparator() + query)
 		}
 		None
 	}
@@ -1026,6 +1027,60 @@ class DatabaseConnection(config : Configuration) {
 		execute(sql)
 	}
 
+	def getSubjectUris(name: String): Map[String, Int] = {
+		validateDatasetString(name)
+		var knownSubjects: Map[String, Int] = Map()
+		try {
+			val statement1 = connection.createStatement()
+			val resultSet1 = statement1.executeQuery("SELECT id, subject FROM "+ name+".subjecttable")
+			while ( resultSet1.next() ) {
+				var subjectId = resultSet1.getInt("id")
+				var subject = resultSet1.getString("subject")
+				knownSubjects += (subject -> subjectId)
+			}
+			statement1.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		knownSubjects
+	}
+
+	def getPredicateUris(name: String): Map[String, Int] = {
+		validateDatasetString(name)
+		var knownSubjects: Map[String, Int] = Map()
+		try {
+			val statement1 = connection.createStatement()
+			val resultSet1 = statement1.executeQuery("SELECT id, predicate FROM "+ name+".predicatetable")
+			while ( resultSet1.next() ) {
+				var subjectId = resultSet1.getInt("id")
+				var subject = resultSet1.getString("predicate")
+				knownSubjects += (subject -> subjectId)
+			}
+			statement1.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		knownSubjects
+	}
+
+	def getObjectUris(name: String): Map[String, Int] = {
+		validateDatasetString(name)
+		var knownSubjects: Map[String, Int] = Map()
+		try {
+			val statement1 = connection.createStatement()
+			val resultSet1 = statement1.executeQuery("SELECT tuple_id, object FROM "+ name+".objecttable")
+			while ( resultSet1.next() ) {
+				var subjectId = resultSet1.getInt("tuple_id")
+				var subject = resultSet1.getString("object")
+				knownSubjects += (subject -> subjectId)
+			}
+			statement1.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+		knownSubjects
+	}
+
 	def insertObject(name: String, s: String): Int = {
 		performInsert(name + ".objecttable", List("object"), List(s)) match {
 			case Some(i) => i
@@ -1034,6 +1089,10 @@ class DatabaseConnection(config : Configuration) {
 					getObjectId(name, s)
 				} catch {
 					case e: SqlSyntaxErrorException => {
+						println(e.getMessage + System.lineSeparator() + s)
+						-1
+					}
+					case e: SqlException => {
 						println(e.getMessage + System.lineSeparator() + s)
 						-1
 					}
@@ -1108,6 +1167,20 @@ class DatabaseConnection(config : Configuration) {
 			case e: SqlException => println(e.getMessage)
 		}
 		*/
+	}
+
+	def insertTriplesIfNotYet(name: String, mtObject: MaintableObject): Option[Int] = {
+		var s = mtObject.subjectId
+		var p = mtObject.propertyId
+		var o = mtObject.objectId
+		var mt: Option[Int] = None
+		val sql2 = sql"SELECT COUNT(*) FROM #$name.maintable WHERE subject_id = #$s AND predicate_id = #$p AND tuple_id = #$o".as[Int]
+		val result = execute(sql2) map ((count) => {
+			if (count == 0) {
+				mt = insertTriples(name, mtObject)
+			}
+		})
+		mt
 	}
 
 	def insertStatistics(name: String, nodes: String, links: Double, edges: Int, gcEdges : Int, gcNodes : Int, connectedcomponents : Int, stronglyconnectedcomponents : Int, highestIndegrees: String, highestOutdegrees: String) = {

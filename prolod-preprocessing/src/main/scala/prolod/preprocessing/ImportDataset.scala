@@ -12,7 +12,14 @@ import scala.collection.immutable.HashSet
 import scala.io.Source
 import scala.collection.JavaConverters._
 
-class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriples: Boolean, keyness: Boolean) {
+class UpdateClusters(name : String, ontologyNamespace : String) {
+	var config = new Configuration()
+	var db = new DatabaseConnection(config)
+
+	db.updateClusterSizes(name, ontologyNamespace)
+}
+
+class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
 
@@ -21,43 +28,55 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
     var subjectsKnown : Map[String, Int] = Map()
 
-	if (!keyness) {
-		if (importTriples) {
-			db.dropMainTables(name)
-		}
-
-		db.dropTables(name)
-		db.createTables(name)
-
-		if (importTriples) {
-			importTriples()
-		}
-
-		val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles, subjectsKnown)
-
-		graphlod.run
-
-		// db.updateClusterSizes(name, ontologyNamespace)
-
-		// db.createIndices(name)
-
-		db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
-
+	if (addFiles) {
+		importTriples(true)
 		db.updateClusterSizes(name, ontologyNamespace)
-	}  else {
-		val keynessImporter = new KeynessImport(db, name)
-		keynessImporter.run
+	} else {
+		if (!keyness) {
+			if (importTriplesFlag) {
+				db.dropMainTables(name)
+			}
+
+			db.dropTables(name)
+			db.createTables(name)
+
+			if (importTriplesFlag) {
+				importTriples(false)
+			}
+
+			val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles, subjectsKnown)
+
+			graphlod.run
+
+			// db.updateClusterSizes(name, ontologyNamespace)
+
+			//
+			if (importTriplesFlag) {
+				db.createIndices(name)
+			}
+
+			db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
+
+			db.updateClusterSizes(name, ontologyNamespace)
+			val keynessImporter = new KeynessImport(db, name)
+			keynessImporter.run
+
+		}  else {
+			val keynessImporter = new KeynessImport(db, name)
+			keynessImporter.run
+		}
 	}
 
 
-    def importTriples() = {
+
+    def importTriples(adding: Boolean) = {
         for (dataset <- datasetFiles) {
             var nxp: NxParser = null
-            importTriplesByLine(new NxParser(new FileInputStream(dataset)))
+            importTriplesByLine(new NxParser(new FileInputStream(dataset)), adding)
         }
     }
 
-    def importTriplesByLine(nxp : NxParser): Unit = {
+    def importTriplesByLine(nxp : NxParser, adding: Boolean): Unit = {
         var mtObjects : List[MaintableObject] = Nil
 
         var predicatesKnown : Map[String, Int] = Map()
@@ -68,6 +87,12 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
         var externalLinks : List[Int] = Nil
         var internalLinks : Map[Int, Map[Int, String]] = Map()
+
+	    if (addFiles) {
+		    subjectsKnown = db.getSubjectUris(name)
+		    predicatesKnown = db.getPredicateUris(name)
+		    objectsKnown = db.getObjectUris(name)
+	    }
 
         while (nxp.hasNext) {
             var subjectId = -1
@@ -136,7 +161,12 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
                     mtObject.internalLink = subjectsKnown.get(internalLinks.get(mtObject.subjectId).get(mtObject.propertyId))
                 }
             }
-            db.insertTriples(name, mtObject)
+
+	        if (addFiles) {
+		        db.insertTriplesIfNotYet(name, mtObject)
+	        } else {
+		        db.insertTriples(name, mtObject)
+	        }
         }
         db.updateSubjectCounts(name, subjectCount)
         db.updatePropertyCounts(name, predicateCount)
@@ -158,25 +188,35 @@ object ImportDataset {
     def main(args: Array[String]) {
 	    if (args(0).equals("importTriples")) {
 		    args match {
-			    case Array(importFlag, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), true, false)
+			    case Array(importFlag, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), true, false, false)
 			    case Array(importFlag, name, namespace, ontologyNamespace, excludeNS, files)
-			                                                            => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), true, false)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), true, false, false)
 			    case _                                                  => printUsage()
 		    }
+	    } else if (args(0).equals("updateClusterSizes")) {
+		    args match {
+			    case Array(updateClusterSizes, name, ontologyNamespace)   => new UpdateClusters(name, ontologyNamespace)
+			    case _                                                    => printUsage()
+		    }
+	    } else if (args(0).equals("addImport")) {
+			args match {
+				case Array(add, name, namespace, ontologyNamespace, files) => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, false, true)
+				case _ => printUsage()
+			}
 	    } else if (args(0).equals("keyness")) {
 		    args match {
-			    case Array(updateKeyness, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, true)
+			    case Array(updateKeyness, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, true, false)
 			    case Array(updateKeyness, name, namespace, ontologyNamespace, excludeNS, files)
-			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, true)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, true, false)
 			    case _                                                  => printUsage()
 		    }
 	    } else {
 		    args match {
-			    case Array(name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, false)
+			    case Array(name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, false, false)
 			    case Array(name, namespace, ontologyNamespace, excludeNS, files)
-			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, false)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, false, false)
 			    case Array(name, namespace, ontologyNamespace, "-excludeNS", excludeNS, "-files", files)
-			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, false)
+			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, false, false)
 			    case _                                                  => printUsage()
 		    }
 	    }
