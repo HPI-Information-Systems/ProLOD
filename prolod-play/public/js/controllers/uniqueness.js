@@ -62,9 +62,11 @@ define(['angular', './controllers'], function (angular) {
                 */
 
                 var myChart = new dimple.chart(svg, data);
-                myChart.setBounds(60, 30, 500, 330);
+                myChart.setBounds(60, 30, 450, 330);
                 var x = myChart.addMeasureAxis("x", "density");
+                x.overrideMax = 1;
                 var y = myChart.addMeasureAxis("y", "uniqueness");
+                y.overrideMax = 1;
                 // first parameters should be unique as dimple only shows unique values
                 // they are shown in the tooltip
                 // the last one is for the legend
