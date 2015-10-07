@@ -26,7 +26,11 @@ define(['angular', './controllers'], function (angular) {
                         {field: "density", type: "number", cellFilter: 'number: 2'},
                         {field: "values", type: "number" },
                         {field: "cluster", type: "string", width: "**"}
-                    ]
+                    ] ,
+                    sortInfo: {
+                        fields: ['keyness'],
+                        directions: ['desc']
+                    }
                 },
                 data: []
             };
@@ -37,15 +41,6 @@ define(['angular', './controllers'], function (angular) {
                 // draw chart
                 var svg = dimple.newSvg("#keyness-chart", 800, 400);
 
-                /*
-                var data = [
-                    {id: 1, property: "rdf:type", cluster: "class1", uniqueness: 0.31, density: 0.1},
-                    {id: 2, property: "foaf:name", cluster: "class1", uniqueness: 0.26, density: 0.3},
-                    {id: 3, property: "dbpedia:bla", cluster: "person", uniqueness: 0.21, density: 0.8},
-                    {id: 4, property: "rdf:type", cluster: "class2", uniqueness: 0.23, density: 0.24},
-                    {id: 5, property: "dbpedia:bla", cluster: "class2", uniqueness: 0.61, density: 0.2}
-                ];
-                */
                 var data = evt.data.data;
                 /*
                 var data = [];

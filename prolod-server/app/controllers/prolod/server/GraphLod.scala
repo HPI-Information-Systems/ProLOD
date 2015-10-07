@@ -83,7 +83,7 @@ object GraphLod extends Controller {
           var newNode : Node = node
           val group = node.group.getOrElse("")
           if (!groups.contains(node.group.getOrElse(""))) {
-            newNode = new Node(node.id, node.uri, None)
+            newNode = new Node(node.id, node.dbId, node.uri, None)
           } else {
             patternNotInGroups = true
           }
@@ -180,7 +180,7 @@ object GraphLod extends Controller {
           var newNode : Node = node
           val group = node.group.getOrElse("")
           if (!groups.contains(node.group.getOrElse(""))) {
-            newNode = new Node(node.id, node.uri, None)
+            newNode = new Node(node.id, node.dbId, node.uri, None)
           } else {
             patternNotInGroups = true
           }
@@ -277,7 +277,7 @@ object GraphLod extends Controller {
           var newNode : Node = node
           val group = node.group.getOrElse("")
           if (!groups.contains(node.group.getOrElse(""))) {
-            newNode = new Node(node.id, node.uri, None)
+            newNode = new Node(node.id, node.dbId, node.uri, None)
           } else {
             patternNotInGroups = true
           }
@@ -374,7 +374,7 @@ object GraphLod extends Controller {
           var newNode : Node = node
           val group = node.group.getOrElse("")
           if (!groups.contains(node.group.getOrElse(""))) {
-            newNode = new Node(node.id, node.uri, None)
+            newNode = new Node(node.id, node.dbId, node.uri, None)
           } else {
             patternNotInGroups = true
           }
@@ -472,7 +472,7 @@ object GraphLod extends Controller {
               var newNode : Node = node
               val group = node.group.getOrElse("")
               if (!groups.contains(node.group.getOrElse(""))) {
-                newNode = new Node(node.id, node.uri, None)
+                newNode = new Node(node.id, node.dbId, node.uri, None)
               } else {
                 patternNotInGroups = true
               }

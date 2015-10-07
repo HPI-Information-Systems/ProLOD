@@ -5,7 +5,8 @@ import play.api.libs.json._
 
 case class PatternFromDB(val name: Option[String] = None, val nodes: List[Node], val links: List[Link])
 
-case class Pattern(id: Int, name: String,
+case class Pattern(id: Int,
+                   name: String,
                    occurences: Int,
                    nodes: List[Node],
                    links: List[Link],
@@ -15,7 +16,7 @@ case class Pattern(id: Int, name: String,
 
 case class Link(source: Int, uri: Option[String] = None, label: Option[String] = None, target: Int, surrounding: Option[Boolean] = None)
 
-case class Node(id: Int, uri: Option[String] = None, label: Option[String] = None, group: Option[String] = None, surrounding: Option[Boolean] = None)
+case class Node(id: Int, dbId: Option[Int], uri: Option[String] = None, label: Option[String] = None, group: Option[String] = None, surrounding: Option[Boolean] = None)
 
 object PatternFormats {
   implicit val linkFormat = Json.format[Link]

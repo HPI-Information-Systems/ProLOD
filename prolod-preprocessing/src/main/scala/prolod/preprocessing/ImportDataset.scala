@@ -2,7 +2,6 @@ package prolod.preprocessing
 
 import java.io.FileInputStream
 import java.net.{MalformedURLException, URL}
-import java.sql.SQLSyntaxErrorException
 import graphlod.GraphLOD
 import org.semanticweb.yars.nx.parser.NxParser
 import org.semanticweb.yars.nx.Node
@@ -42,6 +41,8 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
 			if (importTriplesFlag) {
 				importTriples(false)
+			} else {
+				subjectsKnown = db.getSubjectUris(name)
 			}
 
 			val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles, subjectsKnown)
