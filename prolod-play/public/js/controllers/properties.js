@@ -33,13 +33,14 @@ define(['angular', './controllers'], function (angular) {
                 var data = evt.data.data;
 
                 // bar chart
-                var svgBar = dimple.newSvg("#properties-chart", 600, 400);
+                var svgBar = dimple.newSvg("#properties-chart", 650, 400);
                 var barChart = new dimple.chart(svgBar, data);
-                barChart.setBounds(60, 30, 500, 330);
+                barChart.setBounds(350, 30, 250, 330);
                 var x = barChart.addMeasureAxis("x", "occurences");
-                var y = barChart.addAxis("y", "url");
+                var y = barChart.addCategoryAxis("y", "url");
+                //var y = barChart.addAxis("y", "url");
                 y.addOrderRule("occurences");
-                barChart.addSeries("occurences", dimple.plot.bar);
+                barChart.addSeries("occurrences", dimple.plot.bar);
                 barChart.draw();
 
                 // pie chart
@@ -49,6 +50,7 @@ define(['angular', './controllers'], function (angular) {
                 var propertyDist = [];
                 for(var i in data) {
                     var obj = {};
+                    console.log(data[i]);
                     obj[c] = data[i].url;
                     obj[v] = data[i].percentage;
                     propertyDist.push(obj);
@@ -58,7 +60,7 @@ define(['angular', './controllers'], function (angular) {
                 pieChart.setBounds(5, 5, 150, 150);
                 pieChart.addMeasureAxis("p", "value");
                 pieChart.addSeries("url", dimple.plot.pie);
-                pieChart.addLegend(180, 5, 100, 150, "left");
+                pieChart.addLegend(180, 5, 300, 150, "left");
                 pieChart.draw();
             });
         }]);
