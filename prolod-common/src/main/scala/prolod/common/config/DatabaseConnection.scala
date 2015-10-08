@@ -511,7 +511,6 @@ class DatabaseConnection(config : Configuration) {
 					 pattern = removeOntologyNamespace(pattern, ontology_namespace)
 				})
 				// val occurences = resultSet.getInt("occurences")
-
 				val patternJsonT = Json.parse(pattern).validate[PatternFromDB]
 				val patternsV = List(patternJsonT).filter(p => p.isSuccess).map(p => p.get)
 				val errors = List(patternJsonT).filter(p => p.isError)
@@ -560,7 +559,6 @@ class DatabaseConnection(config : Configuration) {
 					occurences = occurencesP
 				})
 				// val occurences = resultSet.getInt("occurences")
-
 				val patternJsonT = Json.parse(pattern).validate[PatternFromDB]
 				val patternsV = List(patternJsonT).filter(p => p.isSuccess).map(p => p.get)
 				val errors = List(patternJsonT).filter(p => p.isError)
@@ -624,7 +622,6 @@ class DatabaseConnection(config : Configuration) {
 								case e: SqlSyntaxErrorException => println("This dataset has no patterns: " + s)
 							}
 						}
-
 					}
 				}
 
@@ -870,10 +867,10 @@ class DatabaseConnection(config : Configuration) {
 											linkList :::= List(newLink)
 										}
 										val pattern2insert = new PatternFromDB(patternJson.name, nodeList, linkList)
-
-
+										val newPattern = Json.toJson(pattern2insert).toString()
 										val statement = connection.createStatement()
-										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns"+dbExt+" (ID, PATTERN) VALUES (" + isoCounter + ", '" + coloredpattern + "')")
+										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns"+dbExt+" (ID, PATTERN) VALUES (" + isoCounter + ", '" + newPattern + "')")
+										statement.close()
 									} catch {
 										case e: SqlException => {
 											println("error inserting pattern (2)" + e.getMessage)
@@ -1173,6 +1170,63 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
+	def updatePatterns(dataset : String) = {
+		validateDatasetString(dataset)
+		val subjects = getSubjectUris(dataset)
+		updateColoredPatterns(dataset, subjects, None)
+		updateColoredPatterns(dataset, subjects, Some("_gc"))
+	}
+
+	def updateColoredPatterns(dataset: String, subjects: Map[String, Int], gc: Option[String]) = {
+		val dbExt = gc.getOrElse("")
+		val tableName = "COLOREDPATTERNS"+dbExt
+		try {
+			val statement = connection.createStatement()
+			val resultSet = statement.executeQuery("SELECT id, pattern FROM "+ dataset+".COLOREDPATTERNS"+dbExt)
+			var patternMap: Map[String, Int] = Map()
+			while ( resultSet.next() ) {
+				var isoId = resultSet.getInt("id")
+				var pattern = resultSet.getString("pattern")
+				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
+				var nodeList : List[Node] = Nil
+				var linkList : List[Link] = Nil
+				var nodeMap : Map[Int, Int] = Map()
+				for (node <- patternJson.nodes) {
+					var newDbId = -1
+					if (subjects.contains(node.uri.get)) {
+						newDbId = subjects.get(node.uri.get).get
+					}
+					val newNode = node.copy(dbId = Some(newDbId))
+					nodeMap += (node.id -> newNode.id)
+					nodeList :::= List(newNode)
+				}
+				for (link <- patternJson.links) {
+					val newLink = link.copy()
+					linkList :::= List(newLink)
+				}
+				val newPattern = new PatternFromDB(patternJson.name, nodeList, linkList)
+				// val jsonString = Json.obj(newPattern)
+				//val jsonString = Json.writes(newPattern)
+				//JSON.stringify
+				val jsonString = Json.toJson(newPattern).toString()
+				patternMap += (jsonString -> isoId)
+
+				//escaping in pattern?
+				println("replacing " + isoId)
+				val statementD = connection.createStatement()
+				statementD.execute("DELETE FROM " + dataset + "." + tableName + " WHERE id = " + isoId + " AND pattern = '" + pattern + "'")
+				statementD.close()
+
+				val statementI = connection.createStatement()
+				statementI.execute("INSERT INTO " + dataset + "." + tableName + " (ID, PATTERN) VALUES (" + isoId + ", '" + jsonString + "')")
+				statementI.close()
+			}
+			statement.close()
+		} catch {
+			case e : SqlSyntaxErrorException => println(e.getMessage)
+		}
+	}
+
 	def updateClusterSizes(dataset : String, ontologyNamespace : String) = {
 		validateDatasetString(dataset)
 		for (cluster : Group <- getClusters(dataset, ontologyNamespace)) {
@@ -1186,7 +1240,8 @@ class DatabaseConnection(config : Configuration) {
 				})
 
 				val statement = connection.createStatement()
-				val resultSet = statement.execute("UPDATE " + dataset + ".clusters SET cluster_size = " + clusterSize + " WHERE label = '" + ontologyNamespace + cluster.name + "'")
+				statement.execute("UPDATE " + dataset + ".clusters SET cluster_size = " + clusterSize + " WHERE label = '" + ontologyNamespace + cluster.name + "'")
+				statement.close()
 			} catch {
 				case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
 				case e: SqlException => println(e.getMessage + System.lineSeparator())

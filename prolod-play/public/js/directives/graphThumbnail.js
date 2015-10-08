@@ -256,6 +256,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         group: node.group,
                         id: node.id,
                         uri: node.uri,
+                        dbId: node.dbId,
                         label: node.label,
                         surrounding: node.surrounding
                     };

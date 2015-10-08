@@ -2,7 +2,7 @@ GET        /datasets                                         controllers.prolod.
 
 GET        /properties/:dataset                              controllers.prolod.server.Properties.getPropertyStatistics(dataset: String, groups: List[String])
 
-GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: String)
+GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: Int)
 
 GET        /graphstatistics/:dataset                         controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, groups: List[String])
 

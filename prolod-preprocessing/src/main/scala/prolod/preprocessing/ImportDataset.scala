@@ -18,6 +18,13 @@ class UpdateClusters(name : String, ontologyNamespace : String) {
 	db.updateClusterSizes(name, ontologyNamespace)
 }
 
+class UpdatePatterns(name : String) {
+	var config = new Configuration()
+	var db = new DatabaseConnection(config)
+
+	db.updatePatterns(name)
+}
+
 class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
@@ -204,6 +211,11 @@ object ImportDataset {
 				case Array(add, name, namespace, ontologyNamespace, files) => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, false, true)
 				case _ => printUsage()
 			}
+	    } else if (args(0).equals("updatePatternsWithIds")) {
+		    args match {
+			    case Array(updateClusterSizes, name)   => new UpdatePatterns(name)
+			    case _                                                    => printUsage()
+		    }
 	    } else if (args(0).equals("keyness")) {
 		    args match {
 			    case Array(updateKeyness, name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, true, false)
@@ -225,7 +237,7 @@ object ImportDataset {
 
     private def printUsage() {
         println("usage:")
-        println("  name namespace ontologyNamespace [files]")
+        println("  [importTriples|updateClusterSizes|addImport|keyness|updatePatternsWithIds] name namespace ontologyNamespace [files]")
         println("  name namespace ontologyNamespace [excludeNamespaces] [files]")
     }
 
