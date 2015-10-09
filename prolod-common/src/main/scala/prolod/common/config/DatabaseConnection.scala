@@ -258,11 +258,9 @@ class DatabaseConnection(config : Configuration) {
 
 		s match {
 			case pattern(group) => {
-				println(group)
 				group
 			}
 			case _ => {
-				println("")
 				""
 			}
 		}
@@ -690,7 +688,6 @@ class DatabaseConnection(config : Configuration) {
 
 	def getEntityDetails(dataset: String, subjectUri: String): Entity = {
 		validateDatasetString(dataset)
-		println(subjectUri)
 		var triples : List[Triple] = Nil
 		var label : String = ""
 		var subjectId : Int = -1
@@ -873,8 +870,7 @@ class DatabaseConnection(config : Configuration) {
 										statement.close()
 									} catch {
 										case e: SqlException => {
-											println("error inserting pattern (2)" + e.getMessage)
-											println(coloredpattern)
+											println("error inserting pattern (" + coloredpattern + ") " + e.getMessage)
 										}
 										case e: SqlSyntaxErrorException => println(e.getMessage)
 									}

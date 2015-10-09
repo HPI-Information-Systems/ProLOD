@@ -37,8 +37,12 @@ object GraphLod extends Controller {
         var highestIndegreesCleanedMap : Map[String, Map[Int, Int]] = Map()
         for ((key, value) <- highestIndegreesMap) {
           var highestIndegreesInternalMap : Map[Int, Int] = Map()
-          highestIndegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
-          highestIndegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestIndegreesInternalMap)
+			try {
+				highestIndegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
+				highestIndegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestIndegreesInternalMap)
+			} catch {
+				case e: NullPointerException => println(e.getMessage)
+			}
         }
         data.highestIndegrees = highestIndegreesCleanedMap
       }
@@ -51,8 +55,12 @@ object GraphLod extends Controller {
         var highestOutdegreesCleanedMap : Map[String, Map[Int, Int]] = Map()
         for ((key, value) <- highestOutdegreesMap) {
           var highestOutdegreesInternalMap : Map[Int, Int] = Map()
-          highestOutdegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
-          highestOutdegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestOutdegreesInternalMap)
+          try {
+            highestOutdegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
+            highestOutdegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestOutdegreesInternalMap)
+          } catch {
+            case e: NullPointerException => println(e.getMessage)
+          }
         }
         data.highestOutdegrees =  highestOutdegreesCleanedMap
       }
