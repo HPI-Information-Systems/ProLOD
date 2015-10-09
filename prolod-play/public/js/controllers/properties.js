@@ -40,7 +40,7 @@ define(['angular', './controllers'], function (angular) {
                 var y = barChart.addCategoryAxis("y", "url");
                 //var y = barChart.addAxis("y", "url");
                 y.addOrderRule("occurences");
-                barChart.addSeries("occurrences", dimple.plot.bar);
+                barChart.addSeries("occurences", dimple.plot.bar);
                 barChart.draw();
 
                 // pie chart
