@@ -95,7 +95,7 @@ object GraphLod extends Controller {
           } else {
             patternNotInGroups = true
           }
-          if (group.length > 0) {
+          if ((group.length > 0) && !(node.surrounding.getOrElse(false))) {
             var entityCount = 0
             if (tempEntitiesPerClass.contains(group)) {
               entityCount = tempEntitiesPerClass.getOrElse(group, 0)
@@ -126,7 +126,7 @@ object GraphLod extends Controller {
         var tempEntitiesPerClass: Map[String, Int] = Map()
         for (node : Node <- pattern.nodes) {
           val group = node.group.getOrElse("")
-          if (group.length > 0) {
+          if ((group.length > 0) && !(node.surrounding.getOrElse(false))) {
             var entityCount = 0
             if (tempEntitiesPerClass.contains(group)) {
               entityCount = tempEntitiesPerClass.getOrElse(group, 0)
@@ -192,7 +192,7 @@ object GraphLod extends Controller {
           } else {
             patternNotInGroups = true
           }
-          if (group.length > 0) {
+          if ((group.length > 0) && !(node.surrounding.getOrElse(false))) {
             var entityCount = 0
             if (tempEntitiesPerClass.contains(group)) {
               entityCount = tempEntitiesPerClass.getOrElse(group, 0)
@@ -223,7 +223,7 @@ object GraphLod extends Controller {
         var tempEntitiesPerClass: Map[String, Int] = Map()
         for (node : Node <- pattern.nodes) {
           val group = node.group.getOrElse("")
-          if (group.length > 0) {
+          if ((group.length > 0) && !(node.surrounding.getOrElse(false))) {
             var entityCount = 0
             if (tempEntitiesPerClass.contains(group)) {
               entityCount = tempEntitiesPerClass.getOrElse(group, 0)
