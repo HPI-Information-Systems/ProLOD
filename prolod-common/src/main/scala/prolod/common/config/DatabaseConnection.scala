@@ -295,6 +295,24 @@ class DatabaseConnection(config : Configuration) {
 		}
 	}
 
+	def getClusterNames(dataset: String, ontologyNamespace : String): Seq[String] = {
+		validateDatasetString(dataset)
+		val sql = sql"SELECT label FROM #${dataset}.CLUSTERS WHERE username = 'ontology' ORDER BY label".as[(String)]
+		try {
+			val result = execute(sql)
+			result map ((label) => {
+				if (!ontologyNamespace.equals("")) {
+					removeOntologyNamespace(label, ontologyNamespace)
+				} else {
+					label
+				}
+
+			})
+		} catch {
+			case e : SqlSyntaxErrorException => println("This dataset has no clusters: " + dataset + e.getMessage + e.getLocalizedMessage)
+				Nil
+		}
+	}
 
 	private def removeOntologyNamespace(name: String, ontologyNamespace: String): String = {
 		var result = name
@@ -1134,6 +1152,30 @@ class DatabaseConnection(config : Configuration) {
 					case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
 				}
 			}
+		}
+	}
+
+	def updateClasses(dataset: String, ontologyNamespace: String) = {
+		val clusterUris = getClusterNames(dataset, ontologyNamespace)
+		try {
+			val sql = sql"""SELECT o.object, m.subject_id FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'""".as[(String, Int)]
+			execute(sql) map tupled((clusterName, subjectId) => {
+				if (!clusterUris.contains(clusterName)) {
+					val query: String = "INSERT INTO " + dataset + ".clusters (label, cluster_size, username) VALUES ('" + clusterName + "', 0 , 'ontology')"
+					try {
+						val statement = connection.createStatement()
+						val resultSet = statement.execute(query)
+					} catch {
+						case e: SqlIntegrityConstraintViolationException => println(e.getMessage + System.lineSeparator() + query)
+						case e: SqlException => println(e.getMessage + System.lineSeparator() + query)
+						case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
+					}
+				}
+			})
+		} catch {
+			case e: SqlIntegrityConstraintViolationException => println(e.getMessage + System.lineSeparator())
+			case e: SqlException => println(e.getMessage + System.lineSeparator())
+			case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator())
 		}
 	}
 

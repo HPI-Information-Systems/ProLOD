@@ -18,11 +18,11 @@ define(['angular', './controllers'], function (angular) {
              $scope.routeBuilder = routeBuilder;
 
              $scope.init = function () {
-                 console.log('init!');
+                 //console.log('init!');
              };
 
              $scope.updateBreadcrumb = function (viewChain) {
-                 console.log('view: ' + JSON.stringify(viewChain));
+                 //console.log('view: ' + JSON.stringify(viewChain));
                  $rootScope.$emit(Events.VIEWCHANGED, viewChain);
              };
 

@@ -36,6 +36,7 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
 	if (addFiles) {
 		importTriples(true)
+        db.updateClasses(name, ontologyNamespace)
 		db.updateClusterSizes(name, ontologyNamespace)
 	} else {
 		if (!keyness) {
@@ -158,11 +159,26 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
                     // TODO save first, add later when internal links can we looked up
 
-                    mtObjects ::= new MaintableObject(subjectId, predicateId, objectId)
+                    //mtObjects ::=
+                    val mtObject: MaintableObject = new MaintableObject(subjectId, predicateId, objectId)
+                    if (internalLinks.contains(mtObject.subjectId)) {
+                        if (internalLinks.get(mtObject.subjectId).contains(mtObject.propertyId)) {
+                            mtObject.internalLink = subjectsKnown.get(internalLinks.get(mtObject.subjectId).get(mtObject.propertyId))
+                        }
+                    }
+
+                    if (addFiles) {
+                        db.insertTriplesIfNotYet(name, mtObject)
+                    } else {
+                        db.insertTriples(name, mtObject)
+                    }
+
                 }
             }
         }
 
+        // TODO final internal link check
+        /*
         for (mtObject <- mtObjects) {
             if (internalLinks.contains(mtObject.subjectId)) {
                 if (internalLinks.get(mtObject.subjectId).contains(mtObject.propertyId)) {
@@ -176,6 +192,7 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 		        db.insertTriples(name, mtObject)
 	        }
         }
+        */
         db.updateSubjectCounts(name, subjectCount)
         db.updatePropertyCounts(name, predicateCount)
     }
