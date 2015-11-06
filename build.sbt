@@ -2,7 +2,7 @@ name := """Prolod2"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.6"
+scalaVersion in ThisBuild := "2.11.7"
 
 lazy val prolod_play = (project in file("prolod-play"))
   .enablePlugins(PlayScala)
