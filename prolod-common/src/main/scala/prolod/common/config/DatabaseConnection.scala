@@ -325,11 +325,14 @@ class DatabaseConnection(config: Configuration) {
 				triples.put(subject_id.asInstanceOf[Integer], propertyValuePairs)
 			})
 			val keynessStats: util.HashMap[Integer, util.HashMap[String, lang.Double]] = keyness.getKeyness("", triples)
-			keynessStats.asScala.toMap.foreach {
+			keynessStats.asScala.foreach {
 				case (property, udk) => {
 					try {
 						val statement = connection.createStatement()
-						val resultSet = statement.execute("INSERT INTO " + dataset + ".keyness (cluster_id, property_id, keyness, uniqueness, density, values) VALUES (" + clusterId + "," + property + "," + udk.get("keyness") + "," + udk.get("uniqueness") + "," + udk.get("density") + "," + udk.get("properties").toInt + ")")
+						val resultSet = statement.execute("INSERT INTO " + dataset + ".keyness " +
+								"(cluster_id, property_id, keyness, uniqueness, density, values) " +
+								"VALUES (" + clusterId + "," + property + "," + udk.get("keyness") + "," + udk.get("uniqueness") + "," +
+								             udk.get("density") + "," + udk.getOrDefault("properties", 0.0).toInt + ")")
 					} catch {
 						case e: SqlIntegrityConstraintViolationException => println("Dataset already exists")
 					}
