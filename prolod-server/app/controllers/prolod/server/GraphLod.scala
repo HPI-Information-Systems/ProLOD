@@ -79,7 +79,7 @@ object GraphLod extends Controller {
     val data: GraphLodResult = GraphLodResult(datasetId)
     val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, None)
     var entitiesPerClass: Map[String, Int] = Map()
-    var entities = 0
+    var nodesPerPattern = 0
     data.connectedComponents = patternList.size
     if (groups.nonEmpty) {
       var newPatternList: List[Pattern] = Nil
@@ -107,7 +107,7 @@ object GraphLod extends Controller {
         }
         if (groups.isEmpty || (groups.nonEmpty && patternNotInGroups)) {
           newPatternList ::=new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links, -1, pattern.isoGroup)
-          entities += newNodes.size
+          nodesPerPattern = newNodes.size
           for ((group, count) <- tempEntitiesPerClass) {
             var entityCount = 0
             if (entitiesPerClass.contains(group)) {
@@ -135,7 +135,7 @@ object GraphLod extends Controller {
             tempEntitiesPerClass += (group -> entityCount)
           }
         }
-        entities += pattern.nodes.size
+        nodesPerPattern = pattern.nodes.size
         for ((group, count) <- tempEntitiesPerClass) {
           var entityCount = 0
           if (entitiesPerClass.contains(group)) {
@@ -147,17 +147,18 @@ object GraphLod extends Controller {
       }
     }
 
-    if (entities > 0) {
+    if (nodesPerPattern > 0) {
       var classDistribution : Map[String, Double] = Map()
-      var entitiesUnknown = entities
+      var entitiesUnknown = nodesPerPattern
       for ((group, entityCount) <- entitiesPerClass) {
-         classDistribution += (group -> (entityCount.toDouble/entities))
+         classDistribution += (group -> (entityCount.toDouble/nodesPerPattern))
         entitiesUnknown -= entityCount
       }
       if (entitiesUnknown > 0) {
-        classDistribution += ("unknown" -> (entitiesUnknown.toDouble/entities))
+        classDistribution += ("unknown" -> (entitiesUnknown.toDouble/nodesPerPattern))
       }
-      data.nodes = entities
+      data.nodes = nodesPerPattern
+      data.edges = data.patterns(0).links.size
       data.classDistribution =  classDistribution
     }
 
@@ -448,7 +449,8 @@ object GraphLod extends Controller {
       if (entitiesUnknown > 0) {
         classDistribution += ("unknown" -> (entitiesUnknown.toDouble/entities))
       }
-      data.nodes = entities
+      data.nodes = data.patterns(0).nodes.size
+	    data.edges = data.patterns(0).links.size
       data.classDistribution =  classDistribution
     }
 

@@ -15,6 +15,7 @@ class UpdateClusters(name : String, ontologyNamespace : String) {
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
 
+    db.updateClasses(name, ontologyNamespace)
 	db.updateClusterSizes(name, ontologyNamespace)
 }
 
