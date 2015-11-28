@@ -1125,15 +1125,9 @@ class DatabaseConnection(config: Configuration) {
 	def updateClasses(dataset: String, ontologyNamespace: String) = {
 		var clusterUris = getClusterNames(dataset, ontologyNamespace)
 		try {
-<<<<<<< HEAD
-			val sql = sql"""SELECT o.object FROM #${dataset}.MAINTABLE as m, #${dataset}.predicatetable as p, #${dataset}.objecttable as o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'""".as[(String)]
-			execute(sql) map ((clusterName) => {
-				if (!clusterUris.contains(clusterName) && clusterName.startsWith(ontologyNamespace)) {
-=======
 			val sql = sql"""SELECT o.object, m.subject_id FROM #${dataset}.MAINTABLE AS m, #${dataset}.predicatetable AS p, #${dataset}.objecttable AS o WHERE m.predicate_id = p.id  AND o.tuple_id = m.tuple_id  AND p.predicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'""".as[(String, Int)]
 			execute(sql) map tupled((clusterName, subjectId) => {
 				if (!clusterUris.contains(clusterName)) {
->>>>>>> 6ac11b609a4a896b6cd405d4d038c85618cc7366
 					val query: String = "INSERT INTO " + dataset + ".clusters (label, cluster_size, username) VALUES ('" + clusterName + "', 0 , 'ontology')"
 					try {
 						val statement = connection.createStatement()
@@ -1285,5 +1279,4 @@ class DatabaseConnection(config: Configuration) {
 
 		def next(): ResultSet = rs
 	}
-
 }
