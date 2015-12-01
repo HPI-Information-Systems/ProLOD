@@ -50,7 +50,7 @@ define(['angular', './controllers'], function (angular) {
                 var propertyDist = [];
                 for(var i in data) {
                     var obj = {};
-                    console.log(data[i]);
+                    // console.log(data[i]);
                     obj[c] = data[i].url;
                     obj[v] = data[i].percentage;
                     propertyDist.push(obj);

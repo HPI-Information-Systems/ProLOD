@@ -23,7 +23,7 @@ define(['angular', './controllers'], function (angular) {
         };
 
         httpApi.getEntityDetail($routeParams.dataset, node.dbId).then(function(data){
-                console.log(data);
+                // console.log(data);
                 $scope.model.data = data.data.entity.triples;
                 $scope.triples = data.data.entity.triples.length;
                 $scope.uri = data.data.entity.url;

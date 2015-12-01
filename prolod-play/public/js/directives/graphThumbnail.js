@@ -20,6 +20,7 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 var color = $scope.colorFunction;
 
                 var showArrows = $scope.showArrows === 'true';
+                var disableHovering = $scope.disableHovering === 'true';
 
                 var svg = d3.select(element[0])
                     .append("svg")
@@ -137,33 +138,35 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                         .attr("d", "M0,-5L10,0L0,5");
                     //.attr("id", "arrowHead");
 
-                    svg.append("defs").selectAll("marker")
-                        .data(["target_red"])
-                        .enter().append("svg:marker")
-                        .attr("id", function (d) { return d; })
-                        .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 15)
-                        .attr("refY", -1.5)
-                        .attr("markerWidth", 6)
-                        .attr("markerHeight", 6)
-                        .attr("orient", "auto")
-                        .style("fill", "red")
-                        .append("svg:path")
-                        .attr("d", "M0,-5L10,0L0,5");
+                    if (!disableHovering) {
+                        svg.append("defs").selectAll("marker")
+                            .data(["target_red"])
+                            .enter().append("svg:marker")
+                            .attr("id", function (d) { return d; })
+                            .attr("viewBox", "0 -5 10 10")
+                            .attr("refX", 15)
+                            .attr("refY", -1.5)
+                            .attr("markerWidth", 6)
+                            .attr("markerHeight", 6)
+                            .attr("orient", "auto")
+                            .style("fill", "red")
+                            .append("svg:path")
+                            .attr("d", "M0,-5L10,0L0,5");
 
-                    svg.append("defs").selectAll("marker")
-                        .data(["target_lightred"])
-                        .enter().append("svg:marker")
-                        .attr("id", function (d) { return d; })
-                        .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 15)
-                        .attr("refY", -1.5)
-                        .attr("markerWidth", 6)
-                        .attr("markerHeight", 6)
-                        .attr("orient", "auto")
-                        .style("fill", "#FFAD99")
-                        .append("svg:path")
-                        .attr("d", "M0,-5L10,0L0,5");
+                        svg.append("defs").selectAll("marker")
+                            .data(["target_lightred"])
+                            .enter().append("svg:marker")
+                            .attr("id", function (d) { return d; })
+                            .attr("viewBox", "0 -5 10 10")
+                            .attr("refX", 15)
+                            .attr("refY", -1.5)
+                            .attr("markerWidth", 6)
+                            .attr("markerHeight", 6)
+                            .attr("orient", "auto")
+                            .style("fill", "#FFAD99")
+                            .append("svg:path")
+                            .attr("d", "M0,-5L10,0L0,5");
+                    }
 
 
                     node.append("svg:title")
@@ -211,17 +214,19 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 node.on("mouseup", function(node){
                     if (flag === 0){
                         var link = d3.select(this);
-                        console.log("Node");
+                        // console.log("Node");
                         $scope.clickHandler(node);
                     } else if(flag === 1) {
-                        console.log("drag");
+                        // console.log("drag");
                     }
                 }, false);
 
                 function mouseover() {
-                    var link = d3.select(this);
-                    link.style("stroke", "red");
-                    link.style("marker-end", "url(#target_red)");
+                    if (!disableHovering) {
+                        var link = d3.select(this);
+                        link.style("stroke", "red");
+                        link.style("marker-end", "url(#target_red)");
+                    }
                 }
 
                 function mouseover_surrounding() {
@@ -231,9 +236,11 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                 }
 
                 function mouseout() {
-                    var link = d3.select(this);
-                    link.style("stroke", "#bbb");
-                    link.style("marker-end", "url(#target)");
+                    if (!disableHovering) {
+                        var link = d3.select(this);
+                        link.style("stroke", "#bbb");
+                        link.style("marker-end", "url(#target)");
+                    }
                 }
 
                 function mouseout_surrounding() {
@@ -283,7 +290,8 @@ define(['angular', 'd3', './directives'], function (angular, d3) {
                     graph: '=',
                     colorFunction: '=',
                     clickHandler: '=',
-                    showArrows: '@'
+                    showArrows: '@',
+                    disableHovering: '@'
                 },
                 restrict: 'EA',
                 template: [

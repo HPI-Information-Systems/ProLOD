@@ -26,6 +26,17 @@ class UpdatePatterns(name : String) {
 	db.updatePatterns(name)
 }
 
+class AddSimilarPatterns(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) {
+    var config = new Configuration()
+    var db = new DatabaseConnection(config)
+
+    val datasetFiles: List[String] = if (files.isEmpty) Nil else List(files.get)
+    val excludeNamespaces: List[String] = if (excludeNS.isEmpty) Nil else List(excludeNS.get)
+
+    val graphLodPatternSimilarity = new GraphLodPatternSimilarity(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
+    graphLodPatternSimilarity.run
+}
+
 class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
@@ -241,7 +252,13 @@ object ImportDataset {
 			    => new ImportDataset(name, namespace, ontologyNamespace, Some(excludeNS), Some(files), false, true, false)
 			    case _                                                  => printUsage()
 		    }
-	    } else {
+        } else if (args(0).equals("similarPatterns")) {
+            args match {
+                case Array(similarPatterns, name, namespace, ontologyNamespace, files) => new AddSimilarPatterns(name, namespace, ontologyNamespace, None, Some(files))
+                case Array(similarPatterns, name, namespace, ontologyNamespace, excludeNS, files) => new AddSimilarPatterns(name, namespace, ontologyNamespace, Some(excludeNS), Some(files))
+                case _ => printUsage()
+            }
+        } else {
 		    args match {
 			    case Array(name, namespace, ontologyNamespace, files)   => new ImportDataset(name, namespace, ontologyNamespace, None, Some(files), false, false, false)
 			    case Array(name, namespace, ontologyNamespace, excludeNS, files)
@@ -255,7 +272,7 @@ object ImportDataset {
 
     private def printUsage() {
         println("usage:")
-        println("  [importTriples|updateClusterSizes|addImport|keyness|updatePatternsWithIds] name namespace ontologyNamespace [files]")
+        println("  [importTriples|updateClusterSizes|addImport|keyness|updatePatternsWithIds|similarPatterns] name namespace ontologyNamespace [files]")
         println("  name namespace ontologyNamespace [excludeNamespaces] [files]")
     }
 

@@ -7,6 +7,8 @@ import java.{lang, util}
 import com.ibm.db2.jcc.am.{SqlDataException, SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
 import com.typesafe.slick.driver.db2.DB2Driver.api._
 import de.hpi.fgis.loducc.Keyness
+import graphlod.algorithms.GraphFeatures
+import graphlod.graph.Edge
 import play.api.libs.json._
 import prolod.common.models.PatternFormats.patternDBFormat
 import prolod.common.models.{Dataset, Group, Pattern, PatternFromDB, _}
@@ -465,12 +467,27 @@ class DatabaseConnection(config: Configuration) {
 		statistics
 	}
 
+	def getSimilarPatternStatistics(dataset: String, patternId: Int): mutable.Map[String, String] = {
+		validateDatasetString(dataset)
+		val statistics = mutable.Map[String, String]()
+		try {
+			val statement = connection.createStatement()
+			val sql = sql"SELECT count FROM #$dataset.SIMILAR_PATTERNS WHERE id=#$patternId".as[(Int)]
+			statistics += ("patterns" -> execute(sql).head.toString)
+		} catch {
+			case e: SqlSyntaxErrorException => {
+				println("This dataset has no similar patterns with id: " + patternId)
+			}
+		}
+		statistics
+	}
+
 	def getColoredPatterns(dataset: String, id: Int, gc: Option[String]): List[Pattern] = {
 		val dbExt = gc.getOrElse("")
 		var patterns: List[Pattern] = Nil
 		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}".as[String]
 		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
-			"\"group\":\"" + ontology_namespace.replace("/", "\\/")
+			"\"group\":\"" + ontology_namespace
 		})
 		try {
 			val statement = connection.createStatement()
@@ -637,6 +654,64 @@ class DatabaseConnection(config: Configuration) {
 		result = resultSet.getInt("id")
 		statement.close()
 		result
+	}
+
+	def getSimilarPattern(s: String, gc: Option[String], patternId: Int): List[Pattern] = {
+		var dbExt = gc.getOrElse("")
+		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}".as[String]
+		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
+			"\"group\":\"" + ontology_namespace
+		})
+		var patterns: List[Pattern] = Nil
+		try {
+			val statement = connection.createStatement()
+			val sql = sql"SELECT instance FROM #$s.SIMILAR_PATTERNS WHERE id=#$patternId".as[(String)]
+			execute(sql) map ((instance) => {
+				var patternWoNS: String = instance
+				namespaces foreach (ontology_namespace => {
+					patternWoNS = removeOntologyNamespace(patternWoNS, ontology_namespace)
+				})
+				val patternJson = Json.parse(patternWoNS).validate[PatternFromDB].get
+				patterns :::= List(new Pattern(patternId, "", -1, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+			})
+		} catch {
+			case e: SqlSyntaxErrorException => {
+				println("This dataset has no similar patterns with id: " + patternId)
+
+			}
+		}
+		patterns
+	}
+
+	def getSimilarPatterns(s: String, gc: Option[String]): List[Pattern] = {
+		var dbExt = gc.getOrElse("")
+		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}".as[String]
+		val namespaces: Vector[String] = execute(sql) map (ontology_namespace => {
+			"\"group\":\"" + ontology_namespace
+		})
+		var patterns: List[Pattern] = Nil
+		try {
+			val statement = connection.createStatement()
+			val sql = sql"SELECT id, pattern, count FROM #$s.SIMILAR_PATTERNS ORDER BY count ASC".as[(Int, String, Int)]
+			var lastId = -1
+			execute(sql) map tupled((id, pattern, cnt) => {
+				if (lastId != id) {
+					var patternWoNS: String = pattern
+					namespaces foreach (ontology_namespace => {
+						patternWoNS = removeOntologyNamespace(patternWoNS, ontology_namespace)
+					})
+					val patternJson = Json.parse(patternWoNS).validate[PatternFromDB].get
+					patterns :::= List(new Pattern(id, "", cnt, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+				}
+				lastId = id
+			})
+		} catch {
+			case e: SqlSyntaxErrorException => {
+				println("This dataset has no similar patterns: " + s)
+
+			}
+		}
+		patterns
 	}
 
 	def getPropertyStatistics(dataset: String, clusters: List[String]): Seq[Property] = {
@@ -1045,6 +1120,36 @@ class DatabaseConnection(config: Configuration) {
 		performInsert(name + ".predicatetable", List("predicate"), List(s)) match {
 			case Some(i) => i
 			case None => getPropertyId(name, s)
+		}
+	}
+
+	def insertSimilarPatterns(dataset: String, similarPatterns: util.List[util.List[String]], similarPaths: util.List[String], differenceToFirst: util.HashMap[Integer, util.HashMap[Edge, Integer]]) = {
+		dropTable(dataset + ".SIMILAR_PATTERNS")
+		try {
+			val createStatement = connection.createStatement()
+			createStatement.execute("CREATE TABLE " + dataset + ".SIMILAR_PATTERNS (" +
+				"ID INT NOT NULL, " +
+				"PATTERN CLOB, " +
+				"COUNT INT, " +
+				"INSTANCE CLOB)")
+			createStatement.close()
+		} catch {
+			case e: SqlSyntaxErrorException => println(e.getMessage)
+		}
+		val similarPatternList = similarPatterns.asScala.toList
+		val similarPathsList = similarPaths.asScala.toList
+		similarPatternList.zipWithIndex.foreach {
+			case (patternList, index) => {
+				val patterns = patternList.asScala.toList
+				patterns.foreach {
+					case (pattern) => {
+						val path = similarPathsList(index)
+						val query: String = "INSERT INTO " + dataset + ".SIMILAR_PATTERNS (id, pattern, count, instance) VALUES (" + index + ", '" + path.replaceAll("\\'", "\\'\\'") + "', " + patterns.size + ", '" + pattern.replaceAll("\\'", "\\'\\'") + "')"
+						executeStringQuery(query)
+					}
+				}
+
+			}
 		}
 	}
 

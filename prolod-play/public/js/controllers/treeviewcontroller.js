@@ -33,7 +33,7 @@ define(['angular', './controllers'], function (angular) {
                     return;
                 }
 
-                console.log("update treeview");
+                // console.log("update treeview");
                 var params = $route.current.params;
 
                 $scope.model.selectedNodes.length = 0;

@@ -104,6 +104,14 @@ define(["angular", "./services"], function () {
             getGenericUrl: function (view, params) {
                 params = params || $route.current.params;
                 return buildUri([view, params.dataset], {group: params.group});
+            },
+            getSimilarGraphPatterns: function (params) {
+                params = params || $route.current.params;
+                return buildUri(['graphstatistics', params.dataset, 'similarpatterns'], {group: params.group});
+            },
+            getGraphSimilarPatternUrl: function (pattern, params) {
+                params = params || $route.current.params;
+                return buildUri(['graphstatistics', params.dataset, 'similarpattern', pattern]);
             }
         }
     }]);
