@@ -892,26 +892,7 @@ class DatabaseConnection(config: Configuration) {
 								val cPattern = coloredPatternsMap.get(isoCounter).get.asScala.toList
 								cPattern.foreach { case (coloredpattern) =>
 									try {
-										// add subject id (db) for patterns
-										val patternJson = Json.parse(coloredpattern).validate[PatternFromDB].get
-										var nodeList: List[Node] = Nil
-										var linkList: List[Link] = Nil
-										var nodeMap: Map[Int, Int] = Map()
-										for (node <- patternJson.nodes) {
-											var newDbId = -1
-											if (subjects.contains(node.uri.get)) {
-												newDbId = subjects.get(node.uri.get).get
-											}
-											val newNode = node.copy(dbId = Some(newDbId))
-											nodeMap += (node.id -> newNode.id)
-											nodeList :::= List(newNode)
-										}
-										for (link <- patternJson.links) {
-											val newLink = link.copy()
-											linkList :::= List(newLink)
-										}
-										val pattern2insert = new PatternFromDB(patternJson.name, nodeList, linkList)
-										val newPattern = Json.toJson(pattern2insert).toString()
+										val newPattern = addSubjectIdToPattern(subjects, coloredpattern)
 										val statement = connection.createStatement()
 										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns" + dbExt + " (ID, PATTERN) VALUES (" + isoCounter + ", '" + newPattern + "')")
 										statement.close()
@@ -938,11 +919,33 @@ class DatabaseConnection(config: Configuration) {
 		}
 	}
 
+	private def addSubjectIdToPattern(subjects: Map[String, Int], coloredpattern: String): String = {
+		val patternJson = Json.parse(coloredpattern).validate[PatternFromDB].get
+		var nodeList: List[Node] = Nil
+		var linkList: List[Link] = Nil
+		var nodeMap: Map[Int, Int] = Map()
+		for (node <- patternJson.nodes) {
+			var newDbId = -1
+			if (subjects.contains(node.uri.get)) {
+				newDbId = subjects.get(node.uri.get).get
+			}
+			val newNode = node.copy(dbId = Some(newDbId))
+			nodeMap += (node.id -> newNode.id)
+			nodeList :::= List(newNode)
+		}
+		for (link <- patternJson.links) {
+			val newLink = link.copy()
+			linkList :::= List(newLink)
+		}
+		val pattern2insert = new PatternFromDB(patternJson.name, nodeList, linkList)
+		return Json.toJson(pattern2insert).toString()
+	}
+
 	def insertPatternsGC(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int]): Unit = {
 		insertPatterns(name, patterns, coloredPatterns, coloredIsoPatterns, diameter, subjects, Some("_gc"))
 	}
 
-	def performInsert(table: String, names: Seq[Any], values: Seq[Any]): Option[Int] = {
+	private def performInsert(table: String, names: Seq[Any], values: Seq[Any]): Option[Int] = {
 		validateDatasetString(table)
 		val query = String.format("insert into %s (%s) values (%s)",
 			table,
@@ -1136,6 +1139,7 @@ class DatabaseConnection(config: Configuration) {
 		} catch {
 			case e: SqlSyntaxErrorException => println(e.getMessage)
 		}
+		val subjects = getSubjectUris(dataset)
 		val similarPatternList = similarPatterns.asScala.toList
 		val similarPathsList = similarPaths.asScala.toList
 		similarPatternList.zipWithIndex.foreach {
@@ -1144,7 +1148,10 @@ class DatabaseConnection(config: Configuration) {
 				patterns.foreach {
 					case (pattern) => {
 						val path = similarPathsList(index)
-						val query: String = "INSERT INTO " + dataset + ".SIMILAR_PATTERNS (id, pattern, count, instance) VALUES (" + index + ", '" + path.replaceAll("\\'", "\\'\\'") + "', " + patterns.size + ", '" + pattern.replaceAll("\\'", "\\'\\'") + "')"
+
+						val newPattern = addSubjectIdToPattern(subjects, pattern)
+
+						val query: String = so"INSERT INTO " + dataset + ".SIMILAR_PATTERNS (id, pattern, count, instance) VALUES (" + index + ", '" + path.replaceAll("\\'", "\\'\\'") + "', " + patterns.size + ", '" + newPattern.replaceAll("\\'", "\\'\\'") + "')"
 						executeStringQuery(query)
 					}
 				}
