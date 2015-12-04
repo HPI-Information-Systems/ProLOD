@@ -102,6 +102,11 @@ body {
     text-align: left;
 }
 
+#class-sun-burst path {
+    stroke: #fff;
+    fill-rule: evenodd;
+}
+
 .graph-grid {
 
 }

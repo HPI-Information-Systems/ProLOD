@@ -1,23 +1,25 @@
-GET        /datasets                                         controllers.prolod.server.Datasets.datasets()
+GET        /datasets                                            controllers.prolod.server.Datasets.datasets()
 
-GET        /properties/:dataset                              controllers.prolod.server.Properties.getPropertyStatistics(dataset: String, groups: List[String])
+GET        /properties/:dataset                                 controllers.prolod.server.Properties.getPropertyStatistics(dataset: String, groups: List[String])
 
-GET        /entitydetails/:dataset/:entity                   controllers.prolod.server.Entity.getDetails(dataset: String, entity: Int)
+GET        /entitydetails/:dataset/:entity                      controllers.prolod.server.Entity.getDetails(dataset: String, entity: Int)
 
-GET        /graphstatistics/:dataset                         controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, groups: List[String])
+GET        /graphstatistics/:dataset                            controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, groups: List[String])
 
 # example: http://localhost:9000/server/graphstatistics/0/pattern/0?group=1&group=2
-GET        /graphstatistics/:dataset/pattern/:pattern        controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+GET        /graphstatistics/:dataset/pattern/:pattern           controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /graphstatisticsiso/:dataset/pattern/:pattern    controllers.prolod.server.GraphLod.getGraphIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+GET        /graphstatisticsiso/:dataset/pattern/:pattern        controllers.prolod.server.GraphLod.getGraphIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /giantcomponent/:dataset                            controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String])
+GET        /giantcomponent/:dataset                             controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String])
 
-GET        /giantcomponent/:dataset/pattern/:pattern          controllers.prolod.server.GraphLod.getGCPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+GET        /giantcomponent/:dataset/pattern/:pattern            controllers.prolod.server.GraphLod.getGCPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /giantcomponentiso/:dataset/pattern/:pattern       controllers.prolod.server.GraphLod.getGCIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+GET        /giantcomponentiso/:dataset/pattern/:pattern         controllers.prolod.server.GraphLod.getGCIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
-GET        /uniqueness/:dataset                              controllers.prolod.server.Keyness.getKeyness(dataset: String, groups: List[String])
+GET        /uniqueness/:dataset                                 controllers.prolod.server.Keyness.getKeyness(dataset: String, groups: List[String])
 
-GET        /assets/*file                                     controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
+GET        /classes/:dataset                                    controllers.prolod.server.Classes.classes(dataset: String)
+
+GET        /assets/*file                                        controllers.prolod.server.Assets.versioned(path="/public/lib/prolod-server", file: Asset)
 

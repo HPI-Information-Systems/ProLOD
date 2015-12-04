@@ -50,7 +50,7 @@ requirejs.config({
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
          './controllers/graphpatterncontroller', './controllers/gcpatterncontroller', './controllers/graphisopatterncontroller', './controllers/gcisopatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
-         './controllers/uniqueness','./controllers/properties',
+         './controllers/uniqueness','./controllers/properties', './controllers/classviewcontroller',
          './directives/directives', './directives/graphThumbnail', './directives/whenScrollEnds',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
          'angular-route', 'ui-grid', '../bg-splitter/js/splitter','treeControl', 'd3', 'dimple', 'angular-ui-bootstrap','jquery'],
@@ -82,6 +82,7 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/synonyms/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.SynonymViewCtrl, activetab: 'synonyms'});
 
       $routeProvider.when('/uniqueness/:dataset', {templateUrl: 'assets/partials/uniqueness.html', controller: 'UniquenessCtrl', activetab: 'uniqueness'});
+      $routeProvider.when('/classes/:dataset', {templateUrl: 'assets/partials/classview.html', controller: 'ClassViewCtrl', activetab: 'classes'});
 
       /*
       $routeProvider.when('/factGeneration/:dataset', {templateUrl: 'assets/partials/table.html', controller: tableviewcontrollers.FactGenerationViewCtrl, activetab: 'factGeneration'});

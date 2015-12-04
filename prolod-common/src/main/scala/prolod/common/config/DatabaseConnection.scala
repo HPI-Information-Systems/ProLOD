@@ -223,8 +223,8 @@ class DatabaseConnection(config: Configuration) {
 	}
 
 	def validateDatasetString(table: String) = {
-		if (!table.matches("[A-Za-z]+")) {
-			//throw new RuntimeException("illegal table name: " + table)
+		if (!table.matches("[A-Za-z\\-_]+")) {
+			throw new RuntimeException("illegal table name: " + table) // this is a check to prevent SQL injection!
 		}
 	}
 
@@ -1102,13 +1102,23 @@ class DatabaseConnection(config: Configuration) {
 		}
 	}
 
-	def insertClassHierarchy(name: String, cluster_hierarchy: com.google.common.collect.Multimap[String, String]) = {
+
+	def insertClassHierarchy(dataset: String, cluster_hierarchy: com.google.common.collect.Multimap[String, String]) = {
 		cluster_hierarchy.asMap().asScala foreach tupled((cluster, subclusters) => {
 			subclusters.asScala foreach ((subcluster) => {
-				val query: String = "INSERT INTO " + name + ".cluster_hierarchy (cluster, subcluster) VALUES ('" + cluster + "', '" + subcluster + "')"
+				val query: String = "INSERT INTO " + dataset + ".CLUSTER_HIERARCHY (cluster, subcluster) VALUES ('" + cluster + "', '" + subcluster + "')"
 				executeStringQuery(query)
 			})
 		})
+	}
+
+	def getClassHierarchy(dataset: String): Map[String, Vector[String]] = {
+		validateDatasetString(dataset)
+		val sql = sql"SELECT cluster, subcluster FROM #${dataset}.CLUSTER_HIERARCHY ORDER BY cluster, subcluster".as[(String, String)]
+		val result = execute(sql)
+		result.groupBy(tupled((cluster, subcluster) => { cluster }))
+				  .mapValues(vector => vector.map(tupled((cluster,subcluster) => subcluster)));
+
 	}
 
 	def executeStringQuery(query: String): Unit = {

@@ -85,6 +85,10 @@ define(["angular", "./services"], function () {
                 params = params || $route.current.params;
                 return buildUri(['properties', params.dataset], {group: params.group});
             },
+            getClassViewUrl: function (params) {
+                params = params || $route.current.params;
+                return buildUri(['classes', params.dataset], {group: params.group});
+            },
             getInversePredicateUrl: function (params) {
                 params = params || $route.current.params;
                 return buildUri(['inversePredicates', params.dataset], {group: params.group});

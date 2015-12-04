@@ -54,6 +54,15 @@ define(["angular", "./services"], function () {
 
 
             // JUST DUMMIES:
+            getAssociationRules: function (dataset, groups) {
+                return $http.get(uri(['associationRules', dataset]), {params: {groups: groups}});
+            },
+            getSynonyms: function (dataset, groups) {
+                return $http.get(uri(['synonyms', dataset]), {params: {groups: groups}});
+            },
+            getInversePredicates: function (dataset, groups) {
+                return $http.get(uri(['inversePredicates', dataset]), {params: {groups: groups}});
+            },
             /*
             getTable1: function () {
                 return $http.get('persons');
@@ -64,16 +73,7 @@ define(["angular", "./services"], function () {
             getPredicates: function (dataset, groups) {
                 return $http.get(uri(['predicates', dataset]), {params: {groups: groups}});
             },
-            getInversePredicates: function (dataset, groups) {
-                return $http.get(uri(['inversePredicates', dataset]), {params: {groups: groups}});
-            },
-            getAssociationRules: function (dataset, groups) {
-                return $http.get(uri(['associationRules', dataset]), {params: {groups: groups}});
-            },
-            getSynonyms: function (dataset, groups) {
-                return $http.get(uri(['synonyms', dataset]), {params: {groups: groups}});
-            }
-            ,
+
             getFactGeneration: function (dataset, groups) {
                 return $http.get(uri(['factGeneration', dataset]), {params: {groups: groups}});
             },
