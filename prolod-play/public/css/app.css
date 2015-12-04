@@ -107,6 +107,13 @@ body {
     fill-rule: evenodd;
 }
 
+
+#class-sun-burst text {
+    text-anchor: middle;
+    fill: #666;
+    pointer-events: none;
+}
+
 .graph-grid {
 
 }

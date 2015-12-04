@@ -33,16 +33,13 @@ define(['angular', './controllers', 'd3'], function (angular) {
                .innerRadius(function(d) { return Math.max(0, y(d.y)); })
                .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-           var text = svg.append("text")
-               .attr("x", 0)
-               .attr("y", 0)
-               .attr("dy", "0.35em");
-
-           d3.json("/server/classes/" + $routeParams.dataset, function(error, root) {
+           d3.json("/server/classes/" + $routeParams.dataset, function(error, data) {
                if (error) throw error;
 
+               var root = {"name": "", "size": 0, "children": [data.classes]};
+
                var path = svg.selectAll("path")
-                   .data(partition.nodes(root.classes))
+                   .data(partition.nodes(root))
                    .enter().append("path")
                    .attr("d", arc)
                    .style("fill", getColor)
@@ -50,18 +47,32 @@ define(['angular', './controllers', 'd3'], function (angular) {
                    .on("mouseover", mouseover)
                    .on("mouseout", mouseout);
 
+               var clicked = {};
+
+               var text = svg.append("text")
+                   .attr("x", 0)
+                   .attr("y", 0)
+                   .attr("dy", "0.35em");
+
                function click(d) {
+                   clicked = d;
                    path.transition()
                        .duration(750)
                        .attrTween("d", arcTween(d));
                }
 
                function getColor(d) {
+                   if(d === root) {
+                       return d3.rgb("lightgrey");
+                   }
                    return color((d.children ? d : d.parent).name);
                }
-               
+
                function mouseover(d) {
-                   var percentage = (100 * d.size / root.classes.size).toPrecision(3);
+                   if(d === root || d === clicked.parent) {
+                       return;
+                   }
+                   var percentage = (100 * d.size / data.classes.size).toPrecision(3);
                    text.html("<tspan style='font-size: 30px' x=0 dy='-20'>" + (d.size) + "</tspan>"
                              + "<tspan style='font-size: 15px' x=0 dy='25'>" + d.name + "</tspan>"
                              + "<tspan style='font-size: 30px' x=0 dy='35'>" + percentage + "%</tspan>");
