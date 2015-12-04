@@ -6,6 +6,10 @@ GET        /entitydetails/:dataset/:entity                      controllers.prol
 
 GET        /graphstatistics/:dataset                            controllers.prolod.server.GraphLod.getGraphStatistics(dataset: String, groups: List[String])
 
+GET        /graphsimilarpatterns/:dataset                    controllers.prolod.server.GraphLod.getGraphSimilarPatterns(dataset: String, groups: List[String])
+
+GET        /graphsimilarpatterns/:dataset/pattern/:pattern   controllers.prolod.server.GraphLod.getGraphSimilarPattern(dataset: String, groups: List[String], pattern: Int)
+
 # example: http://localhost:9000/server/graphstatistics/0/pattern/0?group=1&group=2
 GET        /graphstatistics/:dataset/pattern/:pattern           controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 

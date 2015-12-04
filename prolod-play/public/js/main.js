@@ -49,7 +49,7 @@ requirejs.config({
 
 require(['angular', './controllers/viewcontrollers','./controllers/tableviewcontrollers', './controllers/chartcontroller', './controllers/controllers',
          './controllers/graphstatisticscontroller', './controllers/maincontroller', './controllers/panelcontroller', './controllers/breadcrumbcontroller', './controllers/treeviewcontroller',
-         './controllers/graphpatterncontroller', './controllers/gcpatterncontroller', './controllers/graphisopatterncontroller', './controllers/gcisopatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
+         './controllers/graphsimilarpatternscontroller', './controllers/graphsimilarpatterncontroller', './controllers/graphpatterncontroller', './controllers/gcpatterncontroller', './controllers/graphisopatterncontroller', './controllers/gcisopatterncontroller', './controllers/graphdetailcontroller','./controllers/giantcomponentcontroller','./controllers/popupcontroller',
          './controllers/uniqueness','./controllers/properties', './controllers/classviewcontroller',
          './directives/directives', './directives/graphThumbnail', './directives/whenScrollEnds',
          './filters/filters', './services/services', './services/httpApi', './services/routeBuilder', './services/colorHash',
@@ -64,6 +64,8 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/', {templateUrl: 'assets/partials/index.html', controller: viewcontrollers.IndexViewCtrl});
 
       $routeProvider.when('/graphstatistics/:dataset', {templateUrl: 'assets/partials/graph_statistics.html', controller: 'GraphCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/similarpatterns', {templateUrl: 'assets/partials/graph_similarpatterns.html', controller: 'GraphSimilarPatternsCtrl', activetab: 'graphs'})
+      $routeProvider.when('/graphstatistics/:dataset/similarpattern/:pattern', {templateUrl: 'assets/partials/graph_similarpattern.html', controller: 'GraphSimilarPatternCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatisticsiso/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_isopattern.html', controller: 'GraphIsoPatternCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/giantComponent', {templateUrl: 'assets/partials/giant_component.html', controller: 'GiantComponentCtrl', activetab: 'graphs'});
@@ -94,6 +96,6 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
     }]);
 
     angular.bootstrap(document, ['Prolod2']);
-    console.log('bootstrapped!');
+    //console.log('bootstrapped!');
 
   });

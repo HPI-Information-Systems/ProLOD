@@ -2,9 +2,10 @@
     <bg-pane>
         <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
-            <a ng-repeat="pattern in data.pattern | limitTo: limit" href="#{{::routeBuilder.getGraphPatternUrl(pattern.id)}}">
+            <a ng-repeat="pattern in data.pattern | limitTo: limit">
                 <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
-                <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"></prolod-graph-thumbnail>
+                <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"
+                                        show-arrows="true" click-handler="nodeClick"></prolod-graph-thumbnail>
             </a>
         </div>
     </bg-pane>
@@ -15,20 +16,8 @@
                 <h3>Statistics:</h3>
                 <table class="table stats">
                     <tr ng-if="stats.connectedComponents">
-                        <td>Patterns:</td>
+                        <td>Connected components:</td>
                         <td class="align-right">{{stats.connectedComponents | number}}</td>
-                    </tr>
-                    <tr ng-if="stats.nodes">
-                        <td>Nodes per pattern:</td>
-                        <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
-                    </tr>
-                    <tr ng-if="stats.edges">
-                        <td>Edges per pattern:</td>
-                        <td class="align-right">{{stats.edges | number}}</td>
-                    </tr>
-                    <tr ng-if="stats.diameter">
-                        <td>Pattern diameter:</td>
-                        <td class="align-right">{{stats.diameter | number}}</td>
                     </tr>
                 </table>
             </div>

@@ -45,6 +45,7 @@ define(["angular", "./services", 'd3'], function () {
 
         function colorHash(value) {
             if (value == null) return "#fff";
+            if (value == "null") return "#fff";
             if (value == "surrounding") return d3.rgb(230, 230, 230);
             var str = JSON.stringify(value) || "";
             var i = murmurhash2_32_gc(str);

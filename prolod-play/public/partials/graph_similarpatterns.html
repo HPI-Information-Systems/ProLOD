@@ -1,0 +1,135 @@
+<bg-splitter orientation="vertical">
+    <bg-pane>
+        <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
+            <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
+            <!--
+            <a href="#{{::routeBuilder.getGiantComponentUrl()}}" ng-if="stats.giantComponentNodes">
+                <div class="graph-cell">
+                    <div>Giant Component</div>
+                    <svg width="200px" height="150px">
+                        <g>
+                            <rect width="200" height="150" fill="white"></rect>
+                            <circle class="node" r="40" style="fill: white;" cx="100" cy="75"></circle>
+                        </g>
+                    </svg>
+                </div>
+            </a>
+            -->
+
+            <a ng-repeat="pattern in data.pattern | limitTo: limit" href="#{{::routeBuilder.getGraphSimilarPatternUrl(pattern.id)}}">
+                <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
+                <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction" show-arrows="true" disable-hovering="true"></prolod-graph-thumbnail>
+            </a>
+
+        </div>
+    </bg-pane>
+
+    <bg-pane>
+        <div class="lowerpanel" click-handler="onClick">
+            <div class="float-left" style="margin-left: 15px;">
+                <h3>Statistics:</h3>
+                <table class="table stats">
+                    <tr>
+                        <td>Nodes:</td>
+                        <td></td>
+                        <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.edges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.averagelinks">
+                        <td>Average Links:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.averagelinks | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.connectedComponents">
+                        <td>Connected Components:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.connectedComponents | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.connectedComponentsMinEdges">
+                        <td class="align-right">Minimum Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.connectedComponentsMinEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.connectedComponentsMaxEdges">
+                        <td class="align-right">Maximum Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.connectedComponentsMaxEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.connectedComponentsAvgEdges">
+                        <td class="align-right">Average Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.connectedComponentsAvgEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.stronglyConnectedComponents">
+                        <td>Strongly Connected Components:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.stronglyConnectedComponents | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.stronglyConnectedComponentsMinEdges">
+                        <td class="align-right">Minimum Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.stronglyConnectedComponentsMinEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.stronglyConnectedComponentsMaxEdges">
+                        <td class="align-right">Maximum Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.stronglyConnectedComponentsMaxEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.stronglyConnectedComponentsAvgEdges">
+                        <td class="align-right">Average Edges:</td>
+                        <td></td>
+                        <td>{{stats.stronglyConnectedComponentsAvgEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.averageDiameter">
+                        <td>Average Diameter:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.averageDiameter | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.giantComponentEdges">
+                        <td>Giant Component - Edges:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.giantComponentEdges | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.giantComponentNodes">
+                        <td>Giant Component - Nodes:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.giantComponentNodes | number}}</td>
+                    </tr>
+                    <tr ng-if="stats.giantComponentDiameter">
+                        <td>Giant Component Diameter:</td>
+                        <td></td>
+                        <td class="align-right">{{stats.giantComponentDiameter | number}}</td>
+                    </tr>
+                    <tr ng-repeat="(key, value) in stats.highestIndegrees" ng-show="$first">
+                        <td>Highest indegree</td>
+                        <td ng-repeat="(k, v) in value"><a id="hi{{k}}" ng-click="onClick('hi'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
+                    </tr>
+                    <tr ng-repeat="(key, value) in stats.highestIndegrees" ng-show="!$first">
+                        <td></td>
+                        <td ng-repeat="(k, v) in value"><a id="hi{{k}}" ng-click="onClick('hi'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
+                    </tr>
+                    <tr ng-repeat="(key, value) in stats.highestOutdegrees" ng-show="$first">
+                        <td>Highest outdegree</td>
+                        <td ng-repeat="(k, v) in value"><a id="ho{{k}}" ng-click="onClick('ho'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
+                    </tr>
+                    <tr ng-repeat="(key, value) in stats.highestOutdegrees" ng-show="!$first">
+                        <td>Highest outdegree</td>
+                        <td ng-repeat="(k, v) in value"><a id="ho{{k}}" ng-click="onClick('ho'+this.id)">{{key}}</a></td>
+                        <td ng-repeat="(k, v) in value" class="align-right"> {{ v }} </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="float-left" style="margin-left: 50px;">
+                <h3>Node degree distribution:</h3>
+                <div id="distribution-chart"></div>
+            </div>
+        </div>
+    </bg-pane>
+</bg-splitter>

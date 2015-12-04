@@ -2,8 +2,8 @@
 
 define(['angular', './controllers', 'dimple'], function (angular) {
     // controller for the lower panel
-    angular.module('Prolod2.controllers').controller("GraphCtrl", ['$scope', '$window', '$routeParams', '$timeout', 'routeBuilder', 'httpApi',
-        function ($scope, $window, $routeParams, $timeout, routeBuilder, httpApi, $modal) {
+    angular.module('Prolod2.controllers').controller("GraphSimilarPatternsCtrl", ['$scope', '$window', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash',
+        function ($scope, $window, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
             var breadCrumbMenu = [
                 {name: 'Graphs', url: routeBuilder.getGraphUrl()},
                 {name:'Similar Graph Patterns', url: routeBuilder.getSimilarGraphPatterns()},
@@ -16,7 +16,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             };
 
             $scope.colorFunction = function (d) {
-                return 'white';
+                return colorHash(d.group);
             };
 
             $scope.loading = true;
@@ -37,9 +37,10 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 }
             };
 
-            httpApi.getGraphStatistics($routeParams.dataset, $routeParams.group).then(function (data) {
+            httpApi.getGraphSimilarPatterns($routeParams.dataset, $routeParams.group).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
+                //console.log($scope.data.pattern);
 
                 $scope.loading = false;
 
