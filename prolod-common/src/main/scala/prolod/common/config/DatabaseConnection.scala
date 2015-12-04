@@ -1151,7 +1151,7 @@ class DatabaseConnection(config: Configuration) {
 
 						val newPattern = addSubjectIdToPattern(subjects, pattern)
 
-						val query: String = so"INSERT INTO " + dataset + ".SIMILAR_PATTERNS (id, pattern, count, instance) VALUES (" + index + ", '" + path.replaceAll("\\'", "\\'\\'") + "', " + patterns.size + ", '" + newPattern.replaceAll("\\'", "\\'\\'") + "')"
+						val query: String = "INSERT INTO " + dataset + ".SIMILAR_PATTERNS (id, pattern, count, instance) VALUES (" + index + ", '" + path.replaceAll("\\'", "\\'\\'") + "', " + patterns.size + ", '" + newPattern.replaceAll("\\'", "\\'\\'") + "')"
 						executeStringQuery(query)
 					}
 				}
