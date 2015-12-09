@@ -7,7 +7,7 @@ define(['angular', './controllers', 'd3'], function (angular) {
            $scope.updateBreadcrumb([{name: 'Classes', url: routeBuilder.getClassViewUrl()}]);
 
            var width = 960,
-               height = 700,
+               height = 600,
                radius = Math.min(width, height) / 2;
 
            var x = d3.scale.linear()
@@ -22,7 +22,7 @@ define(['angular', './controllers', 'd3'], function (angular) {
                .attr("width", width)
                .attr("height", height)
                .append("g")
-               .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+               .attr("transform", "translate(" + width / 2 + "," + (height / 2 ) + ")");
 
            var partition = d3.layout.partition()
                .value(function(d) { return d.size; });
@@ -33,9 +33,8 @@ define(['angular', './controllers', 'd3'], function (angular) {
                .innerRadius(function(d) { return Math.max(0, y(d.y)); })
                .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-           d3.json("/server/classes/" + $routeParams.dataset, function(error, data) {
-               if (error) throw error;
-
+           httpApi.getClassHierarchy($routeParams.dataset).then(function(result) {
+               var data = result.data;
                var root = {"name": "", "size": 0, "children": [data.classes]};
 
                var path = svg.selectAll("path")

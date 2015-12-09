@@ -20,6 +20,9 @@ define(["angular", "./services"], function () {
             getDatasets: function () {
                 return getCached(uri(['server', 'datasets']));
             },
+            getClassHierarchy: function(dataset) {
+                return getCached(uri(["server", "classes", dataset]), {params: {}})
+            },
             getGraphStatistics: function (dataset, groups) {
                 return getCached(uri(['server', 'graphstatistics', dataset]), {params: {groups: groups}});
             },
