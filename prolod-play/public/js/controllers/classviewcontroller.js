@@ -6,7 +6,7 @@ define(['angular', './controllers', 'd3'], function (angular) {
        function ($scope, $window, $routeParams, routeBuilder, httpApi) {
            $scope.updateBreadcrumb([{name: 'Classes', url: routeBuilder.getClassViewUrl()}]);
 
-           var width = 960,
+           var width = 600,
                height = 600,
                radius = Math.min(width, height) / 2;
 

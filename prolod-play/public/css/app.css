@@ -71,7 +71,7 @@ body {
 }
 
 
-#view {
+.view {
     padding: 10px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -100,6 +100,11 @@ body {
     height: calc(100% - 3px);
     width: calc(100% - 10px);
     text-align: left;
+}
+
+#class-sun-burst {
+    margin: 10px;
+    text-align: center;
 }
 
 #class-sun-burst path {
