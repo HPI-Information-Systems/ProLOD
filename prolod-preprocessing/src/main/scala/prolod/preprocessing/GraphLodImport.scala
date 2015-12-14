@@ -20,8 +20,8 @@ class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: S
 	def run: Unit = {
 
 		db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount, ontologyNamespace, namespace)
-		db.insertClasses(name, graphLod.dataset.ontologyClasses)
-		db.insertClassHierarchy(name, graphLod.dataset.ontologySubclasses)
+		db.insertClasses(name, graphLod.dataset.getOntologyClasses)
+		db.insertClassHierarchy(name, graphLod.dataset.getOntologySubclasses)
 		val connectedGraphSizes = graphLod.connectedGraphSizes.asScala.max[Integer]
 		db.insertStatistics(name, graphLod.nodeDegreeDistribution.toString, graphLod.averageLinks,
 			graphLod.graphFeatures.getEdgeCount, graphLod.graphFeatures.getVertexCount, connectedGraphSizes.toInt, graphLod.connectedGraphs.size,

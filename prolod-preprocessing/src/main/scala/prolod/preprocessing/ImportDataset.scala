@@ -48,7 +48,7 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
 
 	if (addFiles) {
 		importTriples(true)
-        db.updateClasses(name, ontologyNamespace)
+		db.updateClasses(name, ontologyNamespace)
 		db.updateClusterSizes(name, ontologyNamespace)
 	} else {
 		if (!keyness) {
