@@ -7,7 +7,6 @@ import java.{lang, util}
 import com.ibm.db2.jcc.am.{SqlDataException, SqlException, SqlIntegrityConstraintViolationException, SqlSyntaxErrorException}
 import com.typesafe.slick.driver.db2.DB2Driver.api._
 import de.hpi.fgis.loducc.Keyness
-import graphlod.algorithms.GraphFeatures
 import graphlod.graph.Edge
 import play.api.libs.json._
 import prolod.common.models.PatternFormats.patternDBFormat
@@ -232,6 +231,7 @@ class DatabaseConnection(config: Configuration) {
 
 	def getClusters(dataset: String, ontologyNamespace: String): Seq[Group] = {
 		validateDatasetString(dataset)
+
 		val sql = sql"SELECT id, label, cluster_size FROM #${dataset}.CLUSTERS WHERE username = 'ontology' ORDER BY LABEL".as[(Int, String, Int)]
 		try {
 			val result = execute(sql)
@@ -1197,16 +1197,15 @@ class DatabaseConnection(config: Configuration) {
 		}
 	}
 
-	def insertClasses(name: String, clusters: util.List[String]) = {
-		val clusterUris = clusters.asScala.toList
+	def insertClasses(dataset: String, clusters: util.Set[String]) = {
+		val clusterUris = clusters.asScala
 		clusterUris.foreach {
 			case (cluster) => {
-				val query: String = "INSERT INTO " + name + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')"
+				val query: String = "INSERT INTO " + dataset + ".clusters (label, cluster_size, username) VALUES ('" + cluster + "', 0 , 'ontology')"
 				executeStringQuery(query)
 			}
 		}
 	}
-
 
 	def insertClassHierarchy(dataset: String, cluster_hierarchy: com.google.common.collect.Multimap[String, String]) = {
 		cluster_hierarchy.asMap().asScala foreach tupled((cluster, subclusters) => {
@@ -1222,8 +1221,7 @@ class DatabaseConnection(config: Configuration) {
 		val sql = sql"SELECT cluster, subcluster FROM #${dataset}.CLUSTER_HIERARCHY ORDER BY cluster, subcluster".as[(String, String)]
 		val result = execute(sql)
 		result.groupBy(tupled((cluster, subcluster) => { cluster }))
-				  .mapValues(vector => vector.map(tupled((cluster,subcluster) => subcluster)));
-
+				  .mapValues(vector => vector.map(tupled((cluster,subcluster) => subcluster)))
 	}
 
 	def executeStringQuery(query: String): Unit = {
