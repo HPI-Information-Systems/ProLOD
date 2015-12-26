@@ -126,11 +126,11 @@ class DatabaseConnection(config: Configuration) {
 		}
 
 		createTable(name + ".patterns (id INT, name VARCHAR(200), pattern CLOB, occurences INT, diameter FLOAT, nodedegreedistribution CLOB)")
-		createTable(name + ".coloredpatterns (id INT, pattern CLOB, name VARCHAR(200))")
+		createTable(name + ".coloredpatterns (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".coloredisopatterns (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".PATTERNS_GC (id INT, name VARCHAR(200), pattern CLOB, occurences INT, diameter FLOAT, nodedegreedistribution CLOB)")
 
-		createTable(name + ".COLOREDPATTERNS_GC (id INT, pattern CLOB, name VARCHAR(200))")
+		createTable(name + ".COLOREDPATTERNS_GC (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".coloredisopatterns_GC (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, gcedges INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
 		createTable(name + ".CLUSTERS " +
@@ -482,7 +482,7 @@ class DatabaseConnection(config: Configuration) {
 		statistics
 	}
 
-	def getColoredPatterns(dataset: String, id: Int, gc: Option[String]): List[Pattern] = {
+	def getColoredPatterns(dataset: String, id: Int, coloredPattern: Int, gc: Option[String]): List[Pattern] = {
 		val dbExt = gc.getOrElse("")
 		var patterns: List[Pattern] = Nil
 		val sql = sql"SELECT ontology_namespace FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}".as[String]
@@ -491,7 +491,7 @@ class DatabaseConnection(config: Configuration) {
 		})
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT pattern FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE id = " + id)
+			val resultSet = statement.executeQuery("SELECT pattern FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE pattern_id = " + id + " AND id = " + coloredPattern)
 			while (resultSet.next()) {
 				var pattern = resultSet.getString("pattern")
 				namespaces foreach (ontology_namespace => {
@@ -505,17 +505,7 @@ class DatabaseConnection(config: Configuration) {
 					println("Could not validate " + errors)
 				}
 				val patternJson = Json.parse(pattern).validate[PatternFromDB].get
-				var isoGroup = -1
-				try {
-					val sqlIso = sql"""SELECT pattern_id FROM #${dataset}.COLOREDISOPATTERNS#${dbExt} WHERE ID = #${id}""".as[Int]
-					val resultIso = execute(sqlIso)
-					resultIso.foreach((isoId) => {
-						isoGroup = isoId
-					})
-				} catch {
-					case e: SqlSyntaxErrorException => println(e.getMessage)
-				}
-				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links, -1, Some(isoGroup))) // new Pattern(id, "", occurences, Nil, Nil)
+				patterns :::= List(new Pattern(id, "", -1, patternJson.nodes, patternJson.links, -1, Some(coloredPattern))) // new Pattern(id, "", occurences, Nil, Nil)
 			}
 		} catch {
 			case e: SqlSyntaxErrorException => println("This dataset has no colored patterns: " + dataset)
@@ -574,6 +564,12 @@ class DatabaseConnection(config: Configuration) {
 			} catch {
 				case e : Throwable => name = ""
 			}
+			var patternId : Int = -1
+			try {
+				patternId = resultSet.getInt("pattern_id")
+			} catch {
+				case e : Throwable => patternId = -1
+			}
 			var isoId = resultSet.getInt("id")
 			namespaces foreach (ontology_namespace => {
 				pattern = removeOntologyNamespace(pattern, ontology_namespace)
@@ -592,7 +588,7 @@ class DatabaseConnection(config: Configuration) {
 				println("Could not validate " + errors)
 			}
 			val patternJson = Json.parse(pattern).validate[PatternFromDB].get
-			patterns :::= List(new Pattern(isoId, name, occurences, patternJson.nodes, patternJson.links)) // new Pattern(id, "", occurences, Nil, Nil)
+			patterns :::= List(new Pattern(patternId, name, occurences, patternJson.nodes, patternJson.links, -1, Some(isoId))) // new Pattern(id, "", occurences, Nil, Nil)
 		}
 		patterns
 	}
@@ -852,14 +848,13 @@ class DatabaseConnection(config: Configuration) {
 		}
 	}
 
-	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int], gc: Option[String]) {
+	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.HashMap[Integer, util.List[String]]], colorIsomorphicPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int], gc: Option[String]) {
 		validateDatasetString(name)
 		val dbExt = gc.getOrElse("")
 		val coloredPatternsMap = coloredPatterns.asScala.toMap
-		val coloredIsoPatternsMap = coloredIsoPatterns.asScala.toMap
+		val coloredIsoPatternsMap = colorIsomorphicPatterns.asScala.toMap
 		val diameterMap = diameter.asScala.toMap
 		val patternsMap = patterns.asScala.toMap
-		var isoCounter: Int = 0
 		patternsMap.foreach {
 			case (id, patternHashMap) => {
 				val patternHashMapScala = patternHashMap.asScala.toMap
@@ -876,18 +871,18 @@ class DatabaseConnection(config: Configuration) {
 							case e: SqlException => println("error inserting pattern: " + e.getMessage)
 							case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + "INSERT INTO " + name + ".PATTERNS" + dbExt + " (ID, PATTERN, OCCURENCES, DIAMETER) VALUES (" + id + ", '" + pattern + "'," + occurences + ", " + patternDiameter + ")")
 						}
-						val cIsoPattern = coloredIsoPatternsMap.get(id).get.asScala.toList
-						cIsoPattern.foreach { case (coloredisopattern) =>
+						val cIsoPattern = coloredIsoPatternsMap.get(id).get.asScala.toList.zipWithIndex
+						cIsoPattern.foreach { case (coloredisopattern, isoIndex) =>
 							try {
 								val statement = connection.createStatement()
-								val resultSet = statement.execute("INSERT INTO " + name + ".coloredisopatterns" + dbExt + " (ID, pattern_id, PATTERN, NAME) VALUES (" + isoCounter + ", " + id + ", '" + coloredisopattern + "', '" + patternName + "')")
+								val resultSet = statement.execute("INSERT INTO " + name + ".coloredisopatterns" + dbExt + " (ID, pattern_id, PATTERN, NAME) VALUES (" + isoIndex + ", " + id + ", '" + coloredisopattern + "', '" + patternName + "')")
 
-								val cPattern = coloredPatternsMap.get(isoCounter).get.asScala.toList
+								val cPattern = coloredPatternsMap.get(id).get.asScala.toMap.get(isoIndex).get.asScala.toList
 								cPattern.foreach { case (coloredpattern) =>
 									try {
 										val newPattern = addSubjectIdToPattern(subjects, coloredpattern)
 										val statement = connection.createStatement()
-										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns" + dbExt + " (ID, PATTERN, NAME) VALUES (" + isoCounter + ", '" + newPattern + "', '" + patternName + "')")
+										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns" + dbExt + " (ID, pattern_id, PATTERN, NAME) VALUES (" + isoIndex + ", " + id + ", '" + newPattern + "', '" + patternName + "')")
 										statement.close()
 									} catch {
 										case e: SqlException => {
@@ -896,8 +891,6 @@ class DatabaseConnection(config: Configuration) {
 										case e: SqlSyntaxErrorException => println(e.getMessage)
 									}
 								}
-
-								isoCounter += 1
 							} catch {
 								case e: SqlException => {
 									println("error inserting pattern (2)" + e.getMessage)
@@ -934,8 +927,8 @@ class DatabaseConnection(config: Configuration) {
 		return Json.toJson(pattern2insert).toString()
 	}
 
-	def insertPatternsGC(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.List[String]], coloredIsoPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int]): Unit = {
-		insertPatterns(name, patterns, coloredPatterns, coloredIsoPatterns, diameter, subjects, Some("_gc"))
+	def insertPatternsGC(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.HashMap[Integer, util.List[String]]], colorIsomorphicPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int]): Unit = {
+		insertPatterns(name, patterns, coloredPatterns, colorIsomorphicPatterns, diameter, subjects, Some("_gc"))
 	}
 
 	private def performInsert(table: String, names: Seq[Any], values: Seq[Any]): Option[Int] = {

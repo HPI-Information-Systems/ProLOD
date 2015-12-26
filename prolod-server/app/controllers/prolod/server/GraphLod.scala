@@ -108,11 +108,11 @@ object GraphLod extends Controller {
 		Ok(json)
 	}
 
-	def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
+	def getGraphPatternStatistics(datasetId: String, groups: List[String], pattern: Int, coloredPattern: Int) = Action {
 		val config = new Configuration()
 		val db = new DatabaseConnection(config)
 		val data: GraphLodResult = GraphLodResult(datasetId)
-		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, None)
+		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, coloredPattern, None)
 		var entitiesPerClass: Map[String, Int] = Map()
 		var nodesPerPattern = 0
 		data.connectedComponents = patternList.size
@@ -206,11 +206,11 @@ object GraphLod extends Controller {
 		Ok(json)
 	}
 
-	def getGCPatternStatistics(datasetId: String, groups: List[String], pattern: Int) = Action {
+	def getGCPatternStatistics(datasetId: String, groups: List[String], pattern: Int, coloredPattern: Int) = Action {
 		val config = new Configuration()
 		val db = new DatabaseConnection(config)
 		val data: GraphLodResult = GraphLodResult(datasetId)
-		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, Some("_gc"))
+		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, coloredPattern, Some("_gc"))
 		var entitiesPerClass: Map[String, Int] = Map()
 		var entities = 0
 		data.connectedComponents = patternList.size
@@ -336,7 +336,7 @@ object GraphLod extends Controller {
 					newNodes ::= newNode
 				}
 				if (groups.isEmpty || (groups.nonEmpty && patternNotInGroups)) {
-					newPatternList ::= new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links)
+					newPatternList ::= new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links, -1, pattern.isoGroup)
 					entities += newNodes.size
 					for ((group, count) <- tempEntitiesPerClass) {
 						var entityCount = 0

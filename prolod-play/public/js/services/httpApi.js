@@ -32,8 +32,8 @@ define(["angular", "./services"], function () {
             getGraphSimilarPattern: function (dataset, groups, pattern) {
                 return getCached(uri(['server', 'graphsimilarpatterns', dataset, 'pattern', pattern]), {params: {groups: groups}});
             },
-            getGraphPatternStatistics: function (dataset, groups, pattern) {
-                return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern]), {params: {groups: groups}});
+            getGraphPatternStatistics: function (dataset, groups, pattern, coloredPattern) {
+                return $http.get(uri(['server', 'graphstatistics', dataset, 'pattern', pattern, 'coloredPattern', coloredPattern]), {params: {groups: groups}});
             },
             getGraphIsoPatternStatistics: function (dataset, groups, pattern) {
                 return $http.get(uri(['server', 'graphstatisticsiso', dataset, 'pattern', pattern]), {params: {groups: groups}});
@@ -48,8 +48,8 @@ define(["angular", "./services"], function () {
             getGCIsoPatternStatistics: function (dataset, groups, pattern) {
                 return $http.get(uri(['server', 'giantcomponentiso', dataset, 'pattern', pattern]), {params: {groups: groups}});
             },
-            getGCPatternStatistics: function (dataset, groups, pattern) {
-                return $http.get(uri(['server', 'giantcomponent', dataset, 'pattern', pattern]), {params: {groups: groups}});
+            getGCPatternStatistics: function (dataset, groups, pattern, coloredPattern) {
+                return $http.get(uri(['server', 'giantcomponent', dataset, 'pattern', pattern, 'coloredPattern', coloredPattern]), {params: {groups: groups}});
             },
             getEntityDetail: function (dataset, entity){
                 return $http.get(uri(['server', 'entitydetails', dataset, entity]));

@@ -67,10 +67,10 @@ require(['angular', './controllers/viewcontrollers','./controllers/tableviewcont
       $routeProvider.when('/graphstatistics/:dataset/similarpatterns', {templateUrl: 'assets/partials/graph_similarpatterns.html', controller: 'GraphSimilarPatternsCtrl', activetab: 'graphs'})
       $routeProvider.when('/graphstatistics/:dataset/similarpattern/:pattern', {templateUrl: 'assets/partials/graph_similarpattern.html', controller: 'GraphSimilarPatternCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatisticsiso/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_isopattern.html', controller: 'GraphIsoPatternCtrl', activetab: 'graphs'});
-      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
+      $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/coloredPattern/:coloredPattern', {templateUrl: 'assets/partials/graph_pattern.html', controller: 'GraphPatternCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/giantComponent', {templateUrl: 'assets/partials/giant_component.html', controller: 'GiantComponentCtrl', activetab: 'graphs'});
       $routeProvider.when('/giantcomponentiso/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/gc_isopattern.html', controller: 'GCIsoPatternCtrl', activetab: 'graphs'});
-      $routeProvider.when('/giantcomponent/:dataset/pattern/:pattern', {templateUrl: 'assets/partials/gc_pattern.html', controller: 'GCPatternCtrl', activetab: 'graphs'});
+      $routeProvider.when('/giantcomponent/:dataset/pattern/:pattern/coloredPattern/:coloredPattern', {templateUrl: 'assets/partials/gc_pattern.html', controller: 'GCPatternCtrl', activetab: 'graphs'});
       $routeProvider.when('/graphstatistics/:dataset/pattern/:pattern/:detail', {templateUrl: 'assets/partials/chart.html', controller: 'PopupCtrl', activetab: 'graphs'});
 
       $routeProvider.when('/charts/:dataset', {templateUrl: 'assets/partials/chart.html', controller: ChartCtrl, activetab: 'charts'});

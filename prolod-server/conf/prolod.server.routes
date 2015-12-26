@@ -11,13 +11,13 @@ GET        /graphsimilarpatterns/:dataset                    controllers.prolod.
 GET        /graphsimilarpatterns/:dataset/pattern/:pattern   controllers.prolod.server.GraphLod.getGraphSimilarPattern(dataset: String, groups: List[String], pattern: Int)
 
 # example: http://localhost:9000/server/graphstatistics/0/pattern/0?group=1&group=2
-GET        /graphstatistics/:dataset/pattern/:pattern           controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+GET        /graphstatistics/:dataset/pattern/:pattern/coloredPattern/:coloredPattern           controllers.prolod.server.GraphLod.getGraphPatternStatistics(dataset: String, groups: List[String], pattern: Int, coloredPattern: Int)
 
 GET        /graphstatisticsiso/:dataset/pattern/:pattern        controllers.prolod.server.GraphLod.getGraphIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 
 GET        /giantcomponent/:dataset                             controllers.prolod.server.GraphLod.getBigComponent(dataset: String, group: List[String])
 
-GET        /giantcomponent/:dataset/pattern/:pattern            controllers.prolod.server.GraphLod.getGCPatternStatistics(dataset: String, groups: List[String], pattern: Int)
+GET        /giantcomponent/:dataset/pattern/:pattern/coloredPattern/:coloredPattern            controllers.prolod.server.GraphLod.getGCPatternStatistics(dataset: String, groups: List[String], pattern: Int, coloredPattern: Int)
 
 GET        /giantcomponentiso/:dataset/pattern/:pattern         controllers.prolod.server.GraphLod.getGCIsoPatternStatistics(dataset: String, groups: List[String], pattern: Int)
 

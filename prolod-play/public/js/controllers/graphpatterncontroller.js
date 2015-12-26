@@ -5,8 +5,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
     angular.module('Prolod2.controllers').controller("GraphPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
         function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
             var pattern = $routeParams.pattern;
-
-
+            var coloredPattern = $routeParams.coloredPattern;
 
             $scope.nodeClick = function (node) {
                 var modalInstance = $modal.open({
@@ -48,7 +47,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 }
             };
 
-            httpApi.getGraphPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
+            httpApi.getGraphPatternStatistics($routeParams.dataset, $routeParams.group, pattern, coloredPattern).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 
@@ -59,10 +58,13 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 $scope.loading = false;
 
                 $scope.isoGroup = stats.patterns[0].isoGroup
+                $scope.id = stats.patterns[0].id
                 var isoGroup = $scope.isoGroup
+                var id = $scope.id
                 var breadCrumbMenu = [
                     {name: 'Graphs', url: routeBuilder.getGraphUrl()},
-                    {name: 'Pattern ' + isoGroup, url: routeBuilder.getGraphPatternIsoUrl(isoGroup)}
+                    {name: 'Pattern ' + id, url: routeBuilder.getGraphPatternIsoUrl(id)},
+                    {name: 'Colored Pattern ' + isoGroup, url: routeBuilder.getGraphPatternUrl(id, isoGroup)}
                 ];
                 if ($routeParams.group) {
                     breadCrumbMenu.push({name: 'Class ' + $routeParams.group, url: routeBuilder.getGraphPatternGroupUrl(pattern)});

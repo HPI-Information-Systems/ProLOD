@@ -3,7 +3,7 @@
         <div id="view" class="graph-grid" when-scroll-ends="increaseLimit()">
             <i class="glyphicon glyphicon-refresh" ng-show="loading"></i>
             <a ng-repeat="pattern in data.pattern | limitTo: limit"
-               href="#{{::routeBuilder.getGCPatternUrl(pattern.id)}}">
+               href="#{{::routeBuilder.getGCPatternUrl(pattern.id, pattern.isoGroup)}}">
                 <!--  href="#{{::routeBuilder.getGraphDetailUrl(pattern.id, pattern.detail)}}" -->
                 <prolod-graph-thumbnail class="graph-cell" graph="pattern" color-function="colorFunction"></prolod-graph-thumbnail>
             </a>

@@ -41,9 +41,9 @@ define(["angular", "./services"], function () {
                 params = params || $route.current.params;
                 return buildUri(['graphstatistics', params.dataset], {group: params.group});
             },
-            getGraphPatternUrl: function (pattern, params) {
+            getGraphPatternUrl: function (pattern, coloredPattern, params) {
                 params = params || $route.current.params;
-                return buildUri(['graphstatistics', params.dataset, 'pattern', pattern]);
+                return buildUri(['graphstatistics', params.dataset, 'pattern', pattern, 'coloredPattern', coloredPattern]);
             },
             getGraphPatternIsoUrl: function (pattern, params) {
                 params = params || $route.current.params;
@@ -65,9 +65,9 @@ define(["angular", "./services"], function () {
                 params = params || $route.current.params;
                 return buildUri(['giantcomponentiso', params.dataset, 'pattern', pattern]);
             },
-            getGCPatternUrl: function (pattern, params) {
+            getGCPatternUrl: function (pattern, coloredPattern, params) {
                 params = params || $route.current.params;
-                return buildUri(['giantcomponent', params.dataset, 'pattern', pattern]);
+                return buildUri(['giantcomponent', params.dataset, 'pattern', pattern, 'coloredPattern', coloredPattern]);
             },
             getChartsUrl: function (params) {
                 params = params || $route.current.params;

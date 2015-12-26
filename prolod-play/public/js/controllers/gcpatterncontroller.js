@@ -5,8 +5,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
     angular.module('Prolod2.controllers').controller("GCPatternCtrl", ['$scope', '$routeParams', '$timeout', 'routeBuilder', 'httpApi', 'colorHash','$modal',
         function ($scope, $routeParams, $timeout, routeBuilder, httpApi, colorHash, $modal) {
             var pattern = $routeParams.pattern;
-
-
+            var coloredPattern = $routeParams.coloredPattern;
 
             $scope.nodeClick = function (node) {
                 var modalInstance = $modal.open({
@@ -48,7 +47,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 }
             };
 
-            httpApi.getGCPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
+            httpApi.getGCPatternStatistics($routeParams.dataset, $routeParams.group, pattern, coloredPattern).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 
@@ -59,11 +58,14 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 $scope.loading = false;
 
                 $scope.isoGroup = stats.patterns[0].isoGroup
+                $scope.id = stats.patterns[0].id
                 var isoGroup = $scope.isoGroup
+                var id = $scope.id
                 var breadCrumbMenu = [
                     {name: 'Graphs', url: routeBuilder.getGraphUrl()},
                     {name:'Giant Component', url: routeBuilder.getGiantComponentUrl()},
-                    {name: 'Pattern ' + isoGroup, url: routeBuilder.getGCPatternIsoUrl(isoGroup)}
+                    {name: 'Pattern ' + id, url: routeBuilder.getGCPatternIsoUrl(id)},
+                    {name: 'Colored Pattern ' + isoGroup, url: routeBuilder.getGCPatternUrl(id, isoGroup)}
                 ];
                 if ($routeParams.group) {
                     breadCrumbMenu.push({name: 'Class ' + $routeParams.group, url: routeBuilder.getGraphPatternGroupUrl(pattern)});
