@@ -15,9 +15,9 @@
             <div class="float-left" style="margin-left: 15px;">
                 <h3>Statistics:</h3>
                 <table class="table stats">
-                    <tr ng-if="stats.connectedComponents">
+                    <tr ng-if="stats.connectedComponents.count">
                         <td>Patterns:</td>
-                        <td class="align-right">{{stats.connectedComponents | number}}</td>
+                        <td class="align-right">{{stats.connectedComponents.count | number}}</td>
                     </tr>
                     <tr ng-if="stats.nodes">
                         <td>Nodes per pattern:</td>

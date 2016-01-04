@@ -15,7 +15,7 @@ object GraphLod extends Controller {
 		val statistics = db.getSimilarPatternStatistics(datasetId, pattern)
 
 		data.patterns = patternList
-		data.connectedComponents = statistics.getOrElse("patterns", "0").toInt
+		data.connectedComponents.count = statistics.getOrElse("patterns", "0").toInt
 
 		val json = Json.obj("statistics" -> data)
 		Ok(json)
@@ -31,11 +31,11 @@ object GraphLod extends Controller {
 		data.nodes = db.getDatasetEntities(datasetId)
 		data.edges = statistics.getOrElse("edges", "0").toInt
 		data.averageLinks = statistics.getOrElse("averagelinks", "0").toFloat
-		data.giantComponentNodes = statistics.getOrElse("gcnodes", "0").toInt
-		data.giantComponentEdges = statistics.getOrElse("gcedges", "0").toInt
+		data.giantComponent.nodes = statistics.getOrElse("gcnodes", "0").toInt
+		data.giantComponent.edges = statistics.getOrElse("gcedges", "0").toInt
 		data.patterns = patternList
-		data.connectedComponents = statistics.getOrElse("connectedcomponents", "0").toInt
-		data.stronglyConnectedComponents = statistics.getOrElse("stronglyconnectedcomponents", "0").toInt
+		data.connectedComponents.count = statistics.getOrElse("connectedcomponents", "0").toInt
+		data.stronglyConnectedComponents.count = statistics.getOrElse("stronglyconnectedcomponents", "0").toInt
 
 
 		val json = Json.obj("statistics" -> data)
@@ -52,11 +52,11 @@ object GraphLod extends Controller {
 		data.nodes = db.getDatasetEntities(datasetId)
 		data.edges = statistics.getOrElse("edges", "0").toInt
 		data.averageLinks = statistics.getOrElse("averagelinks", "0").toFloat
-		data.giantComponentNodes = statistics.getOrElse("gcnodes", "0").toInt
-		data.giantComponentEdges = statistics.getOrElse("gcedges", "0").toInt
+		data.giantComponent.nodes = statistics.getOrElse("gcnodes", "0").toInt
+		data.giantComponent.edges = statistics.getOrElse("gcedges", "0").toInt
 		data.patterns = patternList
-		data.connectedComponents = statistics.getOrElse("connectedcomponents", "0").toInt
-		data.stronglyConnectedComponents = statistics.getOrElse("stronglyconnectedcomponents", "0").toInt
+		data.connectedComponents.count = statistics.getOrElse("connectedcomponents", "0").toInt
+		data.stronglyConnectedComponents.count = statistics.getOrElse("stronglyconnectedcomponents", "0").toInt
 
 		statistics.get("nodedegreedistribution") match {
 			case Some(ndd) => {
@@ -115,7 +115,7 @@ object GraphLod extends Controller {
 		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, coloredPattern, None)
 		var entitiesPerClass: Map[String, Int] = Map()
 		var nodesPerPattern = 0
-		data.connectedComponents = patternList.size
+		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
 			var newPatternList: List[Pattern] = Nil
 			for (pattern: Pattern <- patternList) {
@@ -153,7 +153,7 @@ object GraphLod extends Controller {
 					}
 				}
 			}
-			data.connectedComponents = newPatternList.size
+			data.connectedComponents.count = newPatternList.size
 			data.patterns = newPatternList
 		} else {
 			data.patterns = patternList
@@ -214,7 +214,7 @@ object GraphLod extends Controller {
 		var entitiesPerClass: Map[String, Int] = Map()
 		var nodes = 0
 		var entities = 0
-		data.connectedComponents = patternList.size
+		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
 			var newPatternList: List[Pattern] = Nil
 			for (pattern: Pattern <- patternList) {
@@ -253,7 +253,7 @@ object GraphLod extends Controller {
 					}
 				}
 			}
-			data.connectedComponents = newPatternList.size
+			data.connectedComponents.count = newPatternList.size
 			data.patterns = newPatternList
 		} else {
 			data.patterns = patternList
@@ -320,7 +320,7 @@ object GraphLod extends Controller {
 		val patternList: List[Pattern] = db.getColoredIsoPatterns(datasetId, pattern, Some("_gc"))
 		var entitiesPerClass: Map[String, Int] = Map()
 		var entities = 0
-		data.connectedComponents = patternList.size
+		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
 			var newPatternList: List[Pattern] = Nil
 			for (pattern: Pattern <- patternList) {
@@ -358,7 +358,7 @@ object GraphLod extends Controller {
 					}
 				}
 			}
-			data.connectedComponents = newPatternList.size
+			data.connectedComponents.count = newPatternList.size
 			data.patterns = newPatternList
 		} else {
 			data.patterns = patternList
@@ -417,7 +417,7 @@ object GraphLod extends Controller {
 		val patternList: List[Pattern] = db.getColoredIsoPatterns(datasetId, pattern, None)
 		var entitiesPerClass: Map[String, Int] = Map()
 		var entities = 0
-		data.connectedComponents = patternList.size
+		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
 			var newPatternList: List[Pattern] = Nil
 			for (pattern: Pattern <- patternList) {
@@ -455,7 +455,7 @@ object GraphLod extends Controller {
 					}
 				}
 			}
-			data.connectedComponents = newPatternList.size
+			data.connectedComponents.count = newPatternList.size
 			data.patterns = newPatternList
 		} else {
 			data.patterns = patternList
@@ -515,7 +515,7 @@ object GraphLod extends Controller {
 		val patternList: List[Pattern] = db.getPatterns(datasetId, Some("_gc"))
 		var entitiesPerClass: Map[String, Int] = Map()
 		var entities = 0
-		data.connectedComponents = patternList.size
+		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
 			var newPatternList: List[Pattern] = Nil
 			for (pattern: Pattern <- patternList) {
@@ -555,7 +555,7 @@ object GraphLod extends Controller {
 					}
 				}
 			}
-			data.connectedComponents = newPatternList.size
+			data.connectedComponents.count = newPatternList.size
 			data.patterns = newPatternList
 		} else {
 			data.patterns = patternList
