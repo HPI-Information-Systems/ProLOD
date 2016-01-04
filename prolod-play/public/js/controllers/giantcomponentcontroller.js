@@ -59,7 +59,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
 
-                drawPieChart(stats.classDistribution, colorHash);
+                //drawPieChart(stats.classDistribution, colorHash);
 
                 $scope.stats = stats;
 
@@ -102,6 +102,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             myChart.assignColor(k, colorHash(color));
         }
         myChart.draw();
+
     }
 });
 

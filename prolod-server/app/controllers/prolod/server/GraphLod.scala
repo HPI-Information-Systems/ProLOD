@@ -258,27 +258,31 @@ object GraphLod extends Controller {
 		} else {
 			data.patterns = patternList
 			for (pattern: Pattern <- patternList) {
-				var tempEntitiesPerClass: Map[String, Int] = Map()
-				for (node: Node <- pattern.nodes) {
-					val group = node.group.getOrElse("")
-					if ((group.length > 0) && !(node.surrounding.getOrElse(false))) {
-						var entityCount = 0
-						if (tempEntitiesPerClass.contains(group)) {
-							entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+				if (nodes == 0) {
+					// data.name = pattern.name
+					val level1Patterns: List[Node] = pattern.nodes.filter(_.surrounding.getOrElse(false) == false)
+					nodes = level1Patterns.size
+					var tempEntitiesPerClass: Map[String, Int] = Map()
+					for (node: Node <- pattern.nodes) {
+						val group = node.group.getOrElse("")
+						if ((group.length > 0) && !(node.surrounding.getOrElse(false))) {
+							var entityCount = 0
+							if (tempEntitiesPerClass.contains(group)) {
+								entityCount = tempEntitiesPerClass.getOrElse(group, 0)
+							}
+							entityCount += 1
+							tempEntitiesPerClass += (group -> entityCount)
 						}
-						entityCount += 1
-						tempEntitiesPerClass += (group -> entityCount)
 					}
-				}
-				nodes = pattern.nodes.filter(_.surrounding.getOrElse(false) == true).size
-				entities += pattern.nodes.size
-				for ((group, count) <- tempEntitiesPerClass) {
-					var entityCount = 0
-					if (entitiesPerClass.contains(group)) {
-						entityCount = entitiesPerClass.getOrElse(group, 0)
+					entities = nodes
+					for ((group, count) <- tempEntitiesPerClass) {
+						var entityCount = 0
+						if (entitiesPerClass.contains(group)) {
+							entityCount = entitiesPerClass.getOrElse(group, 0)
+						}
+						entityCount += count
+						entitiesPerClass += (group -> entityCount)
 					}
-					entityCount += count
-					entitiesPerClass += (group -> entityCount)
 				}
 			}
 		}
