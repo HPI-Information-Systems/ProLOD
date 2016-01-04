@@ -212,6 +212,7 @@ object GraphLod extends Controller {
 		val data: GraphLodResult = GraphLodResult(datasetId)
 		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, coloredPattern, Some("_gc"))
 		var entitiesPerClass: Map[String, Int] = Map()
+		var nodes = 0
 		var entities = 0
 		data.connectedComponents = patternList.size
 		if (groups.nonEmpty) {
@@ -240,6 +241,7 @@ object GraphLod extends Controller {
 				}
 				if (groups.isEmpty || (groups.nonEmpty && patternNotInGroups)) {
 					newPatternList ::= new Pattern(pattern.id, pattern.name, pattern.occurences, newNodes, pattern.links, -1, pattern.isoGroup)
+					nodes = newNodes.size
 					entities += newNodes.size
 					for ((group, count) <- tempEntitiesPerClass) {
 						var entityCount = 0
@@ -268,6 +270,7 @@ object GraphLod extends Controller {
 						tempEntitiesPerClass += (group -> entityCount)
 					}
 				}
+				nodes = pattern.nodes.filter(_.surrounding.getOrElse(false) == true).size
 				entities += pattern.nodes.size
 				for ((group, count) <- tempEntitiesPerClass) {
 					var entityCount = 0
@@ -290,13 +293,16 @@ object GraphLod extends Controller {
 			if (entitiesUnknown > 0) {
 				classDistribution += ("unknown" -> (entitiesUnknown.toDouble / entities))
 			}
-			data.nodes = entities
+			data.nodes = nodes
 			data.classDistribution = classDistribution
 		}
 
 		if (data.patterns.nonEmpty) {
 			val patternDiameter = db.getPatternDiameter(datasetId, data.patterns.last.id)
 			data.diameter = patternDiameter
+
+			//data.patternTypes = db.getPatternTypes(datasetId, data.patterns.last.id, data.patterns.last.isoGroup, Some("_gc"))
+
 		}
 
 		val json = Json.obj("statistics" -> data)

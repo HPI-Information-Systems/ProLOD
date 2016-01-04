@@ -20,13 +20,19 @@
                         <td class="align-right">{{stats.connectedComponents | number}}</td>
                     </tr>
                     <tr ng-if="stats.nodes">
-                        <td>Nodes:</td>
+                        <td>Nodes per pattern:</td>
                         <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>
                     </tr>
                     <tr ng-if="stats.edges">
                         <td>Edges:</td>
                         <td class="align-right">{{stats.edges | number}}</td>
                     </tr>
+                    <!--
+                    <tr ng-repeat="stats.patternTypes">
+                        <td>Types:</td>
+                        <td class="align-right">{{stats.patternTypes | number}}</td>
+                    </tr>
+                    -->
                     <tr ng-if="stats.diameter">
                         <td>Diameter:</td>
                         <td class="align-right">{{stats.diameter | number}}</td>
