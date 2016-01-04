@@ -75,9 +75,9 @@ define(['angular', './controllers', 'd3'], function (angular) {
                     if (d === root) {
                         return d3.rgb("lightgrey");
                     }
-                    while(!(d.parent === root || d.parent.parent === root)){
-                        d = d.parent;
-                    }
+                    //while(!(d.parent === root || d.parent.parent === root)){
+                    //    d = d.parent;
+                    //}
                     return colorHash(d.name);
                 }
 

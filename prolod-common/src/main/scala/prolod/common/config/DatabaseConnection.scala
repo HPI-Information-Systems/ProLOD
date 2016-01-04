@@ -1105,10 +1105,10 @@ class DatabaseConnection(config: Configuration) {
 		result
 	}
 
-	def getOntologyNamespace(s: String): String = {
+	def getOntologyNamespace(dataset: String): String = {
 		var namespace: String = null
 		try {
-			val sql = sql"""SELECT ONTOLOGY_NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${s}""".as[String]
+			val sql = sql"""SELECT ONTOLOGY_NAMESPACE FROM PROLOD_MAIN.SCHEMATA WHERE ID = ${dataset}""".as[String]
 			val result = execute(sql)
 			result foreach ((ns) => {
 				namespace = ns
@@ -1243,8 +1243,12 @@ class DatabaseConnection(config: Configuration) {
 		validateDatasetString(dataset)
 		val sql = sql"SELECT cluster, subcluster FROM #${dataset}.CLUSTER_HIERARCHY ORDER BY cluster, subcluster".as[(String, String)]
 		val result = execute(sql)
-		result.groupBy(tupled((cluster, subcluster) => { cluster }))
-				  .mapValues(vector => vector.map(tupled((cluster,subcluster) => subcluster)))
+		val ns = getOntologyNamespace(dataset)
+
+		val cleaned = result.map(tupled((a, b) => (removeOntologyNamespace(a, ns), removeOntologyNamespace(b, ns))))
+		val hierarchy =  cleaned.groupBy(tupled((cluster, subcluster) => { cluster }))
+													  .mapValues(vector => vector.map(tupled((cluster, subcluster) => subcluster)))
+		hierarchy
 	}
 
 	def executeStringQuery(query: String): Unit = {
