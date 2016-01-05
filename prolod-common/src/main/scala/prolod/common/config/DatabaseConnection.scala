@@ -1239,12 +1239,11 @@ class DatabaseConnection(config: Configuration) {
 		})
 	}
 
-	def getClassHierarchy(dataset: String): Map[String, Vector[String]] = {
+	def getClassHierarchy(dataset: String, ontologyNamespace: String): Map[String, Vector[String]] = {
 		validateDatasetString(dataset)
 		val sql = sql"SELECT cluster, subcluster FROM #${dataset}.CLUSTER_HIERARCHY ORDER BY cluster, subcluster".as[(String, String)]
 		val result = execute(sql)
-		val ns = getOntologyNamespace(dataset)
-
+		val ns = ontologyNamespace
 		val cleaned = result.map(tupled((a, b) => (removeOntologyNamespace(a, ns), removeOntologyNamespace(b, ns))))
 		val hierarchy =  cleaned.groupBy(tupled((cluster, subcluster) => { cluster }))
 													  .mapValues(vector => vector.map(tupled((cluster, subcluster) => subcluster)))
