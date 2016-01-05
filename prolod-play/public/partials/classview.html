@@ -1,3 +1,10 @@
-<div class="view">
+<div class="view class-hiearchy">
+    <div class="center-children-flex">
     <div id="class-sun-burst"></div>
+    <ul>
+        <li ng-repeat="node in classColors" ng-style="{color: node.color}">
+            {{node.name}}
+        </li>
+    </ul>
+    </div>
 </div>

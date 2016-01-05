@@ -45,6 +45,9 @@ define(['angular', './controllers', 'd3'], function (angular) {
                 });
 
             httpApi.getClassHierarchy($routeParams.dataset).then(function (result) {
+                $scope.classColors = result.data.classes.children.map(function(group) {
+                    return { name : group.name, color: colorHash(group.name) }
+                });
                 var data = result.data;
                 var root = {"name": "", "size": 0, "children": [data.classes]};
 
@@ -74,6 +77,9 @@ define(['angular', './controllers', 'd3'], function (angular) {
                 function getColor(d) {
                     if (d === root) {
                         return d3.rgb("lightgrey");
+                    }
+                    if (d.parent === root) {
+                        return d3.rgb("grey");
                     }
                     //while(!(d.parent === root || d.parent.parent === root)){
                     //    d = d.parent;

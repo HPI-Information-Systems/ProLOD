@@ -119,6 +119,12 @@ body {
     pointer-events: none;
 }
 
+.center-children-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
 .graph-grid {
 
 }
