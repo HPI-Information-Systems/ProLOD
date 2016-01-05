@@ -119,6 +119,24 @@ body {
     pointer-events: none;
 }
 
+.center-children-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.class-legend {
+    list-style-type: none;
+}
+
+.class-legend li {
+    border: 3px solid;
+    border-radius: 14px;
+    padding: 2px 6px;
+    text-align: center;
+    margin: 6px 0px;
+}
+
 .graph-grid {
 
 }
