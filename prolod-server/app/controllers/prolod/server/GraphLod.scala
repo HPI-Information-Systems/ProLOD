@@ -76,7 +76,12 @@ object GraphLod extends Controller {
 					var highestIndegreesInternalMap: Map[Int, Int] = Map()
 					try {
 						highestIndegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
-						highestIndegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestIndegreesInternalMap)
+						var newKey = key
+						var namespace = db.getNamespace(datasetId)
+						if (namespace != "") {
+							newKey = newKey.replace(namespace, datasetId + ":")
+						}
+						highestIndegreesCleanedMap += (newKey -> highestIndegreesInternalMap)
 					} catch {
 						case e: NullPointerException => println(e.getMessage)
 					}
@@ -94,7 +99,12 @@ object GraphLod extends Controller {
 					var highestOutdegreesInternalMap: Map[Int, Int] = Map()
 					try {
 						highestOutdegreesInternalMap += (db.getSubjectId(datasetId, key) -> value)
-						highestOutdegreesCleanedMap += (key.replace(db.getNamespace(datasetId), datasetId + ":") -> highestOutdegreesInternalMap)
+						var newKey = key
+						var namespace = db.getNamespace(datasetId)
+						if (namespace != "") {
+							newKey = newKey.replace(namespace, datasetId + ":")
+						}
+						highestOutdegreesCleanedMap += (newKey -> highestOutdegreesInternalMap)
 					} catch {
 						case e: NullPointerException => println(e.getMessage)
 					}
@@ -215,6 +225,7 @@ object GraphLod extends Controller {
 		val patternList: List[Pattern] = db.getColoredPatterns(datasetId, pattern, coloredPattern, Some("_gc"))
 		var entitiesPerClass: Map[String, Int] = Map()
 		var nodes = 0
+		var edges = 0
 		var entities = 0
 		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
@@ -262,8 +273,10 @@ object GraphLod extends Controller {
 			for (pattern: Pattern <- patternList) {
 				if (nodes == 0) {
 					// data.name = pattern.name
-					val level1Patterns: List[Node] = pattern.nodes.filter(_.surrounding.getOrElse(false) == false)
-					nodes = level1Patterns.size
+					val level1PatternNodes: List[Node] = pattern.nodes.filter(_.surrounding.getOrElse(false) == false)
+					nodes = level1PatternNodes.size
+					val level1PatternLinks: List[Link] = pattern.links.filter(_.surrounding.getOrElse(false) == false)
+					edges = level1PatternLinks.size
 					var tempEntitiesPerClass: Map[String, Int] = Map()
 					for (node: Node <- pattern.nodes) {
 						val group = node.group.getOrElse("")
@@ -300,6 +313,7 @@ object GraphLod extends Controller {
 				classDistribution += ("unknown" -> (entitiesUnknown.toDouble / entities))
 			}
 			data.nodes = nodes
+			data.edges = edges
 			data.classDistribution = classDistribution
 		}
 
@@ -322,6 +336,7 @@ object GraphLod extends Controller {
 		val patternList: List[Pattern] = db.getColoredIsoPatterns(datasetId, pattern, Some("_gc"))
 		var entitiesPerClass: Map[String, Int] = Map()
 		var entities = 0
+		var edges = 0
 		data.connectedComponents.count = patternList.size
 		if (groups.nonEmpty) {
 			var newPatternList: List[Pattern] = Nil
@@ -365,6 +380,8 @@ object GraphLod extends Controller {
 		} else {
 			data.patterns = patternList
 			for (pattern: Pattern <- patternList) {
+				val level1PatternLinks: List[Link] = pattern.links.filter(_.surrounding.getOrElse(false) == false)
+				edges = level1PatternLinks.size
 				var tempEntitiesPerClass: Map[String, Int] = Map()
 				for (node: Node <- pattern.nodes) {
 					val group = node.group.getOrElse("")
@@ -400,6 +417,7 @@ object GraphLod extends Controller {
 				classDistribution += ("unknown" -> (entitiesUnknown.toDouble / entities))
 			}
 			data.nodes = entities
+			data.edges = edges
 			data.classDistribution = classDistribution
 		}
 
