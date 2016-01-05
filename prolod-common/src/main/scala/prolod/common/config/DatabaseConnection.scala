@@ -133,7 +133,7 @@ class DatabaseConnection(config: Configuration) {
 
 		createTable(name + ".COLOREDPATTERNS_GC (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".coloredisopatterns_GC (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
-		createTable(name + ".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, gcedges INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
+		createTable(name + ".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, nodes INT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, gcedges INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
 		createTable(name + ".CLUSTERS " +
 			"(                                                                   " +
 			"       ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),    " +
@@ -452,10 +452,12 @@ class DatabaseConnection(config: Configuration) {
 				statistics += ("highestIndegrees" -> highestIndegrees)
 				statistics += ("highestOutdegrees" -> highestOutdegrees)
 			})
-			val sql3 = sql"SELECT gcedges FROM #$dataset.graphstatistics".as[Int]
-			val result3 = execute(sql3) map ((gcedges) => {
+			val sql3 = sql"SELECT nodes, gcedges FROM #$dataset.graphstatistics".as[(Int, Int)]
+			val result3 = execute(sql3) map tupled((nodes, gcedges) => {
+				statistics += ("nodes" -> nodes.toString)
 				statistics += ("gcedges" -> gcedges.toString)
 			})
+
 		} catch {
 			case e: SqlSyntaxErrorException => {
 				val sql2 = sql"SELECT gcnodes FROM #$dataset.graphstatistics".as[(Int)]
@@ -1210,10 +1212,10 @@ class DatabaseConnection(config: Configuration) {
 		mt
 	}
 
-	def insertStatistics(name: String, nodes: String, links: Double, edges: Int, gcEdges: Int, gcNodes: Int, connectedcomponents: Int, stronglyconnectedcomponents: Int, highestIndegrees: String, highestOutdegrees: String) = {
+	def insertStatistics(name: String, nodeDistribution: String, averagelinks: Double, nodes: Int, edges: Int, gcNodes: Int, gcEdges: Int, connectedcomponents: Int, stronglyconnectedcomponents: Int, highestIndegrees: String, highestOutdegrees: String) = {
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, edges, gcnodes, gcedges, connectedcomponents, stronglyconnectedcomponents, highestIndegrees, highestOutdegrees) VALUES ('" + nodes + "'," + links + ", " + edges + ", " + gcNodes + ", " + gcEdges + ", " + connectedcomponents + ", " + stronglyconnectedcomponents + ",'" + highestIndegrees + "','" + highestOutdegrees + "')")
+			val resultSet = statement.execute("INSERT INTO " + name + ".graphstatistics (nodedegreedistribution, averagelinks, nodes, edges, gcnodes, gcedges, connectedcomponents, stronglyconnectedcomponents, highestIndegrees, highestOutdegrees) VALUES ('" + nodeDistribution + "'," + averagelinks + ", " + nodes + ", " + edges + ", " + gcNodes + ", " + gcEdges + ", " + connectedcomponents + ", " + stronglyconnectedcomponents + ",'" + highestIndegrees + "','" + highestOutdegrees + "')")
 		} catch {
 			case e: SqlIntegrityConstraintViolationException => println(e.getMessage)
 			case e: SqlException => println(e.getMessage)

@@ -28,7 +28,8 @@ object GraphLod extends Controller {
 		val data: GraphLodResult = GraphLodResult(datasetId)
 		val statistics = db.getStatistics(datasetId)
 
-		data.nodes = db.getDatasetEntities(datasetId)
+		//data.nodes = db.getDatasetEntities(datasetId)
+		data.nodes = statistics.getOrElse("nodes", "0").toInt
 		data.edges = statistics.getOrElse("edges", "0").toInt
 		data.averageLinks = statistics.getOrElse("averagelinks", "0").toFloat
 		data.giantComponent.nodes = statistics.getOrElse("gcnodes", "0").toInt
@@ -49,7 +50,8 @@ object GraphLod extends Controller {
 		val data: GraphLodResult = GraphLodResult(datasetId)
 		val statistics = db.getStatistics(datasetId)
 
-		data.nodes = db.getDatasetEntities(datasetId)
+		//data.nodes = db.getDatasetEntities(datasetId)
+		data.nodes = statistics.getOrElse("nodes", "0").toInt
 		data.edges = statistics.getOrElse("edges", "0").toInt
 		data.averageLinks = statistics.getOrElse("averagelinks", "0").toFloat
 		data.giantComponent.nodes = statistics.getOrElse("gcnodes", "0").toInt
