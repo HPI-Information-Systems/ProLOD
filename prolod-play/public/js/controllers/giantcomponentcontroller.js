@@ -58,7 +58,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             httpApi.getGiantComponent($routeParams.dataset, $routeParams.group).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
-
+                $scope.data.patternTypes = stats.patternTypes;
                 //drawPieChart(stats.classDistribution, colorHash);
 
                 $scope.stats = stats;

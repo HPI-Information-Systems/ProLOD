@@ -58,6 +58,7 @@ define(['angular', './controllers', 'dimple'], function (angular) {
             httpApi.getGCIsoPatternStatistics($routeParams.dataset, $routeParams.group, pattern).then(function (data) {
                 var stats = data.data.statistics;
                 $scope.data.pattern = stats.patterns;
+                $scope.data.patternTypes = stats.patternTypes;
 
                 drawPieChart(stats.classDistribution, colorHash);
 

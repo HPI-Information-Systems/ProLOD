@@ -19,6 +19,10 @@
                         <td>Patterns:</td>
                         <td class="align-right">{{stats.connectedComponents.count | number}}</td>
                     </tr>
+                    <tr ng-repeat="(key, value) in stats.patternTypes">
+                        <td class="align-right"> {{key}}</td>
+                        <td class="align-right"> {{ value }} </td>
+                    </tr>
                     <tr ng-if="stats.nodes">
                         <td>Nodes per pattern:</td>
                         <td class="align-right"><span id='number-default'>{{stats.nodes | number}}</span></td>

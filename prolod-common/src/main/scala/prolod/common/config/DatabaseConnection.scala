@@ -8,6 +8,7 @@ import com.ibm.db2.jcc.am.{SqlDataException, SqlException, SqlIntegrityConstrain
 import com.typesafe.slick.driver.db2.DB2Driver.api._
 import de.hpi.fgis.loducc.Keyness
 import graphlod.graph.Edge
+import graphlod.utils.CollectionUtils
 import play.api.libs.json._
 import prolod.common.models.PatternFormats.patternDBFormat
 import prolod.common.models.{Dataset, Group, Pattern, PatternFromDB, _}
@@ -556,12 +557,70 @@ class DatabaseConnection(config: Configuration) {
 		patterns
 	}
 
-	def getPatternTypes(dataset: String, id: Int, isoGroup: Option[Int], gc: Option[String]): Map[String, Double] = {
+	def getPatternTypes(dataset: String, gc: Option[String]): Map[String, Int] = {
 		val dbExt = gc.getOrElse("")
-		var patternTypes: Map[String, Double] = Map()
+		var patternTypes: Map[String, Int] = Map()
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE id ="+ id +" pattern_id = " + isoGroup.get)
+			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".PATTERNS" + dbExt)
+			while (resultSet.next()) {
+				var name : String = ""
+				var occ : Int = 0
+				try {
+					name = resultSet.getString("name")
+					occ = resultSet.getInt("occurences")
+					if (name.contains("Star")) {
+						name = "Star"
+					}
+				} catch {
+					case e : Throwable => name = ""
+				}
+				if (patternTypes.contains(name)) {
+					occ = occ + patternTypes(name)
+				}
+				patternTypes += (name -> occ)
+			}
+		} catch {
+			case e : Throwable => println(e.toString )
+		}
+
+		patternTypes
+	}
+
+	def getPatternTypes(dataset: String, id: Int, gc: Option[String]): Map[String, Int] = {
+		val dbExt = gc.getOrElse("")
+		var patternTypes: Map[String, Int] = Map()
+		try {
+			val statement = connection.createStatement()
+			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE pattern_id ="+ id)
+			while (resultSet.next()) {
+				var name : String = ""
+				try {
+					name = resultSet.getString("name")
+					if (name.contains("Star")) {
+						name = "Star"
+					}
+				} catch {
+					case e : Throwable => name = ""
+				}
+				var count: Int = 1
+				if (patternTypes.contains(name)) {
+					count = count + patternTypes(name)
+				}
+				patternTypes += (name -> count)
+			}
+		} catch {
+			case e : Throwable => println(e.toString )
+		}
+		patternTypes
+	}
+
+	def getPatternTypes(dataset: String, id: Int, isoGroup: Option[Int], gc: Option[String]): Map[String, Int] = {
+		val dbExt = gc.getOrElse("")
+		var patternTypes: Map[String, Int] = Map()
+		try {
+			val statement = connection.createStatement()
+			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE id ="+ id +" AND pattern_id = " + isoGroup.get)
 			while (resultSet.next()) {
 				var name : String = ""
 				try {
@@ -569,14 +628,14 @@ class DatabaseConnection(config: Configuration) {
 				} catch {
 					case e : Throwable => name = ""
 				}
-				var count: Double = 1
+				var count: Int = 1
 				if (patternTypes.contains(name)) {
 					count = count + patternTypes(name)
 				}
 				patternTypes += (name -> count)
 			}
 		} catch {
-			case e : Throwable => println(e.toString)
+			case e : Throwable => println(e.toString )
 		}
 		patternTypes
 	}
