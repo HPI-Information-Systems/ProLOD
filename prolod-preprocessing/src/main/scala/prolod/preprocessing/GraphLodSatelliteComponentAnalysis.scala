@@ -2,7 +2,6 @@ package prolod.preprocessing
 
 import java.util
 
-import graphlod.EdgeSimilarity
 import prolod.common.config.DatabaseConnection
 
 import scala.collection.JavaConverters._

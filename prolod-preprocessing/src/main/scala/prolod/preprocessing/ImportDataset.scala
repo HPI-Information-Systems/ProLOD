@@ -2,14 +2,12 @@ package prolod.preprocessing
 
 import java.io.FileInputStream
 import java.net.{MalformedURLException, URL}
-import graphlod.GraphLOD
-import org.semanticweb.yars.nx.parser.NxParser
+
+import akka.actor.Actor
 import org.semanticweb.yars.nx.Node
-import prolod.common.config.{DatabaseConnection, Configuration}
+import org.semanticweb.yars.nx.parser.NxParser
+import prolod.common.config.{Configuration, DatabaseConnection}
 import prolod.common.models.MaintableObject
-import scala.collection.immutable.HashSet
-import scala.io.Source
-import scala.collection.JavaConverters._
 
 class UpdateClusters(name : String, ontologyNamespace : String) {
 	var config = new Configuration()
@@ -238,6 +236,45 @@ class ImportDataset(name : String, namespace: String, ontologyNamespace : String
             }
         }
     }
+}
+
+object ImportCommands {
+	case object Start
+	case object Done
+	case class ImportTriples(importFlag: String, namespace: String, ontologyNamespace: String, excludeNS: String, files: String)
+}
+
+class ImportTriplesAkka extends Actor {
+
+	def receive = {
+		case i: ImportCommands.ImportTriples =>
+			//new ImportDataset(i.importFlag, i.namespace, i.ontologyNamespace, Some(i.excludeNS), Some(i.files), true, false, false)
+			println("1 importing")
+			Thread.sleep(5000)
+			println("1 tripples imported")
+			sender() ! ImportCommands.Done
+	}
+}
+
+class UpdateClusterSizesAkka extends Actor {
+	val args = Array()
+
+	def receive = {
+		case ImportCommands.Start =>
+			args match {
+				case Array(updateClusterSizes, name, ontologyNamespace) => new UpdateClusters(name, ontologyNamespace)
+				case _ => printUsage()
+			}
+			println("2 updating")
+			Thread.sleep(5000)
+			println("2 cluster updated")
+			sender() ! ImportCommands.Done
+	}
+
+	private def printUsage() {
+		println("usage...")
+	}
+
 }
 
 object ImportDataset {
