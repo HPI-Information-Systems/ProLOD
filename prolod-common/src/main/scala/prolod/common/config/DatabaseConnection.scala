@@ -22,6 +22,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.io.Source
 
+import com.typesafe.scalalogging._
+
 //import graphlod.dataset._
 
 /*
@@ -40,7 +42,7 @@ def * = (id, schema_name, entities, tuples) <> (Schemata.tupled, Schemata.unappl
 */
 
 //noinspection RedundantBlock
-class DatabaseConnection(config: Configuration) {
+class DatabaseConnection(config: Configuration) extends LazyLogging {
 
 	var driver = com.typesafe.slick.driver.db2.DB2Driver.api
 
@@ -934,6 +936,11 @@ class DatabaseConnection(config: Configuration) {
 		}
 	}
 
+	def insertPatterns(dataset: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.HashMap[Integer, util.List[String]]], colorIsomorphicPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], gc: Option[String]): Unit = {
+		val subjects: Map[String, Int] = getSubjectUris(dataset)
+		insertPatterns(dataset, patterns, coloredPatterns, colorIsomorphicPatterns, diameter, subjects, gc)
+	}
+
 	def insertPatterns(name: String, patterns: util.HashMap[Integer, util.HashMap[String, Integer]], coloredPatterns: util.HashMap[Integer, util.HashMap[Integer, util.List[String]]], colorIsomorphicPatterns: util.HashMap[Integer, util.List[String]], diameter: util.HashMap[Integer, lang.Double], subjects: Map[String, Int], gc: Option[String]) {
 		validateDatasetString(name)
 		val dbExt = gc.getOrElse("")
@@ -963,25 +970,31 @@ class DatabaseConnection(config: Configuration) {
 								val statement = connection.createStatement()
 								val resultSet = statement.execute("INSERT INTO " + name + ".coloredisopatterns" + dbExt + " (ID, pattern_id, PATTERN, NAME) VALUES (" + isoIndex + ", " + id + ", '" + coloredisopattern + "', '" + patternName + "')")
 
-								val cPattern = coloredPatternsMap.get(id).get.asScala.toMap.get(isoIndex).get.asScala.toList
-								cPattern.foreach { case (coloredpattern) =>
-									val newPattern = addSubjectIdToPattern(subjects, coloredpattern)
-									val coloredPatternJson: PatternFromDB = Json.parse(coloredpattern).validate[PatternFromDB].get
-									val coloredPatternName = coloredPatternJson.name.getOrElse("")
-									try {
-										val statement = connection.createStatement()
-										val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns" + dbExt + " (ID, pattern_id, PATTERN, NAME) VALUES (" + isoIndex + ", " + id + ", '" + newPattern + "', '" + coloredPatternName + "')")
-										statement.close()
-									} catch {
-										case e: SqlException => {
-											println("error inserting "+dbExt+" pattern (" + coloredpattern + ") " + e.getMessage)
-											var columnNames = List("ID", "pattern_id", "PATTERN", "NAME")
-											var values = List(isoIndex, id, newPattern, coloredPatternName)
-											performInsert(name + ".coloredpatterns", columnNames, values)
+								val cPatternMap = coloredPatternsMap.get(id).get.asScala.toMap
+								if (!cPatternMap.contains(isoIndex)) {
+									logger.warn("color isomorphism group does not contain")
+								} else {
+									val cPattern = cPatternMap.get(isoIndex).get.asScala.toList
+									cPattern.foreach { case (coloredpattern) =>
+										val newPattern = addSubjectIdToPattern(subjects, coloredpattern)
+										val coloredPatternJson: PatternFromDB = Json.parse(coloredpattern).validate[PatternFromDB].get
+										val coloredPatternName = coloredPatternJson.name.getOrElse("")
+										try {
+											val statement = connection.createStatement()
+											val resultSet = statement.execute("INSERT INTO " + name + ".coloredpatterns" + dbExt + " (ID, pattern_id, PATTERN, NAME) VALUES (" + isoIndex + ", " + id + ", '" + newPattern + "', '" + coloredPatternName + "')")
+											statement.close()
+										} catch {
+											case e: SqlException => {
+												println("error inserting " + dbExt + " pattern (" + coloredpattern + ") " + e.getMessage)
+												var columnNames = List("ID", "pattern_id", "PATTERN", "NAME")
+												var values = List(isoIndex, id, newPattern, coloredPatternName)
+												performInsert(name + ".coloredpatterns", columnNames, values)
+											}
+											case e: SqlSyntaxErrorException => println(e.getMessage)
 										}
-										case e: SqlSyntaxErrorException => println(e.getMessage)
 									}
 								}
+
 							} catch {
 								case e: SqlException => {
 									println("error inserting "+dbExt+" pattern (2)" + e.getMessage)

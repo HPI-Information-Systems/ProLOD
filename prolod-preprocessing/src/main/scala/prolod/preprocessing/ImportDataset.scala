@@ -11,6 +11,8 @@ import scala.collection.immutable.HashSet
 import scala.io.Source
 import scala.collection.JavaConverters._
 
+import com.typesafe.scalalogging._
+
 class UpdateClusters(name : String, ontologyNamespace : String) {
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
@@ -26,7 +28,7 @@ class UpdatePatterns(name : String) {
 	db.updatePatterns(name)
 }
 
-class AddSimilarPatterns(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) {
+class EdgeSetSimilarityImport(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) {
     var config = new Configuration()
     var db = new DatabaseConnection(config)
 
@@ -37,19 +39,21 @@ class AddSimilarPatterns(name : String, namespace: String, ontologyNamespace : S
     graphLodPatternSimilarity.run
 }
 
-class SatelliteComponentAnalysis(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) {
+class SatelliteComponentsImport(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String]) extends LazyLogging {
+	logger.info("Analyze satellite components and import into DB")
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
 
 	val datasetFiles: List[String] = if (files.isEmpty) Nil else List(files.get)
 	val excludeNamespaces: List[String] = if (excludeNS.isEmpty) Nil else List(excludeNS.get)
 
-	val graphLodPatternSimilarity = new GraphLodSatelliteComponentAnalysis(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
-	graphLodPatternSimilarity.run
+	val graphLodSatelliteComponentAnalysis = new GraphLodSatelliteComponentAnalysis(db, name, namespace, ontologyNamespace, excludeNamespaces, datasetFiles)
+	graphLodSatelliteComponentAnalysis.run
 }
 
-class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) {
-    var config = new Configuration()
+class ImportDataset(name : String, namespace: String, ontologyNamespace : String, excludeNS : Option[String], files : Option[String], importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) extends LazyLogging {
+
+	var config = new Configuration()
     var db = new DatabaseConnection(config)
 
     val datasetFiles: List[String] = if (files.isEmpty) Nil else List(files.get)
@@ -273,13 +277,14 @@ object ImportDataset {
 		    }
         } else if (args(0).equals("similarPatterns")) {
             args match {
-                case Array(similarPatterns, name, namespace, ontologyNamespace, files) => new AddSimilarPatterns(name, namespace, ontologyNamespace, None, Some(files))
-                case Array(similarPatterns, name, namespace, ontologyNamespace, excludeNS, files) => new AddSimilarPatterns(name, namespace, ontologyNamespace, Some(excludeNS), Some(files))
+                case Array(similarPatterns, name, namespace, ontologyNamespace, files) => new EdgeSetSimilarityImport(name, namespace, ontologyNamespace, None, Some(files))
+                case Array(similarPatterns, name, namespace, ontologyNamespace, excludeNS, files) => new EdgeSetSimilarityImport(name, namespace, ontologyNamespace, Some(excludeNS), Some(files))
                 case _ => printUsage()
             }
 	    } else if (args(0).equals("satelliteComponents")) {
 		    args match {
-			    case Array(add, name, namespace, ontologyNamespace, files) => new SatelliteComponentAnalysis(name, namespace, ontologyNamespace, None, Some(files), false, false, true)
+			    case Array(add, name, namespace, ontologyNamespace, files) => new SatelliteComponentsImport(name, namespace, ontologyNamespace, None, Some(files))
+			    case Array(add, name, namespace, ontologyNamespace, excludeNS, files) => new SatelliteComponentsImport(name, namespace, ontologyNamespace, Some(excludeNS), Some(files))
 			    case _ => printUsage()
 		    }
 	    } else {

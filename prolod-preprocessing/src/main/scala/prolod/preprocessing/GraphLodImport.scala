@@ -28,17 +28,4 @@ class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: S
 		db.insertPatterns(name, graphLod.patterns, graphLod.coloredPatterns, graphLod.colorIsomorphicPatterns, graphLod.patternDiameter, subjects, None)
 		db.insertPatternsGC(name, graphLod.patternsGC, graphLod.coloredPatternsGC, graphLod.colorIsomorphicPatternsGC, graphLod.patternDiameterGC, subjects)
 	}
-
-
-	//db.insertStats(name, graphLod)
-
-	/*
-	db.getDatasets()
-	db.insert
-    */
-
-	/*
-	val dataset = Dataset.fromFiles(files.asJava, name, namespace, ontologyNamespace, excludedNamespaces.asJava)
-	val graphFeatures = new GraphFeatures("main_graph", dataset.getGraph, dataset.getSimpleGraph)
-    */
 }
