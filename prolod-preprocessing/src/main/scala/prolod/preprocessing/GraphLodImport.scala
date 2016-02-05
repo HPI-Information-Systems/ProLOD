@@ -1,24 +1,18 @@
 package prolod.preprocessing
 
-import java.util
-
 import graphlod.GraphLOD
+import graphlod.dataset.Dataset
 import prolod.common.config.DatabaseConnection
-import scala.collection.JavaConverters._
 
-class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: String, var ontologyNamespace : String, excludedNamespaces : List[String], files: List[String], subjects: Map[String, Int]) {
+class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: String, var ontologyNamespace : String, dataset: Dataset, subjects: Map[String, Int]) {
 	val skipChromatic: Boolean = true
 	val skipGraphviz: Boolean = true
 	val minImportantSubgraphSize: Int = 3
 	val importantDegreeCount: Int = 3
 
-	//val excludedNamespaces : List[String] = Nil
-	val datasetFilesJava: util.List[String] = files.asJava
-
-	val graphLod : GraphLOD = GraphLOD.loadDataset(name, files.asJava, namespace, ontologyNamespace, excludedNamespaces.asJava)
+	val graphLod : GraphLOD = GraphLOD.loadDataset(name, dataset)
 
 	def run: Unit = {
-
 		db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount, ontologyNamespace, namespace)
 		db.insertClasses(name, graphLod.dataset.getOntologyClasses)
 		db.insertClassHierarchy(name, graphLod.dataset.getOntologySubclasses)
