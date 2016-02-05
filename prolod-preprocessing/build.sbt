@@ -1,8 +1,9 @@
 name := "prolod-preprocessing"
 
 libraryDependencies ++= Seq(
-  "graphlod" % "graphlod" % "0.1-SNAPSHOT" exclude("org.slf4j", "slf4j-log4j12"),
-  "keyness" % "keyness" % "0.1-SNAPSHOT" exclude("org.slf4j", "slf4j-log4j12"),
+  // graphlod and keyness are already included in prolod-common
+  //"graphlod" % "graphlod" % "0.1-SNAPSHOT" exclude("org.slf4j", "slf4j-log4j12"),
+  //"keyness" % "keyness" % "0.1-SNAPSHOT" exclude("org.slf4j", "slf4j-log4j12"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
 )
 
