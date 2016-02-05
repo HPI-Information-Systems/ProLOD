@@ -1,5 +1,6 @@
 package prolod.preprocessing
 
+import com.typesafe.scalalogging.LazyLogging
 import graphlod.dataset.{Dataset, SWTGraphMLHandler}
 import prolod.common.config.{Configuration, DatabaseConnection}
 
@@ -20,7 +21,7 @@ class UpdatePatterns(name: String) {
 	db.updatePatterns(name)
 }
 
-class AddSimilarPatterns(name: String, dataset: Dataset) {
+class EdgeSetSimilarityImport(name: String, dataset: Dataset) {
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
 
@@ -28,15 +29,16 @@ class AddSimilarPatterns(name: String, dataset: Dataset) {
 	graphLodPatternSimilarity.run
 }
 
-class SatelliteComponentAnalysis(name: String, dataset: Dataset) {
+class SatelliteComponentAnalysis(name: String, dataset: Dataset) extends LazyLogging {
+	logger.info("Analyze satellite components and import into DB")
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
 
-	val graphLodPatternSimilarity = new GraphLodSatelliteComponentAnalysis(db, name, dataset)
-	graphLodPatternSimilarity.run
+	val graphLodSatelliteComponentAnalysis = new GraphLodSatelliteComponentAnalysis(db, name, dataset)
+	graphLodSatelliteComponentAnalysis.run
 }
 
-class ImportDataset(name: String, namespace: String, ontologyNamespace: String, dataset: Dataset, importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) {
+class ImportDataset(name: String, namespace: String, ontologyNamespace: String, dataset: Dataset, importTriplesFlag: Boolean, keyness: Boolean, addFiles: Boolean) extends LazyLogging {
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
 
@@ -88,6 +90,7 @@ class ImportDataset(name: String, namespace: String, ontologyNamespace: String, 
 }
 
 object ImportDataset {
+	//noinspection RedundantBlock
 	def main(args: Array[String]) {
 		args match {
 			case Array("importTriples", name, namespace, ontologyNamespace, files) => {
@@ -118,11 +121,11 @@ object ImportDataset {
 			}
 			case Array("similarPatterns", name, namespace, ontologyNamespace, files) => {
 				val dataset = createDataset(name, namespace, ontologyNamespace, files, None)
-				new AddSimilarPatterns(name, dataset)
+				new EdgeSetSimilarityImport(name, dataset)
 			}
 			case Array("similarPatterns", name, namespace, ontologyNamespace, excludeNS, files) => {
 				val dataset = createDataset(name, namespace, ontologyNamespace, files, Some(excludeNS))
-				new AddSimilarPatterns(name, dataset)
+				new EdgeSetSimilarityImport(name, dataset)
 			}
 			case Array("satelliteComponents", name, namespace, ontologyNamespace, files) => {
 				val dataset: Dataset = createDataset(files, name, namespace, files, Some(ontologyNamespace))

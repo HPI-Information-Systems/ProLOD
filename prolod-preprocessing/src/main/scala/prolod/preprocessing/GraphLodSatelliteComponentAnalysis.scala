@@ -8,6 +8,8 @@ class GraphLodSatelliteComponentAnalysis(var db: DatabaseConnection, var name : 
 	val graphLodPatternSimilarity : graphlod.SatelliteComponentAnalysis = new graphlod.SatelliteComponentAnalysis(name, dataset)
 
 	def run: Unit = {
-		// db.insertSimilarPatterns(name, graphLodPatternSimilarity.similarityLists, graphLodPatternSimilarity.similarityPaths, graphLodPatternSimilarity.differenceToFirstElement)
+		val graphLodInstance: GraphLOD = graphLod.getGraphLodInstance
+		logger.info("Insert patterns into DB")
+		db.insertPatterns(name, graphLodInstance.patterns, graphLodInstance.coloredPatterns, graphLodInstance.colorIsomorphicPatterns, graphLodInstance.patternDiameter, None)
 	}
 }
