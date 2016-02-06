@@ -38,23 +38,32 @@ class SatelliteComponentAnalysis(name: String, dataset: Dataset) extends LazyLog
 	graphLodSatelliteComponentAnalysis.run
 }
 
-class ImportDataset(name: String, namespace: String, ontologyNamespace: String, dataset: Dataset) extends LazyLogging {
+class ImportDataset(name: String, namespace: String, ontologyNamespace: String, dataset: Dataset, importer: Option[TripleImporter]) extends LazyLogging {
 	var config = new Configuration()
 	var db = new DatabaseConnection(config)
 
-	val subjectsKnown = db.getSubjectUris(name)
-
-	// graphlod & keyness
-	val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, dataset, subjectsKnown)
-
+	if (importer.nonEmpty) {
+		db.dropMainTables(name)
+	}
 	db.dropTables(name)
 	db.createTables(name)
 
+	if (importer.nonEmpty) {
+		importer.get.importTriples(db, adding = false)
+	}
+
+	var subjects = db.getSubjectUris(name)
+
+	val graphlod = new GraphLodImport(db, name, namespace, ontologyNamespace, dataset, subjects)
 	graphlod.run
 
-	db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
+	if(importer.nonEmpty) {
+		db.createIndices(name)
+	}
 
+	db.insertClusterSubjectTable(name, graphlod.graphLod.dataset)
 	db.updateClusterSizes(name, ontologyNamespace)
+
 	val keynessImporter = new KeynessImport(db, name)
 	keynessImporter.run
 }
@@ -64,20 +73,18 @@ object ImportDataset {
 	def main(args: Array[String]) {
 		args match {
 			case Array("importTriples", name, namespace, ontologyNamespace, files) => {
-				val db = createDb()
-				db.dropMainTables(name)
-				new TripleImporter(db, name, namespace, ontologyNamespace, List(files)).importTriples(false)
-				db.createIndices(name)
+				val importer = new TripleImporterFromNxParser(name, namespace, ontologyNamespace, List(files))
+				val dataset = createDataset(name, namespace, ontologyNamespace, files, None)
+				new ImportDataset(name, namespace, ontologyNamespace, dataset, Some(importer))
 			}
 			case Array("importTriples", name, namespace, ontologyNamespace, excludeNS, files) => {
-				val db = createDb()
-				db.dropMainTables(name)
-				new TripleImporter(db, name, namespace, ontologyNamespace, List(files)).importTriples(false)
-				db.createIndices(name)
+				val importer = new TripleImporterFromNxParser(name, namespace, ontologyNamespace, List(files))
+				val dataset = createDataset(name, namespace, ontologyNamespace, files, Some(excludeNS))
+				new ImportDataset(name, namespace, ontologyNamespace, dataset, Some(importer))
 			}
 			case Array("addImport", name, namespace, ontologyNamespace, files) => {
-					val db: DatabaseConnection = createDb()
-				new TripleImporter(db, name, namespace, ontologyNamespace, List(files)).importTriples(true)
+				val db: DatabaseConnection = createDb()
+				new TripleImporterFromNxParser(name, namespace, ontologyNamespace, List(files)).importTriples(db, adding = true)
 				db.updateClasses(name, ontologyNamespace)
 				db.updateClusterSizes(name, ontologyNamespace)
 			}
@@ -111,19 +118,20 @@ object ImportDataset {
 			}
 			case Array("SWTGraphML", name, file) => {
 				val dataset = Dataset.fromGraphML(file, name, new SWTGraphMLHandler())
-				new ImportDataset(name, "", "", dataset)
+				val importer = new TripleImporterFromDataset(name, "" ,"", dataset)
+				new ImportDataset(name, "", "", dataset, importer=Some(importer))
 			}
 			case Array(name, namespace, ontologyNamespace, files) => {
 				val dataset = createDataset(name, namespace, ontologyNamespace, files, None)
-				new ImportDataset(name, namespace, ontologyNamespace, dataset)
+				new ImportDataset(name, namespace, ontologyNamespace, dataset, importer=None)
 			}
 			case Array(name, namespace, ontologyNamespace, excludeNS, files) => {
 				val dataset = createDataset(name, namespace, ontologyNamespace, files, Some(excludeNS))
-				new ImportDataset(name, namespace, ontologyNamespace, dataset)
+				new ImportDataset(name, namespace, ontologyNamespace, dataset, importer=None)
 			}
 			case Array(name, namespace, ontologyNamespace, "-excludeNS", excludeNS, "-files", files) => {
 				val dataset = createDataset(name, namespace, ontologyNamespace, files, Some(excludeNS))
-				new ImportDataset(name, namespace, ontologyNamespace, dataset)
+				new ImportDataset(name, namespace, ontologyNamespace, dataset, importer=None)
 			}
 			case _ => printUsage()
 		}

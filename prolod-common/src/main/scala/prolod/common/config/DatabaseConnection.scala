@@ -69,29 +69,31 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 	def dropMainTables(dataset: String): Unit = {
 		val sqlDir = new File("prolod-preprocessing/sql/")
 		for (file <- sqlDir.listFiles) {
-			try {
-				val queryString = Source.fromFile(file.getPath).mkString
-				val query = String.format(queryString, dataset)
+			if (file.isFile) {
 				try {
-					getTableNameFromStatement(queryString) match {
-						case tableName => {
-							try {
-								var dropStatement = connection.createStatement()
-								var tableNamenormalized = tableName
-								if (tableName.equals("")) tableNamenormalized = file.getName.replace(".sql", "")
-								dropStatement.execute("DROP TABLE " + dataset + "." + tableNamenormalized)
-								dropStatement.close()
-							} catch {
-								case e: SqlSyntaxErrorException => println(e.getMessage)
+					val queryString = Source.fromFile(file.getPath).mkString
+					val query = String.format(queryString, dataset)
+					try {
+						getTableNameFromStatement(queryString) match {
+							case tableName => {
+								try {
+									var dropStatement = connection.createStatement()
+									var tableNamenormalized = tableName
+									if (tableName.equals("")) tableNamenormalized = file.getName.replace(".sql", "")
+									dropStatement.execute("DROP TABLE " + dataset + "." + tableNamenormalized)
+									dropStatement.close()
+								} catch {
+									case e: SqlSyntaxErrorException => println(e.getMessage)
+								}
 							}
 						}
+					} catch {
+						case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
 					}
 				} catch {
-					case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
+					case e: SqlSyntaxErrorException => println(e.getMessage)
+					case e: FileNotFoundException => println(e.getMessage)
 				}
-			} catch {
-				case e: SqlSyntaxErrorException => println(e.getMessage)
-				case e: FileNotFoundException => println(e.getMessage)
 			}
 		}
 	}
@@ -117,7 +119,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 			createStatement.execute("DROP TABLE " + name)
 			createStatement.close()
 		} catch {
-			case e: SqlSyntaxErrorException => println(e.getMessage)
+			case e: SqlSyntaxErrorException => println("failed to drop table: " +e.getMessage)
 		}
 	}
 
@@ -126,7 +128,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 			val createStatement = connection.createStatement()
 			val createResultSet = createStatement.execute("CREATE SCHEMA " + name)
 		} catch {
-			case e: SqlSyntaxErrorException => println(e.getMessage)
+			case e: SqlSyntaxErrorException => println("cant create schema: " + e.getMessage)
 		}
 
 		createTable(name + ".patterns (id INT, name VARCHAR(200), pattern CLOB, occurences INT, diameter FLOAT, nodedegreedistribution CLOB)")
@@ -137,9 +139,8 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		createTable(name + ".COLOREDPATTERNS_GC (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".coloredisopatterns_GC (id INT, pattern_id INT, pattern CLOB, name VARCHAR(200))")
 		createTable(name + ".graphstatistics (nodedegreedistribution CLOB, averagelinks FLOAT, nodes INT, edges INT, connectedcomponents INT, stronglyconnectedcomponents INT, gcnodes INT, gcedges INT, highestIndegrees CLOB, highestOutdegrees CLOB)")
-		createTable(name + ".CLUSTERS " +
-			"(                                                                   " +
-			"       ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),    " +
+		createTable(name + ".CLUSTERS (" +
+			"ID INT NOT NULL GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1)," +
 			"USERNAME VARCHAR(50) DEFAULT 'default' NOT NULL,       " +
 			//"SESSION_ID INT NOT NULL,                    "+
 			//"SESSION_LOCAL_ID INT,                  "+
@@ -155,19 +156,21 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 
 		val sqlDir = new File("prolod-preprocessing/sql/")
 		for (file <- sqlDir.listFiles) {
-			try {
-				val queryString = Source.fromFile(file.getPath).mkString
-				val query = String.format(queryString, name)
+			if (file.isFile) {
 				try {
-					val statement = connection.prepareStatement(query)
-					statement.execute
-					statement.close()
+					val queryString = Source.fromFile(file.getPath).mkString
+					val query = String.format(queryString, name)
+					try {
+						val statement = connection.prepareStatement(query)
+						statement.execute
+						statement.close()
+					} catch {
+						case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
+					}
 				} catch {
-					case e: SqlSyntaxErrorException => println(e.getMessage + System.lineSeparator() + query)
+					case e: SqlSyntaxErrorException => println(e.getMessage)
+					case e: FileNotFoundException => println(e.getMessage)
 				}
-			} catch {
-				case e: SqlSyntaxErrorException => println(e.getMessage)
-				case e: FileNotFoundException => println(e.getMessage)
 			}
 		}
 	}
@@ -228,7 +231,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 	}
 
 	def validateDatasetString(table: String) = {
-		if (!table.matches("[A-Za-z\\-_]+")) {
+		if (!table.matches("[A-Za-z0-9\\-_]+")) {
 			throw new RuntimeException("illegal table name: " + table) // this is a check to prevent SQL injection!
 		}
 	}
@@ -310,13 +313,8 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 
 	def insertKeyness(dataset: String, keyness: Keyness) = {
 		dropTable(dataset + ".keyness")
-		try {
-			val createStatement = connection.createStatement()
-			createStatement.execute("CREATE TABLE " + dataset + ".keyness (cluster_id INT, property_id INT, keyness FLOAT, uniqueness FLOAT, density FLOAT, values INT)")
-			createStatement.close()
-		} catch {
-			case e: SqlSyntaxErrorException => println(e.getMessage)
-		}
+		createTable(dataset + ".keyness (cluster_id INT, property_id INT, keyness FLOAT, uniqueness FLOAT, density FLOAT, values INT)")
+
 		val clusters: Seq[Group] = getClusters(dataset, "")
 		for (cluster: Group <- clusters) {
 			val triples: util.HashMap[Integer, util.HashMap[Integer, Integer]] = new util.HashMap()
@@ -336,9 +334,9 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 					try {
 						val statement = connection.createStatement()
 						val resultSet = statement.execute("INSERT INTO " + dataset + ".keyness " +
-								"(cluster_id, property_id, keyness, uniqueness, density, values) " +
-								"VALUES (" + clusterId + "," + property + "," + udk.get("keyness") + "," + udk.get("uniqueness") + "," +
-								             udk.get("density") + "," + udk.getOrDefault("properties", 0.0).toInt + ")")
+							"(cluster_id, property_id, keyness, uniqueness, density, values) " +
+							"VALUES (" + clusterId + "," + property + "," + udk.get("keyness") + "," + udk.get("uniqueness") + "," +
+							udk.get("density") + "," + udk.getOrDefault("properties", 0.0).toInt + ")")
 					} catch {
 						case e: SqlIntegrityConstraintViolationException => println("Dataset already exists")
 					}
@@ -478,7 +476,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		val statistics = mutable.Map[String, String]()
 		try {
 			val statement = connection.createStatement()
-			val sql = sql"SELECT count FROM #$dataset.SIMILAR_PATTERNS WHERE id=#$patternId".as[(Int)]
+			val sql = sql"SELECT count FROM #$dataset.SIMILAR_PATTERNS WHERE ID=#$patternId".as[(Int)]
 			statistics += ("patterns" -> execute(sql).head.toString)
 		} catch {
 			case e: SqlSyntaxErrorException => {
@@ -530,7 +528,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDISOPATTERNS" + dbExt + " WHERE pattern_id = " + id)
 			patterns = getColoredPatternsFromDBResultSet(dataset, dbExt, namespaces, resultSet)
 		} catch {
-			case e : Throwable => println(e.toString)
+			case e: Throwable => println(e.toString)
 		}
 		patterns.sortWith(_.occurences > _.occurences)
 	}
@@ -544,13 +542,13 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 			try {
 				occurences = resultSet.getInt("occurences")
 			} catch {
-				case e : Throwable => occurences = -1
+				case e: Throwable => occurences = -1
 			}
 			var name: String = ""
 			try {
 				name = resultSet.getString("name")
 			} catch {
-				case e : Throwable => name = ""
+				case e: Throwable => name = ""
 			}
 			//val diameter = resultSet.getDouble("diameter")
 			val patternJson = Json.parse(pattern).validate[PatternFromDB].get
@@ -566,8 +564,8 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 			val statement = connection.createStatement()
 			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".PATTERNS" + dbExt)
 			while (resultSet.next()) {
-				var name : String = ""
-				var occ : Int = 0
+				var name: String = ""
+				var occ: Int = 0
 				try {
 					name = resultSet.getString("name")
 					occ = resultSet.getInt("occurences")
@@ -575,7 +573,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 						name = "Star"
 					}
 				} catch {
-					case e : Throwable => name = ""
+					case e: Throwable => name = ""
 				}
 				if (patternTypes.contains(name)) {
 					occ = occ + patternTypes(name)
@@ -583,7 +581,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 				patternTypes += (name -> occ)
 			}
 		} catch {
-			case e : Throwable => println(e.toString )
+			case e: Throwable => println(e.toString)
 		}
 
 		patternTypes
@@ -594,16 +592,16 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		var patternTypes: Map[String, Int] = Map()
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE pattern_id ="+ id)
+			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE pattern_id =" + id)
 			while (resultSet.next()) {
-				var name : String = ""
+				var name: String = ""
 				try {
 					name = resultSet.getString("name")
 					if (name.contains("Star")) {
 						name = "Star"
 					}
 				} catch {
-					case e : Throwable => name = ""
+					case e: Throwable => name = ""
 				}
 				var count: Int = 1
 				if (patternTypes.contains(name)) {
@@ -612,7 +610,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 				patternTypes += (name -> count)
 			}
 		} catch {
-			case e : Throwable => println(e.toString )
+			case e: Throwable => println(e.toString)
 		}
 		patternTypes
 	}
@@ -622,13 +620,13 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		var patternTypes: Map[String, Int] = Map()
 		try {
 			val statement = connection.createStatement()
-			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE id ="+ id +" AND pattern_id = " + isoGroup.get)
+			val resultSet = statement.executeQuery("SELECT * FROM " + dataset + ".COLOREDPATTERNS" + dbExt + " WHERE id =" + id + " AND pattern_id = " + isoGroup.get)
 			while (resultSet.next()) {
-				var name : String = ""
+				var name: String = ""
 				try {
 					name = resultSet.getString("name")
 				} catch {
-					case e : Throwable => name = ""
+					case e: Throwable => name = ""
 				}
 				var count: Int = 1
 				if (patternTypes.contains(name)) {
@@ -637,7 +635,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 				patternTypes += (name -> count)
 			}
 		} catch {
-			case e : Throwable => println(e.toString )
+			case e: Throwable => println(e.toString)
 		}
 		patternTypes
 	}
@@ -646,17 +644,17 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		var patterns: List[Pattern] = Nil
 		while (resultSet.next()) {
 			var pattern = resultSet.getString("pattern")
-			var name : String = ""
+			var name: String = ""
 			try {
 				name = resultSet.getString("name")
 			} catch {
-				case e : Throwable => name = ""
+				case e: Throwable => name = ""
 			}
-			var patternId : Int = -1
+			var patternId: Int = -1
 			try {
 				patternId = resultSet.getInt("pattern_id")
 			} catch {
-				case e : Throwable => patternId = -1
+				case e: Throwable => patternId = -1
 			}
 			var isoId = resultSet.getInt("id")
 			namespaces foreach (ontology_namespace => {
@@ -742,7 +740,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		var patterns: List[Pattern] = Nil
 		try {
 			val statement = connection.createStatement()
-			val sql = sql"SELECT instance FROM #$s.SIMILAR_PATTERNS WHERE id=#$patternId".as[(String)]
+			val sql = sql"SELECT instance FROM #$s.SIMILAR_PATTERNS WHERE ID=#$patternId".as[(String)]
 			execute(sql) map ((instance) => {
 				var patternWoNS: String = instance
 				namespaces foreach (ontology_namespace => {
@@ -769,7 +767,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 		var patterns: List[Pattern] = Nil
 		try {
 			val statement = connection.createStatement()
-			val sql = sql"SELECT id, pattern, count FROM #$s.SIMILAR_PATTERNS ORDER BY count ASC".as[(Int, String, Int)]
+			val sql = sql"SELECT id, pattern, count FROM #$s.SIMILAR_PATTERNS ORDER BY COUNT ASC".as[(Int, String, Int)]
 			var lastId = -1
 			execute(sql) map tupled((id, pattern, cnt) => {
 				if (lastId != id) {
@@ -997,7 +995,7 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 
 							} catch {
 								case e: SqlException => {
-									println("error inserting "+dbExt+" pattern (2)" + e.getMessage)
+									println("error inserting " + dbExt + " pattern (2)" + e.getMessage)
 									println(coloredisopattern)
 								}
 								case e: SqlSyntaxErrorException => println(e.getMessage)
@@ -1315,12 +1313,14 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 
 	def getClassHierarchy(dataset: String, ontologyNamespace: String): Map[String, Vector[String]] = {
 		validateDatasetString(dataset)
-		val sql = sql"SELECT cluster, subcluster FROM #${dataset}.CLUSTER_HIERARCHY ORDER BY cluster, subcluster".as[(String, String)]
+		val sql = sql"SELECT cluster, subcluster FROM #${dataset}.CLUSTER_HIERARCHY ORDER BY CLUSTER, subcluster".as[(String, String)]
 		val result = execute(sql)
 		val ns = ontologyNamespace
 		val cleaned = result.map(tupled((a, b) => (removeOntologyNamespace(a, ns), removeOntologyNamespace(b, ns))))
-		val hierarchy =  cleaned.groupBy(tupled((cluster, subcluster) => { cluster }))
-													  .mapValues(vector => vector.map(tupled((cluster, subcluster) => subcluster)))
+		val hierarchy = cleaned.groupBy(tupled((cluster, subcluster) => {
+			cluster
+		}))
+			.mapValues(vector => vector.map(tupled((cluster, subcluster) => subcluster)))
 		hierarchy
 	}
 
@@ -1492,4 +1492,5 @@ class DatabaseConnection(config: Configuration) extends LazyLogging {
 
 		def next(): ResultSet = rs
 	}
+
 }
