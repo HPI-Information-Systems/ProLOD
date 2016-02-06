@@ -8,7 +8,7 @@ import org.semanticweb.yars.nx.parser.NxParser
 import prolod.common.config.DatabaseConnection
 import prolod.common.models.MaintableObject
 
-class TripleImporter(db: DatabaseConnection, name: String, namespace: String, ontologyNamespace: String, var subjectsKnown: Map[String, Int], datasetFiles: List[String]) {
+class TripleImporter(db: DatabaseConnection, name: String, namespace: String, ontologyNamespace: String, datasetFiles: List[String]) {
 
 	def importTriples(adding: Boolean) = {
 		for (dataset <- datasetFiles) {
@@ -28,6 +28,8 @@ class TripleImporter(db: DatabaseConnection, name: String, namespace: String, on
 
 		var externalLinks: List[Int] = Nil
 		var internalLinks: Map[Int, Map[Int, String]] = Map()
+
+		var subjectsKnown: Map[String, Int] = Map()
 
 		if (adding) {
 			subjectsKnown = db.getSubjectUris(name)
