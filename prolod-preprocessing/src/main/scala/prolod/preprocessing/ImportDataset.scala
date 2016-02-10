@@ -74,7 +74,7 @@ object ImportDataset {
 		args match {
 			case Array("importTriples", name, namespace, ontologyNamespace, files) => {
 				val importer = new TripleImporterFromNxParser(name, namespace, ontologyNamespace, List(files))
-				val dataset = createDataset(name, namespace, ontologyNamespace, files, None)
+				val dataset = createDataset(name, namespace, ontologyNamespace, files, excludeNS = None)
 				new ImportDataset(name, namespace, ontologyNamespace, dataset, Some(importer))
 			}
 			case Array("importTriples", name, namespace, ontologyNamespace, excludeNS, files) => {
@@ -105,7 +105,7 @@ object ImportDataset {
 				new KeynessImport(db, name).run
 			}
 			case Array("similarPatterns", name, namespace, ontologyNamespace, files) => {
-				val dataset = createDataset(name, namespace, ontologyNamespace, files, None)
+				val dataset = createDataset(name, namespace, ontologyNamespace, files, excludeNS = None)
 				new EdgeSetSimilarityImport(name, dataset)
 			}
 			case Array("similarPatterns", name, namespace, ontologyNamespace, excludeNS, files) => {
@@ -118,10 +118,14 @@ object ImportDataset {
 			}
 			case Array("SWTGraphML", name, file) => {
 				val dataset = Dataset.fromGraphML(file, name, new SWTGraphMLHandler())
-				val importer = new TripleImporterFromDataset(name, "" ,"", dataset)
-				new ImportDataset(name, "", "", dataset, importer=Some(importer))
+				new ImportDataset(name, "https://api.github.com/", "", dataset, importer=None)
 			}
-			case Array(name, namespace, ontologyNamespace, files) => {
+			case Array("SWTGraphML", "importTriples", name, file) => {
+				val dataset = Dataset.fromGraphML(file, name, new SWTGraphMLHandler())
+				val importer = new TripleImporterFromDataset(name, "https://api.github.com/" ,"", dataset)
+				new ImportDataset(name, "https://api.github.com/", "", dataset, Some(importer))
+			}
+			case Array(name, namespace, ontologyNamespace, files) => { // these should be removed
 				val dataset = createDataset(name, namespace, ontologyNamespace, files, None)
 				new ImportDataset(name, namespace, ontologyNamespace, dataset, importer=None)
 			}

@@ -33,7 +33,15 @@ class TripleImporterFromDataset(name: String, namespace: String, ontologyNamespa
 
 		val edgeSet = dataset.getGraph.edgeSet()
 
+		var i = 0
+
+		println("inserting " + edgeSet.size() + " triples")
+
 		for (edge <- edgeSet) {
+			i+=1
+			if (i % 100 == 0) {
+				println("inserting triples: " + i + "/" + edgeSet.size())
+			}
 			var subjectId = -1
 			var objectId = -1
 			var predicateId = -1
