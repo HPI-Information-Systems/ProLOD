@@ -4,13 +4,13 @@ import graphlod.GraphLOD
 import graphlod.dataset.Dataset
 import prolod.common.config.DatabaseConnection
 
-class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: String, var ontologyNamespace : String, dataset: Dataset, subjects: Map[String, Int]) {
+class GraphLodImport(var db: DatabaseConnection, var name : String, namespace: String, var ontologyNamespace : String, dataset: Dataset, subjects: Map[String, Int], numbersOnly: Boolean) {
 	val skipChromatic: Boolean = true
 	val skipGraphviz: Boolean = true
 	val minImportantSubgraphSize: Int = 3
 	val importantDegreeCount: Int = 3
 
-	val graphLod : GraphLOD = GraphLOD.loadDataset(name, dataset)
+	val graphLod : GraphLOD = GraphLOD.loadDataset(name, dataset, numbersOnly)
 
 	def run: Unit = {
 		db.insertDataset(name, graphLod.graphFeatures.getVertexCount, graphLod.graphFeatures.getVertexCount, ontologyNamespace, namespace)
